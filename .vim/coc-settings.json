@@ -1,0 +1,10 @@
+{
+	"pyright.inlayHints.variableTypes": false,
+	"pyright.inlayHints.parameterTypes": false,
+	"pyright.inlayHints.functionReturnTypes": false,
+	"python.linting.ruffEnabled": true,
+	"python.linting.pydocstyleEnabled": true,
+	"python.formatting.provider": "ruff",
+	"pyright.organizeimports.provider": "ruff",
+	"python.analysis.typeCheckingMode": "off"
+}
