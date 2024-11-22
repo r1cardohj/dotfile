@@ -25,3 +25,11 @@ augroup complete
   autocmd CompleteDone * pclose
 augroup end
 
+
+call plug#begin()
+Plug 'voldikss/vim-translator'
+call plug#end()
+
+let g:translator_default_engines=['bing']
+nmap <silent> <Leader>y <Plug>TranslateW
+vmap <silent> <Leader>y <Plug>TranslateWV
