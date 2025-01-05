@@ -45,8 +45,8 @@ Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'antoinemadec/coc-fzf'
 Plug 'preservim/nerdtree'
 Plug 'tpope/vim-commentary'
+Plug 'APZelos/blamer.nvim'
 Plug 'voldikss/vim-translator'
-Plug 'zivyangll/git-blame.vim'
 Plug 'github/copilot.vim'
 call plug#end()
 
@@ -61,7 +61,12 @@ nmap <silent> <Leader>w <Plug>TranslateW
 vmap <silent> <Leader>w <Plug>TranslateWV
 
 " git blame
-nnoremap <Leader>gb :<C-u>call gitblame#echo()<CR>
+nnoremap <Leader>gb :<C-u>BlamerToggle<CR>
+let g:blamer_show_in_insert_mode = 0
+let g:blamer_show_in_visual_mode = 0
+let g:blamer_delay = 3000
+
+
 
 " nerdtree
 nnoremap <leader>e :NERDTreeToggle<CR>
@@ -72,6 +77,8 @@ autocmd BufEnter * if winnr('$') == 1 && exists('b:NERDTree') && b:NERDTree.isTa
 
 "fzf
 let g:fzf_vim = {}
+let g:fzf_vim.buffers_jump = 1
+nnoremap <Leader>bf :<C-u>Buffers<CR>
 
 
 
@@ -184,8 +191,8 @@ set statusline^=%{coc#status()}%{get(b:,'coc_current_function','')}
 
 " mappings
 nnoremap <silent> <space><space> :<C-u>CocFzfList<CR>
-nnoremap <silent> <space>a       :<C-u>CocFzfList diagnostics<CR>
-nnoremap <silent> <space>b       :<C-u>CocFzfList diagnostics --current-buf<CR>
+nnoremap <silent> <space>da       :<C-u>CocFzfList diagnostics<CR>
+nnoremap <silent> <space>db       :<C-u>CocFzfList diagnostics --current-buf<CR>
 nnoremap <silent> <space>c       :<C-u>CocFzfList commands<CR>
 nnoremap <silent> <C-p>          :<c-u>Files<CR>
 nnoremap <silent> <space>fg      :<c-u>Rg<CR>
