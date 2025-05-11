@@ -16,6 +16,7 @@ set background=dark
 set softtabstop=0
 set completeopt=longest,menu
 set nocompatible
+set mouse=a
 set nobackup
 set nowritebackup
 set updatetime=300
@@ -47,12 +48,13 @@ Plug 'preservim/nerdtree', { 'on': 'NERDTreeToggle' }
 Plug 'tpope/vim-commentary'
 Plug 'APZelos/blamer.nvim'
 Plug 'voldikss/vim-translator'
-Plug 'github/copilot.vim'
+Plug 'arcticicestudio/nord-vim'
 call plug#end()
 
-
-:colorscheme sorbet
+":colorscheme sorbet 
+:colorscheme nord
 autocmd vimenter * hi Normal guibg=NONE ctermbg=NONE
+"hi Comment ctermfg=darkgrey
 
 
 " translaotr
@@ -65,6 +67,15 @@ nnoremap <Leader>gb :<C-u>BlamerToggle<CR>
 let g:blamer_show_in_insert_mode = 0
 let g:blamer_show_in_visual_mode = 0
 let g:blamer_delay = 3000
+
+" git gitgutter
+nmap ]h <Plug>(GitGutterNextHunk)
+nmap [h <Plugh(GitGutterPrevHunk)
+nmap <leader>hw <Plug>(GitGutterStageHunk)
+nmap <leader>hx <Plug>(GitGutterUndoHunk)
+nmap <leader>hp <Plug>(GitGutterPreviewHunk)
+nmap <leader>hd <Plug>(GitGutterDiffOrig)
+
 
 
 
