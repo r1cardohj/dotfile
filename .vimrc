@@ -4,6 +4,7 @@ set encoding=utf-8
 syntax on
 filetype plugin indent on
 
+
 set ignorecase
 set hlsearch
 set incsearch
@@ -28,6 +29,17 @@ set signcolumn=yes
 
 let mapleader = "\<space>"
 
+" shortcut
+:iabbrev @@ houjun447@gmail.com
+
+" !!<space> create python main function
+autocmd BufEnter *.py :iabbrev !! if __name__ == '__main__':<cr>
+
+:nnoremap <leader>" viw<esc>a"<esc>bi"<esc>lel
+:nnoremap <leader>' viw<esc>a'<esc>bi'<esc>lel
+:vnoremap <leader>" `<
+
+
 "切换回车为补全
 inoremap <expr> <CR> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
 
@@ -35,6 +47,8 @@ augroup complete
   autocmd!
   autocmd CompleteDone * pclose
 augroup end
+
+
 
 call plug#begin()
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
@@ -44,6 +58,7 @@ Plug 'airblade/vim-gitgutter'
 Plug 'vimjas/vim-python-pep8-indent', {'for': 'python'}
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'antoinemadec/coc-fzf'
+Plug 'dense-analysis/ale'
 Plug 'preservim/nerdtree', { 'on': 'NERDTreeToggle' }
 Plug 'tpope/vim-commentary'
 Plug 'APZelos/blamer.nvim'
@@ -53,8 +68,14 @@ call plug#end()
 
 ":colorscheme sorbet 
 :colorscheme nord
-autocmd vimenter * hi Normal guibg=NONE ctermbg=NONE
+"autocmd vimenter * hi Normal guibg=NONE ctermbg=NONE
 "hi Comment ctermfg=darkgrey
+
+
+function! GitStatus()
+  let [a,m,r] = GitGutterGetHunkSummary()
+  return printf('+%d ~%d -%d', a, m, r)
+endfunction
 
 
 " translaotr
@@ -95,6 +116,18 @@ nnoremap <Leader>bf :<C-u>Buffers<CR>
 
 " fzf config
 let g:fzf_layout = { 'window': { 'width': 0.9, 'height': 0.6 } }
+
+
+" ale config
+"
+let g:ale_lint_delay = 400
+nmap <silent> <C-k> <Plug>(ale_previous_wrap)
+nmap <silent> <C-j> <Plug>(ale_next_wrap)
+nnoremap <leader>F :ALEFix<CR>
+
+let g:ale_completion_enabled = 0
+let g:ale_disable_lsp = 1
+let g:ale_fixers = {'python': ['ruff']}
 
 "coc settings
 
@@ -150,8 +183,8 @@ autocmd CursorHold * silent call CocActionAsync('highlight')
 nmap <leader>rn <Plug>(coc-rename)
 
 " Formatting selected code
-xmap <leader>F  <Plug>(coc-format-selected)
-nmap <leader>F  <Plug>(coc-format-selected)
+" xmap <leader>F  <Plug>(coc-format-selected)
+" nmap <leader>F  <Plug>(coc-format-selected)
 
 augroup mygroup
   autocmd!
@@ -198,7 +231,7 @@ command! -nargs=0 Format :call CocActionAsync('format')
 " Add (Neo)Vim's native statusline support
 " NOTE: Please see `:h coc-status` for integrations with external plugins that
 " provide custom statusline: lightline.vim, vim-airline
-set statusline^=%{coc#status()}%{get(b:,'coc_current_function','')}
+"set statusline^=%{coc#status()}%{get(b:,'coc_current_function','')}
 
 " mappings
 nnoremap <silent> <space><space> :<C-u>CocFzfList<CR>
