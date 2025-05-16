@@ -37,7 +37,6 @@ autocmd BufEnter *.py :iabbrev !! if __name__ == '__main__':<cr>
 
 :nnoremap <leader>" viw<esc>a"<esc>bi"<esc>lel
 :nnoremap <leader>' viw<esc>a'<esc>bi'<esc>lel
-:vnoremap <leader>" `<
 
 
 "切换回车为补全
@@ -53,12 +52,12 @@ augroup end
 call plug#begin()
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
-Plug 'jiangmiao/auto-pairs'
+Plug 'LunarWatcher/auto-pairs'
 Plug 'airblade/vim-gitgutter'
 Plug 'vimjas/vim-python-pep8-indent', {'for': 'python'}
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'antoinemadec/coc-fzf'
-Plug 'dense-analysis/ale'
+Plug 'dense-analysis/ale', {'for': ['python', 'go', 'javascript']}
 Plug 'preservim/nerdtree', { 'on': 'NERDTreeToggle' }
 Plug 'tpope/vim-commentary'
 Plug 'APZelos/blamer.nvim'
@@ -120,13 +119,13 @@ let g:fzf_layout = { 'window': { 'width': 0.9, 'height': 0.6 } }
 
 " ale config
 "
-let g:ale_lint_delay = 400
+let g:ale_lint_delay = 500
 nmap <silent> <C-k> <Plug>(ale_previous_wrap)
 nmap <silent> <C-j> <Plug>(ale_next_wrap)
 nnoremap <leader>F :ALEFix<CR>
 
 let g:ale_completion_enabled = 0
-let g:ale_disable_lsp = 1
+"let g:ale_disable_lsp = 1
 let g:ale_fixers = {'python': ['ruff']}
 
 "coc settings
