@@ -4,7 +4,6 @@ set encoding=utf-8
 syntax on
 filetype plugin indent on
 
-
 set ignorecase
 set hlsearch
 set incsearch
@@ -57,10 +56,11 @@ Plug 'airblade/vim-gitgutter'
 Plug 'vimjas/vim-python-pep8-indent', {'for': 'python'}
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'antoinemadec/coc-fzf'
-Plug 'dense-analysis/ale', {'for': ['python', 'go', 'javascript']}
+Plug 'dense-analysis/ale' 
 Plug 'preservim/nerdtree', { 'on': 'NERDTreeToggle' }
 Plug 'tpope/vim-commentary'
 Plug 'APZelos/blamer.nvim'
+Plug 'mattn/emmet-vim'
 Plug 'voldikss/vim-translator'
 Plug 'arcticicestudio/nord-vim'
 call plug#end()
@@ -71,10 +71,8 @@ call plug#end()
 "hi Comment ctermfg=darkgrey
 
 
-function! GitStatus()
-  let [a,m,r] = GitGutterGetHunkSummary()
-  return printf('+%d ~%d -%d', a, m, r)
-endfunction
+" emmet
+let g:user_emmet_leader_key='<c-e>'
 
 
 " translaotr
@@ -127,6 +125,9 @@ nnoremap <leader>F :ALEFix<CR>
 let g:ale_completion_enabled = 0
 "let g:ale_disable_lsp = 1
 let g:ale_fixers = {'python': ['ruff']}
+" In ~/.vim/vimrc, or somewhere similar.
+let g:ale_linter_aliases = {'vue': ['vue', 'javascript']}
+let g:ale_linters = {'vue': ['eslint', 'vls']}
 
 "coc settings
 
