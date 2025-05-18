@@ -63,6 +63,7 @@ Plug 'APZelos/blamer.nvim'
 Plug 'mattn/emmet-vim'
 Plug 'voldikss/vim-translator'
 Plug 'arcticicestudio/nord-vim'
+Plug 'github/copilot.vim'
 call plug#end()
 
 ":colorscheme sorbet 
