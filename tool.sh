@@ -11,3 +11,8 @@ function proxy_status() {
 	echo http: $http_proxy
 	echo https: $https_proxy
 }
+
+
+function viconf() {
+	vi ~/.vimrc
+}
