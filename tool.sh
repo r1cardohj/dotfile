@@ -16,3 +16,7 @@ function proxy_status() {
 function viconf() {
 	vi ~/.vimrc
 }
+
+function tmuxconf() {
+	vi ~/.tmux.conf
+}
