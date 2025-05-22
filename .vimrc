@@ -68,7 +68,7 @@ Plug 'github/copilot.vim'
 call plug#end()
 
 ":colorscheme sorbet 
-:colorscheme nord
+:colorscheme smyck
 "autocmd vimenter * hi Normal guibg=NONE ctermbg=NONE
 "hi Comment ctermfg=darkgrey
 
