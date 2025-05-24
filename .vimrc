@@ -122,10 +122,13 @@ let g:fzf_layout = { 'window': { 'width': 0.9, 'height': 0.6 } }
 let g:ale_lint_delay = 1000
 nmap <silent> <C-k> <Plug>(ale_previous_wrap)
 nmap <silent> <C-j> <Plug>(ale_next_wrap)
+let g:ale_lint_on_text_changed = 'never'
+let g:ale_lint_on_enter = 0
+let g:ale_lint_on_insert_leave = 0
 nnoremap <leader>F :ALEFix<CR>
 
 let g:ale_completion_enabled = 0
-"let g:ale_disable_lsp = 1
+let g:ale_disable_lsp = 1
 let g:ale_fixers = {'python': ['ruff']}
 " In ~/.vim/vimrc, or somewhere similar.
 let g:ale_linter_aliases = {'vue': ['vue', 'javascript']}
