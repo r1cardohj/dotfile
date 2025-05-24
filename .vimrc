@@ -21,6 +21,8 @@ set nobackup
 set nowritebackup
 set updatetime=300
 set signcolumn=yes
+set laststatus=2
+set termguicolors
 
 "hi Comment ctermfg=darkgrey
 "hi LineNr ctermfg=darkgrey
@@ -60,15 +62,13 @@ Plug 'antoinemadec/coc-fzf'
 Plug 'dense-analysis/ale' 
 Plug 'preservim/nerdtree', { 'on': 'NERDTreeToggle' }
 Plug 'tpope/vim-commentary'
-Plug 'APZelos/blamer.nvim'
 Plug 'mattn/emmet-vim'
 Plug 'voldikss/vim-translator'
-Plug 'arcticicestudio/nord-vim'
-Plug 'github/copilot.vim'
+Plug 'r1cardohj/zzz.vim'
 call plug#end()
 
 ":colorscheme sorbet 
-:colorscheme smyck
+:colorscheme zzz
 "autocmd vimenter * hi Normal guibg=NONE ctermbg=NONE
 "hi Comment ctermfg=darkgrey
 
@@ -119,7 +119,7 @@ let g:fzf_layout = { 'window': { 'width': 0.9, 'height': 0.6 } }
 
 " ale config
 "
-let g:ale_lint_delay = 500
+let g:ale_lint_delay = 1000
 nmap <silent> <C-k> <Plug>(ale_previous_wrap)
 nmap <silent> <C-j> <Plug>(ale_next_wrap)
 nnoremap <leader>F :ALEFix<CR>
@@ -242,3 +242,48 @@ nnoremap <silent> <space>db       :<C-u>CocFzfList diagnostics --current-buf<CR>
 nnoremap <silent> <space>c       :<C-u>CocFzfList commands<CR>
 nnoremap <silent> <C-p>          :<c-u>Files<CR>
 nnoremap <silent> <space>fg      :<c-u>Rg<CR>
+
+function! LinterStatus() abort
+    let l:counts = ale#statusline#Count(bufnr(''))
+
+    let l:all_errors = l:counts.error + l:counts.style_error
+    let l:all_non_errors = l:counts.total - l:all_errors
+
+    return l:counts.total == 0 ? 'OK' : printf(
+    \   '🟨 %d 🟥 %d',
+    \   all_non_errors,
+    \   all_errors
+    \)
+endfunction
+
+"STATUSLINE MODE
+let g:currentmode={
+ \ 'n' : 'NORMAL ',
+ \ 'v' : 'VISUAL ',
+ \ 'V' : 'V-LINE ',
+ \ 'i' : 'INSERT ',
+ \ 'R' : 'R ',
+ \ 'Rv' : 'V-REPLACE ',
+ \ 'c' : 'COMMAND ',
+ \}
+
+set statusline=
+set statusline+=%#Icon#
+set statusline+=\ 💤
+set statusline+=\ %#NormalC#%{(mode()=='n')?'\ NORMAL\ ':''}
+set statusline+=%#InsertC#%{(mode()=='i')?'\ INSERT\ ':''}
+set statusline+=%#VisualC#%{(mode()=='v')?'\ VISUAL\ ':''}
+set statusline+=%#Filename#
+set statusline+=\ %f
+set statusline+=%#ReadOnly#
+set statusline+=\ %r
+set statusline+=%{fugitive#statusline()}
+set statusline+=%{LinterStatus()}
+set statusline+=%m
+set statusline+=%=
+set statusline+=\ %l\:%L
+set statusline+=%#Fileformat#
+set statusline+=\ %y
+set statusline+=\ %{&fileencoding?&fileencoding:&encoding}
+set statusline+=\ [%{&fileformat}\]
+set statusline+=%#Position#
