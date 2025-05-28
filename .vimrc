@@ -69,8 +69,8 @@ Plug 'SirVer/ultisnips'
 Plug 'honza/vim-snippets'
 Plug 'prabirshrestha/vim-lsp'
 Plug 'mattn/vim-lsp-settings'
-Plug 'rhysd/vim-lsp-ale'
 call plug#end()
+
 
 function! s:on_lsp_buffer_enabled() abort
     setlocal omnifunc=lsp#complete
@@ -99,6 +99,7 @@ augroup lsp_install
     autocmd User lsp_buffer_enabled call s:on_lsp_buffer_enabled()
 augroup END
 
+let g:lsp_diagnostics_enabled = 0         " disable diagnostics support
 let g:lsp_settings_filetype_python = 'pyright-langserver'
 
 ":colorscheme sorbet 
@@ -147,14 +148,10 @@ autocmd BufEnter * if winnr('$') == 1 && exists('b:NERDTree') && b:NERDTree.isTa
 "fzf
 let g:fzf_vim = {}
 let g:fzf_vim.buffers_jump = 1
+let g:fzf_layout = { 'window': { 'width': 0.9, 'height': 0.6 } }
 nnoremap <Leader>bf :<C-u>Buffers<CR>
 nnoremap <silent> <C-p>          :<c-u>Files<CR>
 nnoremap <silent> <space>fg      :<c-u>Rg<CR>
-
-
-
-" fzf config
-let g:fzf_layout = { 'window': { 'width': 0.9, 'height': 0.6 } }
 
 
 " ale config
@@ -165,16 +162,16 @@ nmap <silent> <C-j> <Plug>(ale_next_wrap)
 let g:ale_lint_on_text_changed = 'never'
 let g:ale_lint_on_enter = 0
 let g:ale_lint_on_insert_leave = 0
-nnoremap <leader>F :ALEFix<CR>
-
-
 let g:ale_completion_enabled = 0
 let g:ale_disable_lsp = 1
+nnoremap <leader>F :ALEFix<CR>
+let g:ale_echo_msg_format = '[%linter%] %s [%severity%]'
+
+
 let g:ale_fixers = {'python': ['ruff']}
 " In ~/.vim/vimrc, or somewhere similar.
 let g:ale_linter_aliases = {'vue': ['vue', 'javascript']}
-let g:ale_linters = {'vue': ['eslint', 'vls']}
-
+let g:ale_linters = {'vue': ['eslint', 'vls', 'cspell'], 'python': ['ruff', 'cspell', 'pylint']}
 
 function! LinterStatus() abort
     let l:counts = ale#statusline#Count(bufnr(''))
