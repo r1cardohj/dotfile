@@ -65,10 +65,15 @@ Plug 'mattn/emmet-vim'
 Plug 'voldikss/vim-translator'
 Plug 'r1cardohj/zzz.vim'
 Plug 'ervandew/supertab'
-Plug 'SirVer/ultisnips'
-Plug 'honza/vim-snippets'
+if has('python3')
+	Plug 'SirVer/ultisnips'
+	Plug 'honza/vim-snippets'
+endif
 Plug 'prabirshrestha/vim-lsp'
+Plug 'heavenshell/vim-pydocstring', { 'do': 'make install', 'for': 'python' }
 Plug 'mattn/vim-lsp-settings'
+"Plug 'r1cardohj/vim-lsp-ale'
+"Plug 'github/copilot.vim'
 call plug#end()
 
 
