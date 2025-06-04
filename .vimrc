@@ -68,54 +68,71 @@ Plug 'ervandew/supertab'
 if has('python3')
 	Plug 'SirVer/ultisnips'
 	Plug 'honza/vim-snippets'
+	Plug 'davidhalter/jedi-vim', {'for': 'python'}
+    Plug 'heavenshell/vim-pydocstring', { 'do': 'make install', 'for': 'python' }
+else
+	Plug 'prabirshrestha/vim-lsp'
+    Plug 'mattn/vim-lsp-settings'
 endif
-Plug 'prabirshrestha/vim-lsp'
-Plug 'heavenshell/vim-pydocstring', { 'do': 'make install', 'for': 'python' }
-Plug 'mattn/vim-lsp-settings'
-"Plug 'r1cardohj/vim-lsp-ale'
 "Plug 'github/copilot.vim'
 call plug#end()
 
+if has('python3')
+	" set jedi
+	let g:jedi#goto_command = ""
+	let g:jedi#goto_assignments_command = "gr"
+	let g:jedi#goto_stubs_command = "gs"
+	let g:jedi#goto_definitions_command = "gd"
+	let g:jedi#documentation_command = "K"
+	let g:jedi#usages_command = "<leader>n"
+	let g:jedi#rename_command = "<leader>rn"
+	let g:jedi#rename_command_keep_name = "<leader>R"
 
-function! s:on_lsp_buffer_enabled() abort
-    setlocal omnifunc=lsp#complete
-    setlocal signcolumn=yes
-    if exists('+tagfunc') | setlocal tagfunc=lsp#tagfunc | endif
-    nmap <buffer> gd <plug>(lsp-definition)
-    nmap <buffer> gs <plug>(lsp-document-symbol-search)
-    nmap <buffer> gS <plug>(lsp-workspace-symbol-search)
-    nmap <buffer> gr <plug>(lsp-references)
-    nmap <buffer> gi <plug>(lsp-implementation)
-    nmap <buffer> gt <plug>(lsp-type-definition)
-    nmap <buffer> <leader>rn <plug>(lsp-rename)
-    nmap <buffer> [g <plug>(lsp-previous-diagnostic)
-    nmap <buffer> ]g <plug>(lsp-next-diagnostic)
-    nmap <buffer> K <plug>(lsp-hover)
-    nnoremap <buffer> <expr><c-f> lsp#scroll(+4)
-    nnoremap <buffer> <expr><c-d> lsp#scroll(-4)
+	" ulsnip settings
+	let g:UltiSnipsExpandTrigger="<tab>"
+	let g:UltiSnipsJumpForwardTrigger="<c-j>"
+	let g:UltiSnipsJumpBackwardTrigger="<c-k>"
+else
+	" set vim-lsp
+	function! s:on_lsp_buffer_enabled() abort
+		setlocal omnifunc=lsp#complete
+		setlocal signcolumn=yes
+		if exists('+tagfunc') | setlocal tagfunc=lsp#tagfunc | endif
+		nmap <buffer> gd <plug>(lsp-definition)
+		nmap <buffer> gs <plug>(lsp-document-symbol-search)
+		nmap <buffer> gS <plug>(lsp-workspace-symbol-search)
+		nmap <buffer> gr <plug>(lsp-references)
+		nmap <buffer> gi <plug>(lsp-implementation)
+		nmap <buffer> gt <plug>(lsp-type-definition)
+		nmap <buffer> <leader>rn <plug>(lsp-rename)
+		nmap <buffer> [g <plug>(lsp-previous-diagnostic)
+		nmap <buffer> ]g <plug>(lsp-next-diagnostic)
+		nmap <buffer> K <plug>(lsp-hover)
+		nnoremap <buffer> <expr><c-f> lsp#scroll(+4)
+		nnoremap <buffer> <expr><c-d> lsp#scroll(-4)
 
 
-    " refer to doc to add more commands
-endfunction
+		" refer to doc to add more commands
+	endfunction
 
-augroup lsp_install
-    au!
-    " call s:on_lsp_buffer_enabled only for languages that has the server registered.
-    autocmd User lsp_buffer_enabled call s:on_lsp_buffer_enabled()
-augroup END
+	augroup lsp_install
+		au!
+		" call s:on_lsp_buffer_enabled only for languages that has the server registered.
+		autocmd User lsp_buffer_enabled call s:on_lsp_buffer_enabled()
+	augroup END
 
-let g:lsp_diagnostics_enabled = 0         " disable diagnostics support
-let g:lsp_settings_filetype_python = 'pyright-langserver'
+	let g:lsp_diagnostics_enabled = 0         " disable diagnostics support
+	let g:lsp_settings_filetype_python = 'pyright-langserver'
+endif
+
 
 ":colorscheme sorbet 
 :colorscheme zzz
 "autocmd vimenter * hi Normal guibg=NONE ctermbg=NONE
 "hi Comment ctermfg=darkgrey
 
+" supertab
 let g:SuperTabDefaultCompletionType = "context"
-let g:UltiSnipsExpandTrigger="<tab>"
-let g:UltiSnipsJumpForwardTrigger="<c-j>"
-let g:UltiSnipsJumpBackwardTrigger="<c-k>"
 
 " emmet
 let g:user_emmet_leader_key='<c-e>'
@@ -141,8 +158,6 @@ nmap <leader>hp <Plug>(GitGutterPreviewHunk)
 nmap <leader>hd <Plug>(GitGutterDiffOrig)
 
 
-
-
 " nerdtree
 nnoremap <leader>e :NERDTreeToggle<CR>
 " Exit Vim if NERDTree is the only window remaining in the only tab.
@@ -160,7 +175,7 @@ nnoremap <silent> <space>fg      :<c-u>Rg<CR>
 
 
 " ale config
-"
+
 let g:ale_lint_delay = 1000
 nmap <silent> <C-k> <Plug>(ale_previous_wrap)
 nmap <silent> <C-j> <Plug>(ale_next_wrap)
@@ -176,7 +191,9 @@ let g:ale_echo_msg_format = '[%linter%] %s [%severity%]'
 let g:ale_fixers = {'python': ['ruff']}
 " In ~/.vim/vimrc, or somewhere similar.
 let g:ale_linter_aliases = {'vue': ['vue', 'javascript']}
-let g:ale_linters = {'vue': ['eslint', 'vls', 'cspell'], 'python': ['ruff', 'cspell', 'pylint']}
+let g:ale_linters = {'vue': ['eslint', 'vls', 'cspell'], 'python': ['ruff', 'cspell']}
+let g:ale_python_pylint_executable = 'pylint'
+let g:ale_python_pylint_options = '--init-hook=''import sys; sys.path.append(".")'''
 
 function! LinterStatus() abort
     let l:counts = ale#statusline#Count(bufnr(''))
