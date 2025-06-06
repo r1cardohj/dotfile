@@ -17,7 +17,7 @@ set tabstop=4
 set shiftwidth=4
 set background=dark
 set softtabstop=0
-set completeopt=menu,menuone  "",noselect
+set completeopt=menu,menuone,noselect
 set nocompatible
 set mouse=a
 set nobackup
@@ -39,6 +39,8 @@ let mapleader = "\<space>"
 
 " !!<space> create python main function
 autocmd BufEnter *.py :iabbrev !! if __name__ == '__main__':<cr>
+autocmd BufEnter *.go : set completeopt-=noselect
+
 
 :nnoremap <leader>" viw<esc>a"<esc>bi"<esc>lel
 :nnoremap <leader>' viw<esc>a'<esc>bi'<esc>lel
@@ -59,10 +61,14 @@ Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
 Plug 'LunarWatcher/auto-pairs'
 Plug 'airblade/vim-gitgutter'
+Plug 'vim-scripts/IndexedSearch'
 Plug 'tpope/vim-fugitive'
 Plug 'vimjas/vim-python-pep8-indent', {'for': 'python'}
 Plug 'dense-analysis/ale' 
 Plug 'preservim/nerdtree', { 'on': 'NERDTreeToggle' }
+Plug 'unkiwii/vim-nerdtree-sync'
+Plug 'andymass/vim-matchup'
+Plug 'Xuyuanp/nerdtree-git-plugin'
 Plug 'tpope/vim-commentary'
 Plug 'mattn/emmet-vim'
 Plug 'voldikss/vim-translator'
@@ -164,11 +170,15 @@ nmap <leader>hd <Plug>(GitGutterDiffOrig)
 
 
 " nerdtree
+let g:NERDTreeGitStatusUseNerdFonts = 1 " you should install nerdfonts by yourself. default: 0
+let g:nerdtree_sync_cursorline = 1
 nnoremap <leader>e :NERDTreeToggle<CR>
 " Exit Vim if NERDTree is the only window remaining in the only tab.
 autocmd BufEnter * if tabpagenr('$') == 1 && winnr('$') == 1 && exists('b:NERDTree') && b:NERDTree.isTabTree() | quit | endif
 " Close the tab if NERDTree is the only window remaining in it.
 autocmd BufEnter * if winnr('$') == 1 && exists('b:NERDTree') && b:NERDTree.isTabTree() | quit | endif
+let g:NERDTreeGitStatusConcealBrackets = 1 " default: 0
+
 
 "fzf
 let g:fzf_vim = {}
@@ -244,3 +254,8 @@ set statusline+=\ %y
 set statusline+=\ %{&fileencoding?&fileencoding:&encoding}
 set statusline+=\ [%{&fileformat}\]
 set statusline+=%#Position#
+
+let g:matchup_matchparen_deferred = 1
+let g:matchup_matchparen_deferred_show_delay = 200
+let g:matchup_matchparen_deferred_hide_delay = 700
+:hi MatchParen ctermbg=blue guibg=NONE guifg=#FBB1F9
