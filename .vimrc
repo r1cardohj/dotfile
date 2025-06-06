@@ -10,11 +10,14 @@ set incsearch
 set smartcase
 
 set pumheight=10
+set autoread
+set backspace=indent,eol,start
+set showcmd
 set tabstop=4
 set shiftwidth=4
 set background=dark
 set softtabstop=0
-set completeopt=longest,menu,menuone,noselect
+set completeopt=menu,menuone  "",noselect
 set nocompatible
 set mouse=a
 set nobackup
@@ -65,6 +68,8 @@ Plug 'mattn/emmet-vim'
 Plug 'voldikss/vim-translator'
 Plug 'r1cardohj/zzz.vim'
 Plug 'ervandew/supertab'
+Plug 'fatih/vim-go', {'for': 'go'}
+Plug 'Yggdroot/indentLine'
 if has('python3')
 	Plug 'SirVer/ultisnips'
 	Plug 'honza/vim-snippets'
