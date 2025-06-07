@@ -39,7 +39,6 @@ let mapleader = "\<space>"
 
 " !!<space> create python main function
 autocmd BufEnter *.py :iabbrev !! if __name__ == '__main__':<cr>
-autocmd BufEnter *.go : set completeopt-=noselect
 
 
 :nnoremap <leader>" viw<esc>a"<esc>bi"<esc>lel
