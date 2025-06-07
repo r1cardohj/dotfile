@@ -8,6 +8,7 @@ set ignorecase
 set hlsearch
 set incsearch
 set smartcase
+set noswapfile
 
 set pumheight=10
 set autoread
@@ -65,9 +66,8 @@ Plug 'tpope/vim-fugitive'
 Plug 'vimjas/vim-python-pep8-indent', {'for': 'python'}
 Plug 'dense-analysis/ale' 
 Plug 'preservim/nerdtree', { 'on': 'NERDTreeToggle' }
-Plug 'unkiwii/vim-nerdtree-sync'
-Plug 'andymass/vim-matchup'
 Plug 'Xuyuanp/nerdtree-git-plugin'
+Plug 'andymass/vim-matchup'
 Plug 'tpope/vim-commentary'
 Plug 'mattn/emmet-vim'
 Plug 'voldikss/vim-translator'
@@ -169,14 +169,12 @@ nmap <leader>hd <Plug>(GitGutterDiffOrig)
 
 
 " nerdtree
-let g:NERDTreeGitStatusUseNerdFonts = 1 " you should install nerdfonts by yourself. default: 0
-let g:nerdtree_sync_cursorline = 1
 nnoremap <leader>e :NERDTreeToggle<CR>
-" Exit Vim if NERDTree is the only window remaining in the only tab.
-autocmd BufEnter * if tabpagenr('$') == 1 && winnr('$') == 1 && exists('b:NERDTree') && b:NERDTree.isTabTree() | quit | endif
+nnoremap <leader>f :NERDTreeFind<CR>
 " Close the tab if NERDTree is the only window remaining in it.
 autocmd BufEnter * if winnr('$') == 1 && exists('b:NERDTree') && b:NERDTree.isTabTree() | quit | endif
-let g:NERDTreeGitStatusConcealBrackets = 1 " default: 0
+
+
 
 
 "fzf
