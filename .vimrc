@@ -99,6 +99,7 @@ if has('python3')
 	let g:jedi#rename_command = "<leader>rn"
 	let g:jedi#rename_command_keep_name = "<leader>R"
 	let g:jedi#popup_select_first = 0
+	let g:jedi#environment_path = ".venv/bin/python"
 
 	" ulsnip settings
 	let g:UltiSnipsExpandTrigger="<tab>"
@@ -146,11 +147,26 @@ endif
 " supertab
 let g:SuperTabDefaultCompletionType = "context"
 
+" vim-go
+
+let g:go_test_show_name = 1
+let g:go_list_type = "quickfix"
+
+let g:go_diagnostics_level = 2
+let g:go_doc_popup_window = 1
+let g:go_autodetect_gopath = 1
+let g:go_imports_mode="gopls"
+let g:go_imports_autosave=1
+
+let g:go_highlight_build_constraints = 1
+let g:go_highlight_operators = 1
+
+let g:go_fold_enable = []
+
 " emmet
 let g:user_emmet_leader_key='<c-e>'
 
 " copilot
-
 " Open a new Cpilot Chat window
 nnoremap <leader>cc :CopilotChatOpen<CR>
 
@@ -159,7 +175,6 @@ vmap <leader>cas <Plug>CopilotChatAddSelection
 
 imap <silent><script><expr> <C-n> copilot#Accept("\<CR>")
 let g:copilot_no_tab_map = v:true
-
 
 " translaotr
 let g:translator_default_engines = ["bing"]
