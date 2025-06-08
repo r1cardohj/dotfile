@@ -83,7 +83,7 @@ else
     Plug 'mattn/vim-lsp-settings'
 endif
 Plug 'github/copilot.vim'
-Plug 'DanBradbury/copilot-chat.vim'
+Plug 'DanBradbury/copilot-chat.vim', { 'on': ['CopilotChatOpen', 'CopilotChatAddSelection'] }
 call plug#end()
 
 function! SetJediEnvironment()
