@@ -18,7 +18,7 @@ set tabstop=4
 set shiftwidth=4
 set background=dark
 set softtabstop=0
-set completeopt=menu,menuone,noselect
+set completeopt=menu,menuone
 set nocompatible
 set mouse=a
 set nobackup
@@ -84,7 +84,8 @@ else
 	Plug 'prabirshrestha/vim-lsp'
     Plug 'mattn/vim-lsp-settings'
 endif
-"Plug 'github/copilot.vim'
+Plug 'github/copilot.vim'
+Plug 'DanBradbury/copilot-chat.vim'
 call plug#end()
 
 if has('python3')
@@ -97,6 +98,7 @@ if has('python3')
 	let g:jedi#usages_command = "<leader>n"
 	let g:jedi#rename_command = "<leader>rn"
 	let g:jedi#rename_command_keep_name = "<leader>R"
+	let g:jedi#popup_select_first = 0
 
 	" ulsnip settings
 	let g:UltiSnipsExpandTrigger="<tab>"
@@ -146,6 +148,13 @@ let g:SuperTabDefaultCompletionType = "context"
 
 " emmet
 let g:user_emmet_leader_key='<c-e>'
+
+" copilot
+" Open a new Cpilot Chat window
+nnoremap <leader>cc :CopilotChatOpen<CR>
+
+" Add visual selection to copilot window
+vmap <leader>cas <Plug>CopilotChatAddSelection
 
 
 " translaotr
