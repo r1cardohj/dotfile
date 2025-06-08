@@ -197,7 +197,7 @@ nnoremap <leader>cc :CopilotChatOpen<CR>
 " Add visual selection to copilot window
 vmap <leader>cc <Plug>CopilotChatAddSelection
 
-imap <silent><script><expr> <C-n> copilot#Accept("\<CR>")
+imap <silent><script><expr> <C-j> copilot#Accept("\<CR>")
 let g:copilot_no_tab_map = v:true
 
 " translaotr
