@@ -65,7 +65,7 @@ Plug 'vim-scripts/IndexedSearch'
 Plug 'tpope/vim-fugitive'
 Plug 'vimjas/vim-python-pep8-indent', {'for': 'python'}
 Plug 'dense-analysis/ale' 
-Plug 'preservim/nerdtree', { 'on': 'NERDTreeToggle' }
+Plug 'preservim/nerdtree', { 'on': ['NERDTreeToggle', 'NERDTreeFind'] }
 Plug 'Xuyuanp/nerdtree-git-plugin'
 Plug 'andymass/vim-matchup'
 Plug 'tpope/vim-commentary'
@@ -150,11 +150,15 @@ let g:SuperTabDefaultCompletionType = "context"
 let g:user_emmet_leader_key='<c-e>'
 
 " copilot
+
 " Open a new Cpilot Chat window
 nnoremap <leader>cc :CopilotChatOpen<CR>
 
 " Add visual selection to copilot window
 vmap <leader>cas <Plug>CopilotChatAddSelection
+
+imap <silent><script><expr> <C-n> copilot#Accept("\<CR>")
+let g:copilot_no_tab_map = v:true
 
 
 " translaotr
