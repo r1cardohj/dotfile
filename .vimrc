@@ -88,6 +88,34 @@ Plug 'github/copilot.vim'
 Plug 'DanBradbury/copilot-chat.vim'
 call plug#end()
 
+function! SetJediEnvironment()
+  " Get the current working directory
+  let l:project_root = getcwd()
+
+  " Path to the virtual environment Python interpreter
+  let l:venv_python = l:project_root . '/.venv/bin/python'
+  let l:venv2_python = l:project_root . '/venv/bin/python'
+  let l:venv3_python = l:project_root . '/env/bin/python'
+
+
+  " Check if the .venv directory exists
+  if filereadable(l:venv_python)
+    " If .venv exists, use its Python interpreter
+    let g:jedi#environment_path = l:venv_python
+  endif
+
+  if filereadable(l:venv2_python)
+	" If venv exists, use its Python interpreter
+	let g:jedi#environment_path = l:venv2_python
+  endif
+
+  if filereadable(l:venv3_python)
+	" If env exists, use its Python interpreter
+	let g:jedi#environment_path = l:venv3_python
+  endif
+
+endfunction
+
 if has('python3')
 	" set jedi
 	let g:jedi#goto_command = ""
@@ -99,7 +127,7 @@ if has('python3')
 	let g:jedi#rename_command = "<leader>rn"
 	let g:jedi#rename_command_keep_name = "<leader>R"
 	let g:jedi#popup_select_first = 0
-	let g:jedi#environment_path = ".venv/bin/python"
+	autocmd FileType python call SetJediEnvironment()
 
 	" ulsnip settings
 	let g:UltiSnipsExpandTrigger="<tab>"
@@ -143,6 +171,8 @@ endif
 :colorscheme zzz
 "autocmd vimenter * hi Normal guibg=NONE ctermbg=NONE
 "hi Comment ctermfg=darkgrey
+let g:clap_theme = 'material_design_dark'
+
 
 " supertab
 let g:SuperTabDefaultCompletionType = "context"
@@ -171,7 +201,7 @@ let g:user_emmet_leader_key='<c-e>'
 nnoremap <leader>cc :CopilotChatOpen<CR>
 
 " Add visual selection to copilot window
-vmap <leader>cas <Plug>CopilotChatAddSelection
+vmap <leader>cc <Plug>CopilotChatAddSelection
 
 imap <silent><script><expr> <C-n> copilot#Accept("\<CR>")
 let g:copilot_no_tab_map = v:true
@@ -231,9 +261,8 @@ let g:ale_echo_msg_format = '[%linter%] %s [%severity%]'
 let g:ale_fixers = {'python': ['ruff']}
 " In ~/.vim/vimrc, or somewhere similar.
 let g:ale_linter_aliases = {'vue': ['vue', 'javascript']}
-let g:ale_linters = {'vue': ['eslint', 'vls', 'cspell'], 'python': ['ruff', 'cspell']}
-let g:ale_python_pylint_executable = 'pylint'
-let g:ale_python_pylint_options = '--init-hook=''import sys; sys.path.append(".")'''
+let g:ale_linters = {'vue': ['eslint', 'vls'], 'python': ['ruff']}
+let g:ale_python_pylint_use_global = 0
 
 function! LinterStatus() abort
     let l:counts = ale#statusline#Count(bufnr(''))
