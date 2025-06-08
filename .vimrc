@@ -63,7 +63,6 @@ Plug 'LunarWatcher/auto-pairs'
 Plug 'airblade/vim-gitgutter'
 Plug 'vim-scripts/IndexedSearch'
 Plug 'tpope/vim-fugitive'
-Plug 'vimjas/vim-python-pep8-indent', {'for': 'python'}
 Plug 'dense-analysis/ale' 
 Plug 'preservim/nerdtree', { 'on': ['NERDTreeToggle', 'NERDTreeFind'] }
 Plug 'Xuyuanp/nerdtree-git-plugin'
@@ -75,9 +74,8 @@ Plug 'r1cardohj/zzz.vim'
 Plug 'ervandew/supertab'
 Plug 'fatih/vim-go', {'for': 'go'}
 Plug 'Yggdroot/indentLine'
+Plug 'sheerun/vim-polyglot'
 if has('python3')
-	Plug 'SirVer/ultisnips'
-	Plug 'honza/vim-snippets'
 	Plug 'davidhalter/jedi-vim', {'for': 'python'}
     Plug 'heavenshell/vim-pydocstring', { 'do': 'make install', 'for': 'python' }
 else
@@ -129,10 +127,6 @@ if has('python3')
 	let g:jedi#popup_select_first = 0
 	autocmd FileType python call SetJediEnvironment()
 
-	" ulsnip settings
-	let g:UltiSnipsExpandTrigger="<tab>"
-	let g:UltiSnipsJumpForwardTrigger="<c-j>"
-	let g:UltiSnipsJumpBackwardTrigger="<c-k>"
 else
 	" set vim-lsp
 	function! s:on_lsp_buffer_enabled() abort
@@ -171,7 +165,7 @@ endif
 :colorscheme zzz
 "autocmd vimenter * hi Normal guibg=NONE ctermbg=NONE
 "hi Comment ctermfg=darkgrey
-let g:clap_theme = 'material_design_dark'
+
 
 
 " supertab
