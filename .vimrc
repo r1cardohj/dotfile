@@ -78,13 +78,11 @@ Plug 'sheerun/vim-polyglot'
 if has('python3')
 	Plug 'davidhalter/jedi-vim', {'for': 'python'}
     Plug 'heavenshell/vim-pydocstring', { 'do': 'make install', 'for': 'python' }
-else
-	Plug 'prabirshrestha/vim-lsp'
-    Plug 'mattn/vim-lsp-settings'
 endif
 Plug 'github/copilot.vim'
 Plug 'DanBradbury/copilot-chat.vim', { 'on': ['CopilotChatOpen', 'CopilotChatAddSelection'] }
 call plug#end()
+
 
 function! SetJediEnvironment()
   " Get the current working directory
@@ -126,38 +124,6 @@ if has('python3')
 	let g:jedi#rename_command_keep_name = "<leader>R"
 	let g:jedi#popup_select_first = 0
 	autocmd FileType python call SetJediEnvironment()
-
-else
-	" set vim-lsp
-	function! s:on_lsp_buffer_enabled() abort
-		setlocal omnifunc=lsp#complete
-		setlocal signcolumn=yes
-		if exists('+tagfunc') | setlocal tagfunc=lsp#tagfunc | endif
-		nmap <buffer> gd <plug>(lsp-definition)
-		nmap <buffer> gs <plug>(lsp-document-symbol-search)
-		nmap <buffer> gS <plug>(lsp-workspace-symbol-search)
-		nmap <buffer> gr <plug>(lsp-references)
-		nmap <buffer> gi <plug>(lsp-implementation)
-		nmap <buffer> gt <plug>(lsp-type-definition)
-		nmap <buffer> <leader>rn <plug>(lsp-rename)
-		nmap <buffer> [g <plug>(lsp-previous-diagnostic)
-		nmap <buffer> ]g <plug>(lsp-next-diagnostic)
-		nmap <buffer> K <plug>(lsp-hover)
-		nnoremap <buffer> <expr><c-f> lsp#scroll(+4)
-		nnoremap <buffer> <expr><c-d> lsp#scroll(-4)
-
-
-		" refer to doc to add more commands
-	endfunction
-
-	augroup lsp_install
-		au!
-		" call s:on_lsp_buffer_enabled only for languages that has the server registered.
-		autocmd User lsp_buffer_enabled call s:on_lsp_buffer_enabled()
-	augroup END
-
-	let g:lsp_diagnostics_enabled = 0         " disable diagnostics support
-	let g:lsp_settings_filetype_python = 'pyright-langserver'
 endif
 
 
@@ -256,7 +222,7 @@ let g:ale_fixers = {'python': ['ruff']}
 " In ~/.vim/vimrc, or somewhere similar.
 let g:ale_linter_aliases = {'vue': ['vue', 'javascript']}
 let g:ale_linters = {'vue': ['eslint', 'vls'], 'python': ['ruff']}
-let g:ale_python_pylint_use_global = 0
+
 
 function! LinterStatus() abort
     let l:counts = ale#statusline#Count(bufnr(''))
