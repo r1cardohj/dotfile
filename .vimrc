@@ -46,14 +46,10 @@ autocmd BufEnter *.py :iabbrev !! if __name__ == '__main__':<cr>
 :nnoremap <leader>' viw<esc>a'<esc>bi'<esc>lel
 
 
-"切换回车为补全
-inoremap <expr> <CR> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
-
 augroup complete
   autocmd!
   autocmd CompleteDone * pclose
 augroup end
-
 
 
 call plug#begin()
@@ -70,6 +66,7 @@ Plug 'andymass/vim-matchup'
 Plug 'tpope/vim-commentary'
 Plug 'mattn/emmet-vim'
 Plug 'voldikss/vim-translator'
+Plug 'voldikss/vim-browser-search'
 Plug 'r1cardohj/zzz.vim'
 Plug 'ervandew/supertab'
 Plug 'fatih/vim-go', {'for': 'go'}
@@ -170,6 +167,10 @@ let g:copilot_no_tab_map = v:true
 let g:translator_default_engines = ["bing"]
 nmap <silent> <Leader>w <Plug>TranslateW
 vmap <silent> <Leader>w <Plug>TranslateWV
+
+" browser-search
+nmap <silent> <Leader>s <Plug>SearchNormal
+vmap <silent> <Leader>s <Plug>SearchVisual
 
 " git blame
 nnoremap <Leader>gb :<C-u>BlamerToggle<CR>
