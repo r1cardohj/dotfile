@@ -40,6 +40,7 @@ let mapleader = "\<space>"
 
 " !!<space> create python main function
 autocmd BufEnter *.py :iabbrev !! if __name__ == '__main__':<cr>
+autocmd BufNewFile,BufRead *.rs set filetype=rust
 
 
 :nnoremap <leader>" viw<esc>a"<esc>bi"<esc>lel
@@ -50,6 +51,8 @@ augroup complete
   autocmd!
   autocmd CompleteDone * pclose
 augroup end
+
+
 
 
 call plug#begin()
@@ -121,6 +124,7 @@ if has('python3')
 	let g:jedi#rename_command_keep_name = "<leader>R"
 	let g:jedi#popup_select_first = 0
 	autocmd FileType python call SetJediEnvironment()
+    autocmd FileType python let g:SuperTabDefaultCompletionType = "<c-x><c-o>"
 endif
 
 
@@ -130,9 +134,10 @@ endif
 "hi Comment ctermfg=darkgrey
 
 
-
-" supertab
+" supertab completion
 let g:SuperTabDefaultCompletionType = "context"
+let g:SuperTabLongestEnhanced = 1
+
 
 " vim-go
 
@@ -149,6 +154,23 @@ let g:go_highlight_build_constraints = 1
 let g:go_highlight_operators = 1
 
 let g:go_fold_enable = []
+
+
+" rust lsp use ale inner
+function! Enable_rust_lsp()
+    let g:ale_disable_lsp = 'auto'
+    nmap gd :ALEGoToDefinition<CR>
+    nmap gr :ALEFindReferences<CR>
+    nmap gi :ALEGoToImplementation<CR>
+    nmap gs :ALESymbolSearch<CR>
+    nmap K :ALEHover<CR>
+    set omnifunc=ale#completion#OmniFunc
+    let g:ale_linters = {'rust': ['analyzer', 'cargo']}
+    let g:SuperTabDefaultCompletionType = "<c-x><c-o>"
+endfunction
+
+autocmd FileType rust call Enable_rust_lsp()
+
 
 " emmet
 let g:user_emmet_leader_key='<c-e>'
@@ -219,7 +241,7 @@ nnoremap <leader>F :ALEFix<CR>
 let g:ale_echo_msg_format = '[%linter%] %s [%severity%]'
 
 
-let g:ale_fixers = {'python': ['ruff']}
+let g:ale_fixers = {'python': ['ruff', 'ruff_format', 'isort']}
 " In ~/.vim/vimrc, or somewhere similar.
 let g:ale_linter_aliases = {'vue': ['vue', 'javascript']}
 let g:ale_linters = {'vue': ['eslint', 'vls'], 'python': ['ruff']}
