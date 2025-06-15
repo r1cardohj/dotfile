@@ -62,7 +62,7 @@ Plug 'LunarWatcher/auto-pairs'
 Plug 'airblade/vim-gitgutter'
 Plug 'vim-scripts/IndexedSearch'
 Plug 'tpope/vim-fugitive'
-Plug 'dense-analysis/ale' 
+Plug 'dense-analysis/ale'
 Plug 'preservim/nerdtree', { 'on': ['NERDTreeToggle', 'NERDTreeFind'] }
 Plug 'Xuyuanp/nerdtree-git-plugin'
 Plug 'andymass/vim-matchup'
@@ -128,7 +128,7 @@ if has('python3')
 endif
 
 
-":colorscheme sorbet 
+":colorscheme sorbet
 :colorscheme zzz
 "autocmd vimenter * hi Normal guibg=NONE ctermbg=NONE
 "hi Comment ctermfg=darkgrey
@@ -164,6 +164,8 @@ function! Enable_rust_lsp()
     nmap gi :ALEGoToImplementation<CR>
     nmap gs :ALESymbolSearch<CR>
     nmap K :ALEHover<CR>
+    nmap <leader>rn :ALERename<CR>
+    nmap <leader>ca :ALECodeAction<CR>
     set omnifunc=ale#completion#OmniFunc
     let g:ale_linters = {'rust': ['analyzer', 'cargo']}
     let g:SuperTabDefaultCompletionType = "<c-x><c-o>"
@@ -241,7 +243,7 @@ nnoremap <leader>F :ALEFix<CR>
 let g:ale_echo_msg_format = '[%linter%] %s [%severity%]'
 
 
-let g:ale_fixers = {'python': ['ruff', 'ruff_format', 'isort']}
+let g:ale_fixers = {'*': ['remove_trailing_lines', 'trim_whitespace'], 'python': ['ruff', 'ruff_format', 'isort']}
 " In ~/.vim/vimrc, or somewhere similar.
 let g:ale_linter_aliases = {'vue': ['vue', 'javascript']}
 let g:ale_linters = {'vue': ['eslint', 'vls'], 'python': ['ruff']}
