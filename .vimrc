@@ -56,11 +56,11 @@ augroup end
 
 
 call plug#begin()
-Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
-Plug 'junegunn/fzf.vim'
+"Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
+"Plug 'junegunn/fzf.vim'
+Plug 'ctrlpvim/ctrlp.vim', { 'on': ['CtrlP', 'CtrlPBuffer', 'CtrlPMRU', 'CtrlPTag', 'CtrlPCwd', 'CtrlPFileBrowser'] }
 Plug 'LunarWatcher/auto-pairs'
 Plug 'airblade/vim-gitgutter'
-Plug 'vim-scripts/IndexedSearch'
 Plug 'tpope/vim-fugitive'
 Plug 'preservim/nerdtree', { 'on': ['NERDTreeToggle', 'NERDTreeFind'] }
 Plug 'Xuyuanp/nerdtree-git-plugin'
@@ -73,11 +73,13 @@ Plug 'r1cardohj/zzz.vim'
 Plug 'Yggdroot/indentLine'
 Plug 'sheerun/vim-polyglot'
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
-Plug 'antoinemadec/coc-fzf'
+"Plug 'antoinemadec/coc-fzf'
 Plug 'github/copilot.vim'
 Plug 'DanBradbury/copilot-chat.vim'
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
+Plug 'mhinz/vim-startify'
+Plug 'ryanoasis/vim-devicons'
 call plug#end()
 
 
@@ -140,16 +142,17 @@ nnoremap <leader>e :NERDTreeToggle<CR>
 nnoremap <leader>f :NERDTreeFind<CR>
 " Close the tab if NERDTree is the only window remaining in it.
 autocmd BufEnter * if winnr('$') == 1 && exists('b:NERDTree') && b:NERDTree.isTabTree() | quit | endif
+let g:NERDTreeGitStatusUseNerdFonts = 1
 
 
 
 "fzf
-let g:fzf_vim = {}
-let g:fzf_vim.buffers_jump = 1
-let g:fzf_layout = { 'window': { 'width': 0.9, 'height': 0.6 } }
-nnoremap <Leader>bf :<C-u>Buffers<CR>
-nnoremap <silent> <C-p>          :<c-u>Files<CR>
-nnoremap <silent> <space>fg      :<c-u>Rg<CR>
+" let g:fzf_vim = {}
+" let g:fzf_vim.buffers_jump = 1
+" let g:fzf_layout = { 'window': { 'width': 0.9, 'height': 0.6 } }
+" nnoremap <Leader>bf :<C-u>Buffers<CR>
+" nnoremap <silent> <C-p>          :<c-u>Files<CR>
+" nnoremap <silent> <space>fg      :<c-u>Rg<CR>
 
 
 let g:matchup_matchparen_deferred = 1
@@ -281,7 +284,12 @@ command! -nargs=0 OR   :call     CocActionAsync('runCommand', 'editor.action.org
 set statusline^=%{coc#status()}%{get(b:,'coc_current_function','')}
 
 " mappings
-nnoremap <silent> <space><space> :<C-u>CocFzfList<CR>
-nnoremap <silent> <space>a       :<C-u>CocFzfList diagnostics<CR>
-nnoremap <silent> <space>b       :<C-u>CocFzfList diagnostics --current-buf<CR>
-nnoremap <silent> <space>c       :<C-u>CocFzfList commands<CR>
+" nnoremap <silent> <space><space> :<C-u>CocFzfList<CR>
+" nnoremap <silent> <space>a       :<C-u>CocFzfList diagnostics<CR>
+" nnoremap <silent> <space>b       :<C-u>CocFzfList diagnostics --current-buf<CR>
+" nnoremap <silent> <space>c       :<C-u>CocFzfList commands<CR>
+nnoremap <silent> <space><space> :<C-u>CocList<CR>
+nnoremap <silent> <space>f       :<C-u>CocList files<CR>
+nnoremap <silent> <space>fg      :<C-u>CocList grep<CR>
+nnoremap <silent> <space>c       :<C-u>CocList commands<CR>
+nnoremap <silent> <space>d       :<C-u>CocList diagnostics<CR>
