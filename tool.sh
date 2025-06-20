@@ -1,5 +1,6 @@
 function proxy_on() {
-	export http_proxy=http://127.0.0.1:7890
+	ip=$(cat /etc/resolv.conf |grep -oP '(?<=nameserver\ ).*')
+	export http_proxy=http://$ip:7890
 	export https_proxy=$http_proxy
 }
 
