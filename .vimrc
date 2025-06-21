@@ -56,24 +56,22 @@ augroup end
 
 
 call plug#begin()
-"Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
-"Plug 'junegunn/fzf.vim'
 Plug 'ctrlpvim/ctrlp.vim'
 Plug 'LunarWatcher/auto-pairs'
 Plug 'airblade/vim-gitgutter'
 Plug 'tpope/vim-fugitive'
 Plug 'preservim/nerdtree', { 'on': ['NERDTreeToggle', 'NERDTreeFind'] }
 Plug 'Xuyuanp/nerdtree-git-plugin'
+Plug 'bryanmylee/vim-colorscheme-icons'
 Plug 'andymass/vim-matchup'
 Plug 'tpope/vim-commentary'
 Plug 'mattn/emmet-vim'
 Plug 'voldikss/vim-translator'
 Plug 'voldikss/vim-browser-search'
-Plug 'r1cardohj/zzz.vim'
 Plug 'Yggdroot/indentLine'
+Plug 'r1cardohj/zzz.vim'
 Plug 'sheerun/vim-polyglot'
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
-"Plug 'antoinemadec/coc-fzf'
 Plug 'github/copilot.vim'
 Plug 'DanBradbury/copilot-chat.vim'
 Plug 'vim-airline/vim-airline'
@@ -144,15 +142,6 @@ nnoremap <leader>f :NERDTreeFind<CR>
 autocmd BufEnter * if winnr('$') == 1 && exists('b:NERDTree') && b:NERDTree.isTabTree() | quit | endif
 let g:NERDTreeGitStatusUseNerdFonts = 1
 
-
-
-"fzf
-" let g:fzf_vim = {}
-" let g:fzf_vim.buffers_jump = 1
-" let g:fzf_layout = { 'window': { 'width': 0.9, 'height': 0.6 } }
-" nnoremap <Leader>bf :<C-u>Buffers<CR>
-" nnoremap <silent> <C-p>          :<c-u>Files<CR>
-" nnoremap <silent> <space>fg      :<c-u>Rg<CR>
 
 
 let g:matchup_matchparen_deferred = 1
@@ -283,11 +272,6 @@ command! -nargs=0 OR   :call     CocActionAsync('runCommand', 'editor.action.org
 " provide custom statusline: lightline.vim, vim-airline
 set statusline^=%{coc#status()}%{get(b:,'coc_current_function','')}
 
-" mappings
-" nnoremap <silent> <space><space> :<C-u>CocFzfList<CR>
-" nnoremap <silent> <space>a       :<C-u>CocFzfList diagnostics<CR>
-" nnoremap <silent> <space>b       :<C-u>CocFzfList diagnostics --current-buf<CR>
-" nnoremap <silent> <space>c       :<C-u>CocFzfList commands<CR>
 nnoremap <silent> <space><space> :<C-u>CocList<CR>
 nnoremap <silent> <space>f       :<C-u>CocList files<CR>
 nnoremap <silent> <space>fg      :<C-u>CocList grep<CR>
