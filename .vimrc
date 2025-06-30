@@ -1,5 +1,6 @@
 set nu
 set ai
+
 set encoding=utf-8
 syntax on
 filetype plugin indent on
@@ -10,15 +11,17 @@ set incsearch
 set smartcase
 set noswapfile
 
+
 set pumheight=10
 set autoread
+
 set backspace=indent,eol,start
 set showcmd
 set tabstop=4
 set shiftwidth=4
 set background=dark
 set softtabstop=0
-set completeopt=menu,menuone,noselect
+set completeopt=menu,menuone
 set nocompatible
 set mouse=a
 set nobackup
@@ -28,12 +31,16 @@ set signcolumn=yes
 set laststatus=2
 set termguicolors
 set omnifunc=syntaxcomplete#Complete
+set wildignore+=*/.git/*,*/tmp/*,*.swp,*.bak,*.pyc,*.pyo,*.class,*.o,*.obj,*.exe,*.dll,*.so,*.dylib
 
+
+let g:with_node = 0
 "hi Comment ctermfg=darkgrey
 "hi LineNr ctermfg=darkgrey
 "hi Constant ctermfg=Brown
 
 let mapleader = "\<space>"
+let g:Lf_WindowPosition = 'popup'
 
 " shortcut
 :iabbrev @@ houjun447@gmail.com
@@ -53,15 +60,13 @@ augroup complete
 augroup end
 
 
-
-
 call plug#begin()
 Plug 'ctrlpvim/ctrlp.vim'
 Plug 'LunarWatcher/auto-pairs'
 Plug 'airblade/vim-gitgutter'
 Plug 'tpope/vim-fugitive'
 Plug 'preservim/nerdtree', { 'on': ['NERDTreeToggle', 'NERDTreeFind'] }
-Plug 'Xuyuanp/nerdtree-git-plugin'
+Plug 'Xuyuanp/nerdtree-git-plugin', { 'on': ['NERDTreeToggle', 'NERDTreeFind'] }
 Plug 'bryanmylee/vim-colorscheme-icons'
 Plug 'andymass/vim-matchup'
 Plug 'tpope/vim-commentary'
@@ -70,21 +75,96 @@ Plug 'voldikss/vim-translator'
 Plug 'voldikss/vim-browser-search'
 Plug 'Yggdroot/indentLine'
 Plug 'r1cardohj/zzz.vim'
+Plug 'morhetz/gruvbox'
 Plug 'sheerun/vim-polyglot'
-Plug 'neoclide/coc.nvim', {'branch': 'release'}
-Plug 'github/copilot.vim'
+Plug 'ervandew/supertab'
+Plug 'dense-analysis/ale'
+Plug 'davidhalter/jedi-vim', {'for': 'python'}
+Plug 'github/copilot.vim', {'on': ['Copilot']}
 Plug 'DanBradbury/copilot-chat.vim'
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 Plug 'mhinz/vim-startify'
 Plug 'ryanoasis/vim-devicons'
 Plug 'markonm/traces.vim'
+Plug 'lambdalisue/suda.vim'
+Plug 'AndrewRadev/quickpeek.vim'
 call plug#end()
+
+let g:quickpeek_auto = v:true
+
+" ale config
+
+let g:ale_lint_delay = 1000
+nmap <silent> [g <Plug>(ale_previous_wrap)
+nmap <silent> ]g <Plug>(ale_next_wrap)
+let g:ale_virtualtext_cursor = 'current'
+let g:ale_lint_on_text_changed = 'never'
+let g:ale_lint_on_enter = 0
+let g:ale_lint_on_insert_leave = 0
+"let g:ale_completion_enabled = 1
+let g:ale_disable_lsp = 1
+nnoremap <leader>F :ALEFix<CR>
+let g:ale_echo_msg_format = '[%linter%] %s [%severity%]'
+
+
+let g:ale_fixers = {'*': ['remove_trailing_lines', 'trim_whitespace'], 'python': ['ruff', 'ruff_format', 'isort']}
+" In ~/.vim/vimrc, or somewhere similar.
+let g:ale_linters = {'python': ['ruff', 'pylint', 'jedils']}
+
+function! SetJediEnvironment()
+  " Get the current working directory
+  let l:project_root = getcwd()
+
+  " Path to the virtual environment Python interpreter
+  let l:venv_python = l:project_root . '/.venv/bin/python'
+  let l:venv2_python = l:project_root . '/venv/bin/python'
+  let l:venv3_python = l:project_root . '/env/bin/python'
+
+
+  " Check if the .venv directory exists
+  if filereadable(l:venv_python)
+    " If .venv exists, use its Python interpreter
+    let g:jedi#environment_path = l:venv_python
+  endif
+
+  if filereadable(l:venv2_python)
+	" If venv exists, use its Python interpreter
+	let g:jedi#environment_path = l:venv2_python
+  endif
+
+  if filereadable(l:venv3_python)
+	" If env exists, use its Python interpreter
+	let g:jedi#environment_path = l:venv3_python
+  endif
+
+endfunction
+
+if has('python3')
+	" set jedi
+	let g:jedi#goto_command = "<leader>d"
+	let g:jedi#goto_assignments_command = "ga"
+	let g:jedi#goto_stubs_command = "gs"
+	let g:jedi#goto_definitions_command = "gd"
+	let g:jedi#documentation_command = "K"
+	let g:jedi#usages_command = "gr"
+	let g:jedi#rename_command = "<leader>rn"
+	let g:jedi#rename_command_keep_name = "<leader>R"
+	let g:jedi#popup_select_first = 0
+	autocmd FileType python call SetJediEnvironment()
+    autocmd FileType python let g:SuperTabDefaultCompletionType = "<c-x><c-o>"
+endif
+
+" supertab completion
+let g:SuperTabDefaultCompletionType = "context"
+let g:SuperTabLongestEnhanced = 1
 
 
 ":colorscheme sorbet
 :colorscheme zzz
-"autocmd vimenter * hi Normal guibg=NONE ctermbg=NONE
+" autocmd vimenter * hi Normal guibg=NONE ctermbg=NONE
+" autocmd vimenter * hi SignColumn guibg=NONE ctermbg=NONE
+" autocmd vimenter * hi LineNr guibg=NONE ctermbg=NONE
 "hi Comment ctermfg=darkgrey
 
 " airline
@@ -95,9 +175,12 @@ let g:airline#extensions#tabline#left_sep = ' '
 let g:airline#extensions#tabline#left_alt_sep = '|'
 let g:airline#extensions#tabline#formatter = 'unique_tail'
 
-" supertab completion
-let g:SuperTabLongestEnhanced = 1
-
+" ctrlp
+if executable('rg')
+  set grepprg=rg\ --color=never
+  let g:ctrlp_user_command = 'rg %s --files --color=never --glob ""'
+  let g:ctrlp_use_caching = 0
+endif
 
 " emmet
 let g:user_emmet_leader_key='<c-e>'
@@ -144,137 +227,9 @@ autocmd BufEnter * if winnr('$') == 1 && exists('b:NERDTree') && b:NERDTree.isTa
 let g:NERDTreeGitStatusUseNerdFonts = 1
 
 
-
+" match up
 let g:matchup_matchparen_deferred = 1
 let g:matchup_matchparen_deferred_show_delay = 200
 let g:matchup_matchparen_deferred_hide_delay = 700
 :hi MatchParen ctermbg=blue guibg=NONE guifg=#FBB1F9
 
-
-" coc
-
-inoremap <silent><expr> <TAB>
-      \ coc#pum#visible() ? coc#pum#next(1) :
-      \ CheckBackspace() ? "\<Tab>" :
-      \ coc#refresh()
-inoremap <expr><S-TAB> coc#pum#visible() ? coc#pum#prev(1) : "\<C-h>"
-
-" Make <CR> to accept selected completion item or notify coc.nvim to format
-" <C-g>u breaks current undo, please make your own choice
-inoremap <silent><expr> <TAB> coc#pum#visible() ? coc#pum#confirm()
-                              \: "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
-
-function! CheckBackspace() abort
-  let col = col('.') - 1
-  return !col || getline('.')[col - 1]  =~# '\s'
-endfunction
-
-" Use <c-space> to trigger completion
-if has('nvim')
-  inoremap <silent><expr> <c-space> coc#refresh()
-else
-  inoremap <silent><expr> <c-@> coc#refresh()
-endif
-
-" Use `[g` and `]g` to navigate diagnostics
-" Use `:CocDiagnostics` to get all diagnostics of current buffer in location list
-nmap <silent><nowait> [g <Plug>(coc-diagnostic-prev)
-nmap <silent><nowait> ]g <Plug>(coc-diagnostic-next)
-
-" GoTo code navigation
-nmap <silent><nowait> gd <Plug>(coc-definition)
-nmap <silent><nowait> gy <Plug>(coc-type-definition)
-nmap <silent><nowait> gi <Plug>(coc-implementation)
-nmap <silent><nowait> gr <Plug>(coc-references)
-
-" Use K to show documentation in preview window
-nnoremap <silent> K :call ShowDocumentation()<CR>
-
-function! ShowDocumentation()
-  if CocAction('hasProvider', 'hover')
-    call CocActionAsync('doHover')
-  else
-    call feedkeys('K', 'in')
-  endif
-endfunction
-
-" Highlight the symbol and its references when holding the cursor
-autocmd CursorHold * silent call CocActionAsync('highlight')
-
-" Symbol renaming
-nmap <leader>rn <Plug>(coc-rename)
-
-augroup mygroup
-  autocmd!
-  " Setup formatexpr specified filetype(s)
-  autocmd FileType typescript,json setl formatexpr=CocAction('formatSelected')
-augroup end
-
-" Applying code actions to the selected code block
-" Example: `<leader>aap` for current paragraph
-xmap <leader>a  <Plug>(coc-codeaction-selected)
-nmap <leader>a  <Plug>(coc-codeaction-selected)
-
-" Remap keys for applying code actions at the cursor position
-nmap <leader>ac  <Plug>(coc-codeaction-cursor)
-" Remap keys for apply code actions affect whole buffer
-nmap <leader>as  <Plug>(coc-codeaction-source)
-" Apply the most preferred quickfix action to fix diagnostic on the current line
-nmap <leader>qf  <Plug>(coc-fix-current)
-
-" Remap keys for applying refactor code actions
-nmap <silent> <leader>re <Plug>(coc-codeaction-refactor)
-xmap <silent> <leader>r  <Plug>(coc-codeaction-refactor-selected)
-nmap <silent> <leader>r  <Plug>(coc-codeaction-refactor-selected)
-
-" Run the Code Lens action on the current line
-nmap <leader>cl  <Plug>(coc-codelens-action)
-
-" Formatting selected code
-xmap <leader>f  <Plug>(coc-format-selected)
-
-" Map function and class text objects
-" NOTE: Requires 'textDocument.documentSymbol' support from the language server
-xmap if <Plug>(coc-funcobj-i)
-omap if <Plug>(coc-funcobj-i)
-xmap af <Plug>(coc-funcobj-a)
-omap af <Plug>(coc-funcobj-a)
-xmap ic <Plug>(coc-classobj-i)
-omap ic <Plug>(coc-classobj-i)
-xmap ac <Plug>(coc-classobj-a)
-omap ac <Plug>(coc-classobj-a)
-
-" Remap <C-f> and <C-b> to scroll float windows/popups
-if has('nvim-0.4.0') || has('patch-8.2.0750')
-  nnoremap <silent><nowait><expr> <C-f> coc#float#has_scroll() ? coc#float#scroll(1) : "\<C-f>"
-  nnoremap <silent><nowait><expr> <C-b> coc#float#has_scroll() ? coc#float#scroll(0) : "\<C-b>"
-  inoremap <silent><nowait><expr> <C-f> coc#float#has_scroll() ? "\<c-r>=coc#float#scroll(1)\<cr>" : "\<Right>"
-  inoremap <silent><nowait><expr> <C-b> coc#float#has_scroll() ? "\<c-r>=coc#float#scroll(0)\<cr>" : "\<Left>"
-  vnoremap <silent><nowait><expr> <C-f> coc#float#has_scroll() ? coc#float#scroll(1) : "\<C-f>"
-  vnoremap <silent><nowait><expr> <C-b> coc#float#has_scroll() ? coc#float#scroll(0) : "\<C-b>"
-endif
-
-" Use CTRL-S for selections ranges
-" Requires 'textDocument/selectionRange' support of language server
-nmap <silent> <C-s> <Plug>(coc-range-select)
-xmap <silent> <C-s> <Plug>(coc-range-select)
-
-" Add `:Format` command to format current buffer
-command! -nargs=0 Format :call CocActionAsync('format')
-
-" Add `:Fold` command to fold current buffer
-command! -nargs=? Fold :call     CocAction('fold', <f-args>)
-
-" Add `:OR` command for organize imports of the current buffer
-command! -nargs=0 OR   :call     CocActionAsync('runCommand', 'editor.action.organizeImport')
-
-" Add (Neo)Vim's native statusline support
-" NOTE: Please see `:h coc-status` for integrations with external plugins that
-" provide custom statusline: lightline.vim, vim-airline
-set statusline^=%{coc#status()}%{get(b:,'coc_current_function','')}
-
-nnoremap <silent> <space><space> :<C-u>CocList<CR>
-nnoremap <silent> <space>f       :<C-u>CocList files<CR>
-nnoremap <silent> <space>fg      :<C-u>CocList grep<CR>
-nnoremap <silent> <space>c       :<C-u>CocList commands<CR>
-nnoremap <silent> <space>d       :<C-u>CocList diagnostics<CR>
