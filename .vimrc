@@ -9,7 +9,10 @@ set ignorecase
 set hlsearch
 set incsearch
 set smartcase
+set cursorline
 set noswapfile
+set scrolloff=5     " keep at least 5 lines above/below cursor
+set sidescrolloff=5 " keep at least 5 columns left/right of cursor
 
 
 set pumheight=10
@@ -34,10 +37,6 @@ set omnifunc=syntaxcomplete#Complete
 set wildignore+=*/.git/*,*/tmp/*,*.swp,*.bak,*.pyc,*.pyo,*.class,*.o,*.obj,*.exe,*.dll,*.so,*.dylib
 
 
-let g:with_node = 0
-"hi Comment ctermfg=darkgrey
-"hi LineNr ctermfg=darkgrey
-"hi Constant ctermfg=Brown
 
 let mapleader = "\<space>"
 let g:Lf_WindowPosition = 'popup'
@@ -52,6 +51,9 @@ autocmd BufNewFile,BufRead *.rs set filetype=rust
 
 :nnoremap <leader>" viw<esc>a"<esc>bi"<esc>lel
 :nnoremap <leader>' viw<esc>a'<esc>bi'<esc>lel
+
+
+set noshowmode
 
 
 augroup complete
@@ -75,10 +77,11 @@ Plug 'voldikss/vim-translator'
 Plug 'voldikss/vim-browser-search'
 Plug 'Yggdroot/indentLine'
 Plug 'r1cardohj/zzz.vim'
-Plug 'morhetz/gruvbox'
+Plug 'shrikecode/kyotonight.vim'
 Plug 'sheerun/vim-polyglot'
 Plug 'ervandew/supertab'
 Plug 'dense-analysis/ale'
+Plug 'heavenshell/vim-pydocstring', { 'do': 'make install', 'for': 'python' }
 Plug 'davidhalter/jedi-vim', {'for': 'python'}
 Plug 'github/copilot.vim', {'on': ['Copilot']}
 Plug 'DanBradbury/copilot-chat.vim'
@@ -89,6 +92,7 @@ Plug 'ryanoasis/vim-devicons'
 Plug 'markonm/traces.vim'
 Plug 'lambdalisue/suda.vim'
 Plug 'AndrewRadev/quickpeek.vim'
+Plug 'preservim/tagbar'
 call plug#end()
 
 let g:quickpeek_auto = v:true
@@ -110,7 +114,7 @@ let g:ale_echo_msg_format = '[%linter%] %s [%severity%]'
 
 let g:ale_fixers = {'*': ['remove_trailing_lines', 'trim_whitespace'], 'python': ['ruff', 'ruff_format', 'isort']}
 " In ~/.vim/vimrc, or somewhere similar.
-let g:ale_linters = {'python': ['ruff', 'pylint', 'jedils']}
+let g:ale_linters = {'python': ['ruff']}
 
 function! SetJediEnvironment()
   " Get the current working directory
@@ -155,21 +159,41 @@ if has('python3')
     autocmd FileType python let g:SuperTabDefaultCompletionType = "<c-x><c-o>"
 endif
 
+
 " supertab completion
 let g:SuperTabDefaultCompletionType = "context"
 let g:SuperTabLongestEnhanced = 1
 
 
-":colorscheme sorbet
-:colorscheme zzz
+" generate python docstring
+nmap <silent> <leader>ds <Plug>(pydocstring)
+
+
+
+let g:kyotonight_bold = 1
+let g:kyotonight_underline = 1
+let g:kyotonight_italic = 1
+let g:kyotonight_italic_comments = 1
+let g:kyotonight_uniform_status_lines = 1
+let g:kyotonight_cursor_line_number_background = 0
+let g:kyotonight_uniform_diff_background = 1
+"let g:kyotonight_lualine_bold = 1
+
+:colorscheme kyotonight
 " autocmd vimenter * hi Normal guibg=NONE ctermbg=NONE
 " autocmd vimenter * hi SignColumn guibg=NONE ctermbg=NONE
 " autocmd vimenter * hi LineNr guibg=NONE ctermbg=NONE
-"hi Comment ctermfg=darkgrey
+"hi Comment ctermfg=darkgrey guifg=darkgrey gui=italic cterm=italic
+" hi LineNr ctermfg=darkgrey guifg=darkgrey
+" hi Constant ctermfg=Brown guifg=darkgrey
 
 " airline
 
-let g:airline_theme='minimalist'
+"
+"let g:airline_theme='minimalist'
+let g:airline_theme='kyotonight'
+let g:airline_powerline_fonts = 1
+"let g:airline_theme='kyotonight'
 let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#tabline#left_sep = ' '
 let g:airline#extensions#tabline#left_alt_sep = '|'
@@ -218,7 +242,6 @@ nmap <leader>hx <Plug>(GitGutterUndoHunk)
 nmap <leader>hp <Plug>(GitGutterPreviewHunk)
 nmap <leader>hd <Plug>(GitGutterDiffOrig)
 
-
 " nerdtree
 nnoremap <leader>e :NERDTreeToggle<CR>
 nnoremap <leader>f :NERDTreeFind<CR>
@@ -226,10 +249,26 @@ nnoremap <leader>f :NERDTreeFind<CR>
 autocmd BufEnter * if winnr('$') == 1 && exists('b:NERDTree') && b:NERDTree.isTabTree() | quit | endif
 let g:NERDTreeGitStatusUseNerdFonts = 1
 
+" nerdtree git status
+let g:NERDTreeGitStatusIndicatorMapCustom = {
+                \ 'Modified'  :'M',
+                \ 'Staged'    :'S',
+                \ 'Untracked' :'U',
+                \ 'Renamed'   :'R',
+                \ 'Unmerged'  :'═',
+                \ 'Deleted'   :'D',
+                \ 'Dirty'     :'✗',
+                \ 'Ignored'   :'☒',
+                \ 'Clean'     :'✔︎',
+                \ 'Unknown'   :'?',
+                \ }
+
+
 
 " match up
 let g:matchup_matchparen_deferred = 1
 let g:matchup_matchparen_deferred_show_delay = 200
 let g:matchup_matchparen_deferred_hide_delay = 700
 :hi MatchParen ctermbg=blue guibg=NONE guifg=#FBB1F9
+
 
