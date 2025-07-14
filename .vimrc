@@ -17,6 +17,7 @@ set sidescrolloff=5 " keep at least 5 columns left/right of cursor
 
 set pumheight=10
 set autoread
+set wildmenu
 
 set backspace=indent,eol,start
 set showcmd
@@ -24,7 +25,7 @@ set tabstop=4
 set shiftwidth=4
 set background=dark
 set softtabstop=0
-set completeopt=menu,menuone,noselect
+set completeopt=menu,menuone
 set nocompatible
 set mouse=a
 set nobackup
@@ -35,8 +36,8 @@ set laststatus=2
 set termguicolors
 set omnifunc=syntaxcomplete#Complete
 set wildignore+=*/.git/*,*/tmp/*,*.swp,*.bak,*.pyc,*.pyo,*.class,*.o,*.obj,*.exe,*.dll,*.so,*.dylib
-  set shortmess+=c   " Shut off completion messages
-  set belloff+=ctrlg " Add only if Vim beeps during completion
+set shortmess+=c   " Shut off completion messages
+set belloff+=ctrlg " Add only if Vim beeps during completion
 
 
 
@@ -81,19 +82,15 @@ Plug 'Yggdroot/indentLine'
 Plug 'r1cardohj/zzz.vim'
 Plug 'shrikecode/kyotonight.vim'
 Plug 'sheerun/vim-polyglot'
-"Plug 'ervandew/supertab'
 Plug 'dense-analysis/ale'
-Plug 'lifepillar/vim-mucomplete'
-Plug 'hrsh7th/vim-vsnip'
-Plug 'hrsh7th/vim-vsnip-integ'
-"Plug 'SirVer/ultisnips'
-"Plug 'honza/vim-snippets'
+Plug 'ervandew/supertab'
 Plug 'heavenshell/vim-pydocstring', { 'do': 'make install', 'for': 'python' }
 Plug 'davidhalter/jedi-vim', {'for': 'python'}
+Plug 'fatih/vim-go', { 'do': ':GoInstallBinaries', 'for': 'go' }
 Plug 'github/copilot.vim', {'on': ['Copilot']}
 Plug 'DanBradbury/copilot-chat.vim'
 Plug 'vim-airline/vim-airline'
-"Plug 'vim-airline/vim-airline-themes'
+Plug 'vim-airline/vim-airline-themes'
 Plug 'mhinz/vim-startify'
 Plug 'ryanoasis/vim-devicons'
 Plug 'markonm/traces.vim'
@@ -113,7 +110,7 @@ let g:ale_virtualtext_cursor = 'current'
 let g:ale_lint_on_text_changed = 'never'
 let g:ale_lint_on_enter = 0
 let g:ale_lint_on_insert_leave = 0
-"let g:ale_completion_enabled = 1
+let g:ale_completion_enabled = 1
 let g:ale_disable_lsp = 1
 nnoremap <leader>F :ALEFix<CR>
 let g:ale_echo_msg_format = '[%linter%] %s [%severity%]'
@@ -162,15 +159,20 @@ if has('python3')
 	let g:jedi#rename_command = "<leader>rn"
 	let g:jedi#rename_command_keep_name = "<leader>R"
 	let g:jedi#popup_select_first = 0
-    let g:jedi#show_call_signatures = 1
+    let g:jedi#show_call_signatures = 0
 	autocmd FileType python call SetJediEnvironment()
     autocmd FileType python let g:SuperTabDefaultCompletionType = "<c-x><c-o>"
 endif
 
-" mucomplete
-let g:jedi#popup_on_dot = 0  " It may be 1 as well
-let g:mucomplete#enable_auto_at_startup = 1
-let g:mucomplete#completion_delay = 150
+" code completion SuperTab config
+let g:SuperTabDefaultCompletionType = "context"
+let g:SuperTabLongestEnhanced = 1
+
+" snippets
+let g:UltiSnipsExpandTrigger="<tab>"
+let g:UltiSnipsJumpForwardTrigger="<tab>"
+let g:UltiSnipsJumpBackwardTrigger="<c-b>"
+let g:UltiSnipsEditSplit="vertical"
 
 
 " generate python docstring
@@ -181,7 +183,7 @@ nmap <silent> <leader>ds <Plug>(pydocstring)
 let g:kyotonight_bold = 1
 let g:kyotonight_underline = 1
 let g:kyotonight_italic = 1
-let g:kyotonight_italic_comments = 1
+"let g:kyotonight_italic_comments = 1
 let g:kyotonight_uniform_status_lines = 1
 let g:kyotonight_cursor_line_number_background = 0
 let g:kyotonight_uniform_diff_background = 1
@@ -201,12 +203,13 @@ let g:kyotonight_uniform_diff_background = 1
 "
 "let g:airline_theme='minimalist'
 let g:airline_theme='kyotonight'
-let g:airline_powerline_fonts = 1
+"let g:airline_powerline_fonts = 1
 "let g:airline_theme='kyotonight'
 let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#tabline#left_sep = ' '
 let g:airline#extensions#tabline#left_alt_sep = '|'
 let g:airline#extensions#tabline#formatter = 'unique_tail'
+let g:airline#extensions#virtualenv#enabled = 1
 
 " ctrlp
 if executable('rg')
@@ -279,5 +282,4 @@ let g:matchup_matchparen_deferred = 1
 let g:matchup_matchparen_deferred_show_delay = 200
 let g:matchup_matchparen_deferred_hide_delay = 700
 :hi MatchParen ctermbg=blue guibg=NONE guifg=#FBB1F9
-
 
