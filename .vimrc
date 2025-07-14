@@ -24,7 +24,7 @@ set tabstop=4
 set shiftwidth=4
 set background=dark
 set softtabstop=0
-set completeopt=menu,menuone
+set completeopt=menu,menuone,noselect
 set nocompatible
 set mouse=a
 set nobackup
@@ -35,6 +35,8 @@ set laststatus=2
 set termguicolors
 set omnifunc=syntaxcomplete#Complete
 set wildignore+=*/.git/*,*/tmp/*,*.swp,*.bak,*.pyc,*.pyo,*.class,*.o,*.obj,*.exe,*.dll,*.so,*.dylib
+  set shortmess+=c   " Shut off completion messages
+  set belloff+=ctrlg " Add only if Vim beeps during completion
 
 
 
@@ -79,14 +81,19 @@ Plug 'Yggdroot/indentLine'
 Plug 'r1cardohj/zzz.vim'
 Plug 'shrikecode/kyotonight.vim'
 Plug 'sheerun/vim-polyglot'
-Plug 'ervandew/supertab'
+"Plug 'ervandew/supertab'
 Plug 'dense-analysis/ale'
+Plug 'lifepillar/vim-mucomplete'
+Plug 'hrsh7th/vim-vsnip'
+Plug 'hrsh7th/vim-vsnip-integ'
+"Plug 'SirVer/ultisnips'
+"Plug 'honza/vim-snippets'
 Plug 'heavenshell/vim-pydocstring', { 'do': 'make install', 'for': 'python' }
 Plug 'davidhalter/jedi-vim', {'for': 'python'}
 Plug 'github/copilot.vim', {'on': ['Copilot']}
 Plug 'DanBradbury/copilot-chat.vim'
 Plug 'vim-airline/vim-airline'
-Plug 'vim-airline/vim-airline-themes'
+"Plug 'vim-airline/vim-airline-themes'
 Plug 'mhinz/vim-startify'
 Plug 'ryanoasis/vim-devicons'
 Plug 'markonm/traces.vim'
@@ -99,7 +106,7 @@ let g:quickpeek_auto = v:true
 
 " ale config
 
-let g:ale_lint_delay = 1000
+let g:ale_lint_delay = 3000
 nmap <silent> [g <Plug>(ale_previous_wrap)
 nmap <silent> ]g <Plug>(ale_next_wrap)
 let g:ale_virtualtext_cursor = 'current'
@@ -155,14 +162,15 @@ if has('python3')
 	let g:jedi#rename_command = "<leader>rn"
 	let g:jedi#rename_command_keep_name = "<leader>R"
 	let g:jedi#popup_select_first = 0
+    let g:jedi#show_call_signatures = 1
 	autocmd FileType python call SetJediEnvironment()
     autocmd FileType python let g:SuperTabDefaultCompletionType = "<c-x><c-o>"
 endif
 
-
-" supertab completion
-let g:SuperTabDefaultCompletionType = "context"
-let g:SuperTabLongestEnhanced = 1
+" mucomplete
+let g:jedi#popup_on_dot = 0  " It may be 1 as well
+let g:mucomplete#enable_auto_at_startup = 1
+let g:mucomplete#completion_delay = 150
 
 
 " generate python docstring
@@ -180,6 +188,7 @@ let g:kyotonight_uniform_diff_background = 1
 "let g:kyotonight_lualine_bold = 1
 
 :colorscheme kyotonight
+
 " autocmd vimenter * hi Normal guibg=NONE ctermbg=NONE
 " autocmd vimenter * hi SignColumn guibg=NONE ctermbg=NONE
 " autocmd vimenter * hi LineNr guibg=NONE ctermbg=NONE
@@ -216,7 +225,7 @@ nnoremap <leader>cc :CopilotChatOpen<CR>
 " Add visual selection to copilot window
 vmap <leader>cc <Plug>CopilotChatAddSelection
 
-imap <silent><script><expr> <C-j> copilot#Accept("\<CR>")
+imap <silent><script><expr> <C-l> copilot#Accept("\<CR>")
 let g:copilot_no_tab_map = v:true
 
 " translaotr
