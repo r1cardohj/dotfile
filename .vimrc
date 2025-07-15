@@ -66,33 +66,23 @@ augroup end
 
 
 call plug#begin()
-Plug 'ctrlpvim/ctrlp.vim'
 Plug 'LunarWatcher/auto-pairs'
 Plug 'airblade/vim-gitgutter'
 Plug 'tpope/vim-fugitive'
-Plug 'preservim/nerdtree', { 'on': ['NERDTreeToggle', 'NERDTreeFind'] }
-Plug 'Xuyuanp/nerdtree-git-plugin', { 'on': ['NERDTreeToggle', 'NERDTreeFind'] }
-Plug 'bryanmylee/vim-colorscheme-icons'
-Plug 'andymass/vim-matchup'
 Plug 'tpope/vim-commentary'
 Plug 'mattn/emmet-vim'
 Plug 'voldikss/vim-translator'
-Plug 'voldikss/vim-browser-search'
-Plug 'Yggdroot/indentLine'
-Plug 'r1cardohj/zzz.vim'
+Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
+Plug 'junegunn/fzf.vim'
+"Plug 'Yggdroot/LeaderF', { 'do': ':LeaderfInstallCExtension' }
 Plug 'shrikecode/kyotonight.vim'
 Plug 'sheerun/vim-polyglot'
 Plug 'dense-analysis/ale'
 Plug 'ervandew/supertab'
-Plug 'heavenshell/vim-pydocstring', { 'do': 'make install', 'for': 'python' }
 Plug 'davidhalter/jedi-vim', {'for': 'python'}
-Plug 'fatih/vim-go', { 'do': ':GoInstallBinaries', 'for': 'go' }
 Plug 'github/copilot.vim', {'on': ['Copilot']}
 Plug 'DanBradbury/copilot-chat.vim'
 Plug 'vim-airline/vim-airline'
-Plug 'vim-airline/vim-airline-themes'
-Plug 'mhinz/vim-startify'
-Plug 'ryanoasis/vim-devicons'
 Plug 'markonm/traces.vim'
 Plug 'lambdalisue/suda.vim'
 Plug 'AndrewRadev/quickpeek.vim'
@@ -168,16 +158,6 @@ endif
 let g:SuperTabDefaultCompletionType = "context"
 let g:SuperTabLongestEnhanced = 1
 
-" snippets
-let g:UltiSnipsExpandTrigger="<tab>"
-let g:UltiSnipsJumpForwardTrigger="<tab>"
-let g:UltiSnipsJumpBackwardTrigger="<c-b>"
-let g:UltiSnipsEditSplit="vertical"
-
-
-" generate python docstring
-nmap <silent> <leader>ds <Plug>(pydocstring)
-
 
 
 let g:kyotonight_bold = 1
@@ -236,15 +216,6 @@ let g:translator_default_engines = ["bing"]
 nmap <silent> <Leader>w <Plug>TranslateW
 vmap <silent> <Leader>w <Plug>TranslateWV
 
-" browser-search
-nmap <silent> <Leader>s <Plug>SearchNormal
-vmap <silent> <Leader>s <Plug>SearchVisual
-
-" git blame
-nnoremap <Leader>gb :<C-u>BlamerToggle<CR>
-let g:blamer_show_in_insert_mode = 0
-let g:blamer_show_in_visual_mode = 0
-let g:blamer_delay = 3000
 
 " git gitgutter
 nmap ]h <Plug>(GitGutterNextHunk)
@@ -254,32 +225,19 @@ nmap <leader>hx <Plug>(GitGutterUndoHunk)
 nmap <leader>hp <Plug>(GitGutterPreviewHunk)
 nmap <leader>hd <Plug>(GitGutterDiffOrig)
 
-" nerdtree
-nnoremap <leader>e :NERDTreeToggle<CR>
-nnoremap <leader>f :NERDTreeFind<CR>
-" Close the tab if NERDTree is the only window remaining in it.
-autocmd BufEnter * if winnr('$') == 1 && exists('b:NERDTree') && b:NERDTree.isTabTree() | quit | endif
-let g:NERDTreeGitStatusUseNerdFonts = 1
-
-" nerdtree git status
-let g:NERDTreeGitStatusIndicatorMapCustom = {
-                \ 'Modified'  :'M',
-                \ 'Staged'    :'S',
-                \ 'Untracked' :'U',
-                \ 'Renamed'   :'R',
-                \ 'Unmerged'  :'═',
-                \ 'Deleted'   :'D',
-                \ 'Dirty'     :'✗',
-                \ 'Ignored'   :'☒',
-                \ 'Clean'     :'✔︎',
-                \ 'Unknown'   :'?',
-                \ }
-
-
-
-" match up
-let g:matchup_matchparen_deferred = 1
-let g:matchup_matchparen_deferred_show_delay = 200
-let g:matchup_matchparen_deferred_hide_delay = 700
-:hi MatchParen ctermbg=blue guibg=NONE guifg=#FBB1F9
-
+" 
+let g:Lf_WindowPosition = 'popup'
+let g:Lf_UseCache = 0
+let g:Lf_UseVersionControlTool = 0
+let g:Lf_PreviewResult = {'Function': 0, 'BufTag': 0, 'File': 0 }
+let g:Lf_WindowHeight = 0.30
+let g:Lf_WildIgnore = {
+        \ 'dir': ['.svn','.git','.hg'],
+        \ 'file': ['*.sw?','~$*','*.bak','*.exe','*.o','*.so','*.py[co]']
+        \}
+let g:Lf_ShortcutF = "<leader>ff"
+noremap <leader>fb :<C-U><C-R>=printf("Leaderf buffer %s", "")<CR><CR>
+noremap <leader>fm :<C-U><C-R>=printf("Leaderf mru %s", "")<CR><CR>
+noremap <leader>ft :<C-U><C-R>=printf("Leaderf bufTag %s", "")<CR><CR>
+noremap <leader>fl :<C-U><C-R>=printf("Leaderf line %s", "")<CR><CR>
+noremap <leader>fg :<C-U><C-R>=printf("Leaderf rg %s", "")<CR><CR>
