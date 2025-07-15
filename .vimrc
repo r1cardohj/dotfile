@@ -9,7 +9,7 @@ set ignorecase
 set hlsearch
 set incsearch
 set smartcase
-set cursorline
+"set cursorline
 set noswapfile
 set scrolloff=5     " keep at least 5 lines above/below cursor
 set sidescrolloff=5 " keep at least 5 columns left/right of cursor
@@ -33,7 +33,7 @@ set nowritebackup
 set updatetime=300
 set signcolumn=yes
 set laststatus=2
-set termguicolors
+"set termguicolors
 set omnifunc=syntaxcomplete#Complete
 set wildignore+=*/.git/*,*/tmp/*,*.swp,*.bak,*.pyc,*.pyo,*.class,*.o,*.obj,*.exe,*.dll,*.so,*.dylib
 set shortmess+=c   " Shut off completion messages
@@ -79,9 +79,8 @@ Plug 'dense-analysis/ale'
 Plug 'ervandew/supertab'
 Plug 'davidhalter/jedi-vim', {'for': 'python'}
 Plug 'github/copilot.vim', {'on': ['Copilot']}
-Plug 'DanBradbury/copilot-chat.vim'
+"Plug 'DanBradbury/copilot-chat.vim'
 Plug 'vim-airline/vim-airline'
-Plug 'mcchrish/nnn.vim'
 Plug 'markonm/traces.vim'
 Plug 'lambdalisue/suda.vim'
 Plug 'AndrewRadev/quickpeek.vim'
@@ -167,14 +166,15 @@ let g:kyotonight_cursor_line_number_background = 0
 let g:kyotonight_uniform_diff_background = 1
 "let g:kyotonight_lualine_bold = 1
 
-:colorscheme kyotonight
+":colorscheme kyotonight
 
 " autocmd vimenter * hi Normal guibg=NONE ctermbg=NONE
 " autocmd vimenter * hi SignColumn guibg=NONE ctermbg=NONE
 " autocmd vimenter * hi LineNr guibg=NONE ctermbg=NONE
-"hi Comment ctermfg=darkgrey guifg=darkgrey gui=italic cterm=italic
+hi Comment ctermfg=darkgrey guifg=darkgrey gui=italic cterm=italic
 " hi LineNr ctermfg=darkgrey guifg=darkgrey
-" hi Constant ctermfg=Brown guifg=darkgrey
+hi Constant ctermfg=Brown guifg=Brown
+highlight Normal guifg=white guibg=black ctermbg=black
 
 " airline
 
