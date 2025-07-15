@@ -72,9 +72,7 @@ Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-commentary'
 Plug 'mattn/emmet-vim'
 Plug 'voldikss/vim-translator'
-Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
-Plug 'junegunn/fzf.vim'
-"Plug 'Yggdroot/LeaderF', { 'do': ':LeaderfInstallCExtension' }
+Plug 'Yggdroot/LeaderF', { 'do': ':LeaderfInstallCExtension' }
 Plug 'shrikecode/kyotonight.vim'
 Plug 'sheerun/vim-polyglot'
 Plug 'dense-analysis/ale'
@@ -83,10 +81,10 @@ Plug 'davidhalter/jedi-vim', {'for': 'python'}
 Plug 'github/copilot.vim', {'on': ['Copilot']}
 Plug 'DanBradbury/copilot-chat.vim'
 Plug 'vim-airline/vim-airline'
+Plug 'mcchrish/nnn.vim'
 Plug 'markonm/traces.vim'
 Plug 'lambdalisue/suda.vim'
 Plug 'AndrewRadev/quickpeek.vim'
-Plug 'preservim/tagbar'
 call plug#end()
 
 let g:quickpeek_auto = v:true
@@ -100,7 +98,7 @@ let g:ale_virtualtext_cursor = 'current'
 let g:ale_lint_on_text_changed = 'never'
 let g:ale_lint_on_enter = 0
 let g:ale_lint_on_insert_leave = 0
-let g:ale_completion_enabled = 1
+let g:ale_completion_enabled = 0
 let g:ale_disable_lsp = 1
 nnoremap <leader>F :ALEFix<CR>
 let g:ale_echo_msg_format = '[%linter%] %s [%severity%]'
@@ -225,19 +223,26 @@ nmap <leader>hx <Plug>(GitGutterUndoHunk)
 nmap <leader>hp <Plug>(GitGutterPreviewHunk)
 nmap <leader>hd <Plug>(GitGutterDiffOrig)
 
-" 
-let g:Lf_WindowPosition = 'popup'
+" leaderf
+let g:Lf_HideHelp = 1
 let g:Lf_UseCache = 0
 let g:Lf_UseVersionControlTool = 0
-let g:Lf_PreviewResult = {'Function': 0, 'BufTag': 0, 'File': 0 }
-let g:Lf_WindowHeight = 0.30
-let g:Lf_WildIgnore = {
-        \ 'dir': ['.svn','.git','.hg'],
-        \ 'file': ['*.sw?','~$*','*.bak','*.exe','*.o','*.so','*.py[co]']
-        \}
+let g:Lf_IgnoreCurrentBufferName = 1
+let g:Lf_WindowPosition = 'popup'
+let g:Lf_PreviewResult = {'Function': 0, 'BufTag': 0, 'File': 0, 'Buffer': 0}
+let g:Lf_PopupHeight = 0.3
+
 let g:Lf_ShortcutF = "<leader>ff"
 noremap <leader>fb :<C-U><C-R>=printf("Leaderf buffer %s", "")<CR><CR>
 noremap <leader>fm :<C-U><C-R>=printf("Leaderf mru %s", "")<CR><CR>
 noremap <leader>ft :<C-U><C-R>=printf("Leaderf bufTag %s", "")<CR><CR>
 noremap <leader>fl :<C-U><C-R>=printf("Leaderf line %s", "")<CR><CR>
 noremap <leader>fg :<C-U><C-R>=printf("Leaderf rg %s", "")<CR><CR>
+
+" nnn
+autocmd StdinReadPre * let s:std_in=1
+autocmd VimEnter * if argc() == 0 && !exists('s:std_in') | call nnn#pick() | endif
+autocmd BufEnter * if tabpagenr('$') == 1 && winnr('$') == 1 && &filetype ==# 'nnn' | quit! | endif
+autocmd BufEnter * if winnr('$') == 1 && &filetype ==# 'nnn' | quit! | endif
+let g:nnn#layout = { 'window': { 'width': 0.7, 'height': 0.5, 'highlight': 'Comment' } }
+
