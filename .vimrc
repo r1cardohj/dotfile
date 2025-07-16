@@ -82,9 +82,7 @@ Plug 'ervandew/supertab'
 Plug 'davidhalter/jedi-vim', {'for': 'python'}
 Plug 'github/copilot.vim', {'on': ['Copilot']}
 Plug 'markonm/traces.vim'
-Plug 'lambdalisue/suda.vim'
 Plug 'AndrewRadev/quickpeek.vim'
-
 call plug#end()
 
 
@@ -158,16 +156,6 @@ let g:SuperTabDefaultCompletionType = "context"
 let g:SuperTabLongestEnhanced = 1
 
 
-" autocmd vimenter * hi Normal guibg=NONE ctermbg=NONE
-" autocmd vimenter * hi SignColumn guibg=NONE ctermbg=NONE
-" autocmd vimenter * hi LineNr guibg=NONE ctermbg=NONE
-"hi Comment ctermfg=darkgrey guifg=darkgrey gui=italic cterm=italic
-hi Comment ctermfg=green guifg=green
-hi LineNr ctermfg=darkgrey guifg=darkgrey
-hi Constant ctermfg=Brown guifg=Brown
-highlight Normal guifg=white guibg=black ctermbg=black
-
-
 " emmet
 let g:user_emmet_leader_key='<c-e>'
 
@@ -206,6 +194,8 @@ noremap <leader>fg :<C-U><C-R>=printf("Leaderf rg %s", "")<CR><CR>
 "html/xml
 set matchpairs+=<:>     " specially for html
 autocmd BufRead,BufNewFile *.htm,*.html,*.css setlocal tabstop=2 shiftwidth=2 softtabstop=2
+
+" ------------------------- UI ----------------------------
 
 " LinterStatus function (unchanged)
 function! LinterStatus() abort
@@ -256,7 +246,6 @@ set statusline+=%#Position#
 
 
 
-" 建议加一些自定义highlight
 hi Icon guifg=#FBB1F9 ctermfg=213
 hi NormalC guifg=#ABE9B3 ctermfg=121
 hi InsertC guifg=#F2CDCD ctermfg=217
@@ -271,3 +260,8 @@ hi LineCol guifg=#F8BD96 ctermfg=223
 hi FileType guifg=#ABE9B3 ctermfg=121
 hi Fileformat guifg=#DDB6F2 ctermfg=183
 hi Position guifg=#F8BD96 ctermfg=223
+
+hi Comment ctermfg=green guifg=green
+hi LineNr ctermfg=darkgrey guifg=darkgrey
+hi Constant ctermfg=Brown guifg=Brown
+highlight Normal guifg=white guibg=black ctermbg=black
