@@ -11,6 +11,10 @@ set incsearch
 set smartcase
 "set cursorline
 set noswapfile
+set showmode
+set showcmd
+set title
+set ruler
 set scrolloff=5     " keep at least 5 lines above/below cursor
 set sidescrolloff=5 " keep at least 5 columns left/right of cursor
 
@@ -67,7 +71,6 @@ augroup end
 
 call plug#begin()
 Plug 'LunarWatcher/auto-pairs'
-Plug 'airblade/vim-gitgutter'
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-commentary'
 Plug 'mattn/emmet-vim'
@@ -78,8 +81,6 @@ Plug 'dense-analysis/ale'
 Plug 'ervandew/supertab'
 Plug 'davidhalter/jedi-vim', {'for': 'python'}
 Plug 'github/copilot.vim', {'on': ['Copilot']}
-Plug 'vim-airline/vim-airline'
-Plug 'vim-airline/vim-airline-themes'
 Plug 'markonm/traces.vim'
 Plug 'lambdalisue/suda.vim'
 Plug 'AndrewRadev/quickpeek.vim'
@@ -160,30 +161,12 @@ let g:SuperTabLongestEnhanced = 1
 " autocmd vimenter * hi Normal guibg=NONE ctermbg=NONE
 " autocmd vimenter * hi SignColumn guibg=NONE ctermbg=NONE
 " autocmd vimenter * hi LineNr guibg=NONE ctermbg=NONE
-hi Comment ctermfg=darkgrey guifg=darkgrey gui=italic cterm=italic
+"hi Comment ctermfg=darkgrey guifg=darkgrey gui=italic cterm=italic
+hi Comment ctermfg=green guifg=green
 hi LineNr ctermfg=darkgrey guifg=darkgrey
 hi Constant ctermfg=Brown guifg=Brown
 highlight Normal guifg=white guibg=black ctermbg=black
 
-" airline
-
-"
-let g:airline_theme='serene'
-"let g:airline_theme='kyotonight'
-"let g:airline_powerline_fonts = 1
-"let g:airline_theme='kyotonight'
-let g:airline#extensions#tabline#enabled = 1
-let g:airline#extensions#tabline#left_sep = ' '
-let g:airline#extensions#tabline#left_alt_sep = '|'
-let g:airline#extensions#tabline#formatter = 'unique_tail'
-let g:airline#extensions#virtualenv#enabled = 1
-
-" ctrlp
-if executable('rg')
-  set grepprg=rg\ --color=never
-  let g:ctrlp_user_command = 'rg %s --files --color=never --glob ""'
-  let g:ctrlp_use_caching = 0
-endif
 
 " emmet
 let g:user_emmet_leader_key='<c-e>'
@@ -204,14 +187,6 @@ nmap <silent> <Leader>w <Plug>TranslateW
 vmap <silent> <Leader>w <Plug>TranslateWV
 
 
-" git gitgutter
-nmap ]h <Plug>(GitGutterNextHunk)
-nmap [h <Plugh(GitGutterPrevHunk)
-nmap <leader>hw <Plug>(GitGutterStageHunk)
-nmap <leader>hx <Plug>(GitGutterUndoHunk)
-nmap <leader>hp <Plug>(GitGutterPreviewHunk)
-nmap <leader>hd <Plug>(GitGutterDiffOrig)
-
 " leaderf
 let g:Lf_HideHelp = 1
 let g:Lf_UseCache = 0
@@ -228,3 +203,71 @@ noremap <leader>ft :<C-U><C-R>=printf("Leaderf bufTag %s", "")<CR><CR>
 noremap <leader>fl :<C-U><C-R>=printf("Leaderf line %s", "")<CR><CR>
 noremap <leader>fg :<C-U><C-R>=printf("Leaderf rg %s", "")<CR><CR>
 
+"html/xml
+set matchpairs+=<:>     " specially for html
+autocmd BufRead,BufNewFile *.htm,*.html,*.css setlocal tabstop=2 shiftwidth=2 softtabstop=2
+
+" LinterStatus function (unchanged)
+function! LinterStatus() abort
+    let l:counts = ale#statusline#Count(bufnr(''))
+
+    let l:all_errors = l:counts.error + l:counts.style_error
+    let l:all_non_errors = l:counts.total - l:all_errors
+
+    return l:counts.total == 0 ? 'OK' : printf(
+    \   'W(%d) E(%d)',
+    \   all_non_errors,
+    \   all_errors
+    \)
+endfunction
+
+" STATUSLINE MODE
+let g:currentmode={
+ \ 'n' : 'NORMAL ',
+ \ 'v' : 'VISUAL ',
+ \ 'V' : 'V-LINE ',
+ \ 'i' : 'INSERT ',
+ \ 'R' : 'R ',
+ \ 'Rv' : 'V-REPLACE ',
+ \ 'c' : 'COMMAND ',
+ \}
+
+set statusline=
+set statusline+=%#Icon#
+set statusline+=\ 💤
+set statusline+=\ %#NormalC#%{(mode()=='n')?'\ NORMAL\ ':''}
+set statusline+=%#InsertC#%{(mode()=='i')?'\ INSERT\ ':''}
+set statusline+=%#VisualC#%{(mode()=='v')?'\ VISUAL\ ':''}
+set statusline+=%#Filename#
+set statusline+=\ %<%f\       " 显示相对路径, 用%<截断显示
+set statusline+=%#ReadOnly#
+set statusline+=\ %r
+set statusline+=%{fugitive#statusline()}
+set statusline+=%{LinterStatus()}
+set statusline+=%m
+set statusline+=%=
+set statusline+=%#LineCol#
+set statusline+=\ \ %l/%L\ \ %c\
+set statusline+=%#FileType#
+set statusline+=\ %y
+set statusline+=\ %{&fileencoding?&fileencoding:&encoding}
+set statusline+=\ [%{&fileformat}]
+set statusline+=%#Position#
+
+
+
+" 建议加一些自定义highlight
+hi Icon guifg=#FBB1F9 ctermfg=213
+hi NormalC guifg=#ABE9B3 ctermfg=121
+hi InsertC guifg=#F2CDCD ctermfg=217
+hi VisualC guifg=#B5E8E0 ctermfg=158
+hi CommandC guifg=#F8BD96 ctermfg=223
+hi ReplaceC guifg=#F28FAD ctermfg=212
+hi VReplaceC guifg=#F28FAD ctermfg=212
+hi VLineC guifg=#DDB6F2 ctermfg=183
+hi Filename guifg=#89DCEB ctermfg=81
+hi ReadOnly guifg=#F28FAD ctermfg=212
+hi LineCol guifg=#F8BD96 ctermfg=223
+hi FileType guifg=#ABE9B3 ctermfg=121
+hi Fileformat guifg=#DDB6F2 ctermfg=183
+hi Position guifg=#F8BD96 ctermfg=223
