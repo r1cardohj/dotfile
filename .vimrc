@@ -73,18 +73,19 @@ Plug 'tpope/vim-commentary'
 Plug 'mattn/emmet-vim'
 Plug 'voldikss/vim-translator'
 Plug 'Yggdroot/LeaderF', { 'do': ':LeaderfInstallCExtension' }
-Plug 'shrikecode/kyotonight.vim'
 Plug 'sheerun/vim-polyglot'
 Plug 'dense-analysis/ale'
 Plug 'ervandew/supertab'
 Plug 'davidhalter/jedi-vim', {'for': 'python'}
 Plug 'github/copilot.vim', {'on': ['Copilot']}
-"Plug 'DanBradbury/copilot-chat.vim'
 Plug 'vim-airline/vim-airline'
+Plug 'vim-airline/vim-airline-themes'
 Plug 'markonm/traces.vim'
 Plug 'lambdalisue/suda.vim'
 Plug 'AndrewRadev/quickpeek.vim'
+
 call plug#end()
+
 
 let g:quickpeek_auto = v:true
 
@@ -156,31 +157,19 @@ let g:SuperTabDefaultCompletionType = "context"
 let g:SuperTabLongestEnhanced = 1
 
 
-
-let g:kyotonight_bold = 1
-let g:kyotonight_underline = 1
-let g:kyotonight_italic = 1
-"let g:kyotonight_italic_comments = 1
-let g:kyotonight_uniform_status_lines = 1
-let g:kyotonight_cursor_line_number_background = 0
-let g:kyotonight_uniform_diff_background = 1
-"let g:kyotonight_lualine_bold = 1
-
-":colorscheme kyotonight
-
 " autocmd vimenter * hi Normal guibg=NONE ctermbg=NONE
 " autocmd vimenter * hi SignColumn guibg=NONE ctermbg=NONE
 " autocmd vimenter * hi LineNr guibg=NONE ctermbg=NONE
 hi Comment ctermfg=darkgrey guifg=darkgrey gui=italic cterm=italic
-" hi LineNr ctermfg=darkgrey guifg=darkgrey
+hi LineNr ctermfg=darkgrey guifg=darkgrey
 hi Constant ctermfg=Brown guifg=Brown
 highlight Normal guifg=white guibg=black ctermbg=black
 
 " airline
 
 "
-"let g:airline_theme='minimalist'
-let g:airline_theme='kyotonight'
+let g:airline_theme='serene'
+"let g:airline_theme='kyotonight'
 "let g:airline_powerline_fonts = 1
 "let g:airline_theme='kyotonight'
 let g:airline#extensions#tabline#enabled = 1
@@ -238,11 +227,4 @@ noremap <leader>fm :<C-U><C-R>=printf("Leaderf mru %s", "")<CR><CR>
 noremap <leader>ft :<C-U><C-R>=printf("Leaderf bufTag %s", "")<CR><CR>
 noremap <leader>fl :<C-U><C-R>=printf("Leaderf line %s", "")<CR><CR>
 noremap <leader>fg :<C-U><C-R>=printf("Leaderf rg %s", "")<CR><CR>
-
-" nnn
-autocmd StdinReadPre * let s:std_in=1
-autocmd VimEnter * if argc() == 0 && !exists('s:std_in') | call nnn#pick() | endif
-autocmd BufEnter * if tabpagenr('$') == 1 && winnr('$') == 1 && &filetype ==# 'nnn' | quit! | endif
-autocmd BufEnter * if winnr('$') == 1 && &filetype ==# 'nnn' | quit! | endif
-let g:nnn#layout = { 'window': { 'width': 0.7, 'height': 0.5, 'highlight': 'Comment' } }
 
