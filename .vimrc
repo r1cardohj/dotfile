@@ -84,6 +84,7 @@ Plug 'github/copilot.vim', {'on': ['Copilot']}
 Plug 'markonm/traces.vim'
 call plug#end()
 
+" -------------- coding ---------------------
 
 " ale config
 
@@ -94,8 +95,8 @@ let g:ale_virtualtext_cursor = 'current'
 let g:ale_lint_on_text_changed = 'never'
 let g:ale_lint_on_enter = 0
 let g:ale_lint_on_insert_leave = 0
-let g:ale_completion_enabled = 0
 let g:ale_disable_lsp = 1
+let g:ale_completion_enabled = 0
 nnoremap <leader>F :ALEFix<CR>
 let g:ale_echo_msg_format = '[%linter%] %s [%severity%]'
 
@@ -103,6 +104,8 @@ let g:ale_echo_msg_format = '[%linter%] %s [%severity%]'
 let g:ale_fixers = {'*': ['remove_trailing_lines', 'trim_whitespace'], 'python': ['ruff', 'ruff_format', 'isort']}
 " In ~/.vim/vimrc, or somewhere similar.
 let g:ale_linters = {'python': ['ruff']}
+
+
 
 function! SetJediEnvironment()
   " Get the current working directory
@@ -256,3 +259,18 @@ hi Comment ctermfg=green guifg=green
 hi LineNr ctermfg=darkgrey guifg=darkgrey
 hi Constant ctermfg=Brown guifg=Brown
 highlight Normal guifg=white guibg=black ctermbg=black
+
+
+highlight Pmenu      guibg=#282c34 guifg=#c8d3f5 ctermbg=236 ctermfg=189
+highlight PmenuSel   guibg=#a6e3a1 guifg=#1a1b26 ctermbg=121 ctermfg=234
+highlight PmenuSbar  guibg=#44475a guifg=NONE ctermbg=237 ctermfg=NONE
+highlight PmenuThumb guibg=#a6e3a1 guifg=NONE ctermbg=121 ctermfg=NONE
+
+
+if has('gui_running')
+    set pumblend=15
+endif
+
+
+let g:completion_matching_strategy_list = ['exact', 'substring', 'fuzzy']
+
