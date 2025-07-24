@@ -263,6 +263,7 @@ hi Position guifg=#F8BD96 ctermfg=223
 hi Comment ctermfg=green guifg=green
 " hi LineNr ctermfg=darkgrey guifg=darkgrey
 hi Constant ctermfg=Brown guifg=Brown
+hi String ctermfg=Brown guifg=Brown
 highlight Normal guifg=white guibg=black ctermbg=black
 
 
