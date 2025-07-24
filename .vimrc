@@ -29,7 +29,7 @@ set tabstop=4
 set shiftwidth=4
 set background=dark
 set softtabstop=0
-set completeopt=menu,menuone
+set completeopt=menu,menuone,noselect
 set nocompatible
 set mouse=a
 set nobackup
@@ -37,7 +37,6 @@ set nowritebackup
 set updatetime=300
 set signcolumn=yes
 set laststatus=2
-"set termguicolors
 set omnifunc=syntaxcomplete#Complete
 set wildignore+=*/.git/*,*/tmp/*,*.swp,*.bak,*.pyc,*.pyo,*.class,*.o,*.obj,*.exe,*.dll,*.so,*.dylib
 set shortmess+=c   " Shut off completion messages
@@ -78,17 +77,22 @@ Plug 'voldikss/vim-translator'
 Plug 'Yggdroot/LeaderF', { 'do': ':LeaderfInstallCExtension' }
 Plug 'sheerun/vim-polyglot'
 Plug 'dense-analysis/ale'
-Plug 'ervandew/supertab'
+Plug 'lifepillar/vim-mucomplete'
+"Plug 'ervandew/supertab'
 Plug 'davidhalter/jedi-vim', {'for': 'python'}
 Plug 'github/copilot.vim', {'on': ['Copilot']}
 Plug 'markonm/traces.vim'
 call plug#end()
 
+
 " -------------- coding ---------------------
+
+let g:mucomplete#enable_auto_at_startup = 1
+let g:mucomplete#completion_delay = 1
 
 " ale config
 
-let g:ale_lint_delay = 3000
+let g:ale_lint_delay = 5000
 nmap <silent> [g <Plug>(ale_previous_wrap)
 nmap <silent> ]g <Plug>(ale_next_wrap)
 let g:ale_virtualtext_cursor = 'current'
@@ -96,7 +100,6 @@ let g:ale_lint_on_text_changed = 'never'
 let g:ale_lint_on_enter = 0
 let g:ale_lint_on_insert_leave = 0
 let g:ale_disable_lsp = 1
-let g:ale_completion_enabled = 0
 nnoremap <leader>F :ALEFix<CR>
 let g:ale_echo_msg_format = '[%linter%] %s [%severity%]'
 
@@ -104,7 +107,6 @@ let g:ale_echo_msg_format = '[%linter%] %s [%severity%]'
 let g:ale_fixers = {'*': ['remove_trailing_lines', 'trim_whitespace'], 'python': ['ruff', 'ruff_format', 'isort']}
 " In ~/.vim/vimrc, or somewhere similar.
 let g:ale_linters = {'python': ['ruff']}
-
 
 
 function! SetJediEnvironment()
@@ -146,7 +148,8 @@ if has('python3')
 	let g:jedi#rename_command = "<leader>rn"
 	let g:jedi#rename_command_keep_name = "<leader>R"
 	let g:jedi#popup_select_first = 0
-    let g:jedi#show_call_signatures = 0
+    let g:jedi#popup_on_dot = 1
+    let g:jedi#show_call_signatures = 2
 	autocmd FileType python call SetJediEnvironment()
     autocmd FileType python let g:SuperTabDefaultCompletionType = "<c-x><c-o>"
 endif
@@ -190,6 +193,8 @@ set matchpairs+=<:>     " specially for html
 autocmd BufRead,BufNewFile *.htm,*.html,*.css setlocal tabstop=2 shiftwidth=2 softtabstop=2
 
 " ------------------------- UI ----------------------------
+
+colorscheme lunaperche
 
 " LinterStatus function (unchanged)
 function! LinterStatus() abort
@@ -256,21 +261,28 @@ hi Fileformat guifg=#DDB6F2 ctermfg=183
 hi Position guifg=#F8BD96 ctermfg=223
 
 hi Comment ctermfg=green guifg=green
-hi LineNr ctermfg=darkgrey guifg=darkgrey
+" hi LineNr ctermfg=darkgrey guifg=darkgrey
 hi Constant ctermfg=Brown guifg=Brown
 highlight Normal guifg=white guibg=black ctermbg=black
 
 
-highlight Pmenu      guibg=#282c34 guifg=#c8d3f5 ctermbg=236 ctermfg=189
-highlight PmenuSel   guibg=#a6e3a1 guifg=#1a1b26 ctermbg=121 ctermfg=234
-highlight PmenuSbar  guibg=#44475a guifg=NONE ctermbg=237 ctermfg=NONE
-highlight PmenuThumb guibg=#a6e3a1 guifg=NONE ctermbg=121 ctermfg=NONE
-
+" highlight Pmenu      guibg=#282c34 guifg=#c8d3f5 ctermbg=236 ctermfg=189
+" highlight PmenuSel   guibg=#a6e3a1 guifg=#1a1b26 ctermbg=121 ctermfg=234
+" highlight PmenuSbar  guibg=#44475a guifg=NONE ctermbg=237 ctermfg=NONE
+" highlight PmenuThumb guibg=#a6e3a1 guifg=NONE ctermbg=121 ctermfg=NONE
 
 if has('gui_running')
     set pumblend=15
 endif
 
 
+
 let g:completion_matching_strategy_list = ['exact', 'substring', 'fuzzy']
 
+
+" Sudo write with :w!!
+if executable('sudo') && executable('tee')
+  command! SUwrite
+        \ execute 'w !sudo tee % > /dev/null' |
+        \ setlocal nomodified
+endif
