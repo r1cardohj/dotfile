@@ -1,3 +1,8 @@
+" ---------------- MODE -------------------
+" light mode will never use lsp
+let g:light_mode = 0
+" -----------------------------------------
+
 set nu
 set ai
 
@@ -43,7 +48,6 @@ set shortmess+=c   " Shut off completion messages
 set belloff+=ctrlg " Add only if Vim beeps during completion
 
 
-
 let mapleader = "\<space>"
 let g:Lf_WindowPosition = 'popup'
 
@@ -68,29 +72,34 @@ augroup complete
 augroup end
 
 
+
 call plug#begin()
-Plug 'LunarWatcher/auto-pairs'
-Plug 'tpope/vim-fugitive'
-Plug 'tpope/vim-commentary'
-Plug 'mattn/emmet-vim'
-Plug 'voldikss/vim-translator'
-Plug 'Yggdroot/LeaderF', { 'do': ':LeaderfInstallCExtension' }
-Plug 'sheerun/vim-polyglot'
-Plug 'dense-analysis/ale'
-Plug 'lifepillar/vim-mucomplete'
-"Plug 'ervandew/supertab'
-Plug 'davidhalter/jedi-vim', {'for': 'python'}
-Plug 'github/copilot.vim', {'on': ['Copilot']}
-Plug 'markonm/traces.vim'
+  Plug 'LunarWatcher/auto-pairs'
+  Plug 'tpope/vim-fugitive'
+  Plug 'tpope/vim-commentary'
+  Plug 'mattn/emmet-vim'
+  Plug 'voldikss/vim-translator'
+  Plug 'Yggdroot/LeaderF', { 'do': ':LeaderfInstallCExtension' }
+  Plug 'sheerun/vim-polyglot'
+  Plug 'markonm/traces.vim'
+  Plug 'kkoomen/vim-doge', { 'do': { -> doge#install() } }
+  Plug 'github/copilot.vim', {'on': ['Copilot']}
+  Plug 'dense-analysis/ale'
+  " light mode never use lsp and node.js
+  if g:light_mode
+    Plug 'lifepillar/vim-mucomplete'
+    Plug 'davidhalter/jedi-vim', {'for': 'python'}
+  else
+    Plug 'ycm-core/YouCompleteMe'
+  endif
 call plug#end()
 
 
-" -------------- coding ---------------------
+" ------------------------------- coding ------------------------------------
 
-let g:mucomplete#enable_auto_at_startup = 1
-let g:mucomplete#completion_delay = 1
 
 " ale config
+" it just a linter in my conf
 
 let g:ale_lint_delay = 5000
 nmap <silent> [g <Plug>(ale_previous_wrap)
@@ -109,7 +118,45 @@ let g:ale_fixers = {'*': ['remove_trailing_lines', 'trim_whitespace'], 'python':
 let g:ale_linters = {'python': ['ruff']}
 
 
-function! SetJediEnvironment()
+
+" completion and lsp
+
+if g:light_mode
+  if has('python3')
+      " set jedi
+      let g:jedi#goto_command = "<leader>d"
+      let g:jedi#goto_assignments_command = "ga"
+      let g:jedi#goto_stubs_command = "gs"
+      let g:jedi#goto_definitions_command = "gd"
+      let g:jedi#documentation_command = "K"
+      let g:jedi#usages_command = "gr"
+      let g:jedi#rename_command = "<leader>rn"
+      let g:jedi#rename_command_keep_name = "<leader>R"
+      let g:jedi#popup_select_first = 0
+      let g:jedi#popup_on_dot = 1
+      let g:jedi#show_call_signatures = 2
+  endif
+
+  let g:mucomplete#enable_auto_at_startup = 1
+  let g:mucomplete#completion_delay = 200
+else
+  nnoremap gd :YcmCompleter GoTo<cr>
+  nnoremap gs :YcmCompleter GoToSymbol<cr>
+  nnoremap gr :YcmCompleter GoToReferences<cr>
+  nnoremap K  :YcmCompleter GetDoc<cr>
+  nnoremap gt :YcmCompleter GetType<cr>
+  nnoremap <leader>rn :YcmCompleter RefactorRename<space>
+
+  let g:ycm_enable_diagnostic_signs = 0
+  let g:ycm_show_diagnostics_ui = 0
+  let g:ycm_enable_diagnostic_highlighting = 0
+endif
+
+autocmd FileType python call SetPythonEnvironment()
+
+
+
+function! SetPythonEnvironment()
   " Get the current working directory
   let l:project_root = getcwd()
 
@@ -137,27 +184,6 @@ function! SetJediEnvironment()
 
 endfunction
 
-if has('python3')
-	" set jedi
-	let g:jedi#goto_command = "<leader>d"
-	let g:jedi#goto_assignments_command = "ga"
-	let g:jedi#goto_stubs_command = "gs"
-	let g:jedi#goto_definitions_command = "gd"
-	let g:jedi#documentation_command = "K"
-	let g:jedi#usages_command = "gr"
-	let g:jedi#rename_command = "<leader>rn"
-	let g:jedi#rename_command_keep_name = "<leader>R"
-	let g:jedi#popup_select_first = 0
-    let g:jedi#popup_on_dot = 1
-    let g:jedi#show_call_signatures = 2
-	autocmd FileType python call SetJediEnvironment()
-    autocmd FileType python let g:SuperTabDefaultCompletionType = "<c-x><c-o>"
-endif
-
-" code completion SuperTab config
-let g:SuperTabDefaultCompletionType = "context"
-let g:SuperTabLongestEnhanced = 1
-
 
 " emmet
 let g:user_emmet_leader_key='<c-e>'
@@ -165,6 +191,8 @@ let g:user_emmet_leader_key='<c-e>'
 " copilot
 imap <silent><script><expr> <C-l> copilot#Accept("\<CR>")
 let g:copilot_no_tab_map = v:true
+nnoremap <leader>cc :CopilotChatOpen<CR>
+vmap <leader>cc <Plug>CopilotChatAddSelection
 
 " translaotr
 let g:translator_default_engines = ["bing"]
@@ -191,6 +219,13 @@ noremap <leader>fg :<C-U><C-R>=printf("Leaderf rg %s", "")<CR><CR>
 "html/xml
 set matchpairs+=<:>     " specially for html
 autocmd BufRead,BufNewFile *.htm,*.html,*.css setlocal tabstop=2 shiftwidth=2 softtabstop=2
+
+
+" doc generate
+let g:doge_enable_mappings = 0
+nmap <silent> <leader>gd <Plug>(doge-generate)
+
+
 
 " ------------------------- UI ----------------------------
 
@@ -280,6 +315,7 @@ endif
 
 let g:completion_matching_strategy_list = ['exact', 'substring', 'fuzzy']
 
+"------------------------- UTILS -------------------------------
 
 " Sudo write with :w!!
 if executable('sudo') && executable('tee')
@@ -287,3 +323,4 @@ if executable('sudo') && executable('tee')
         \ execute 'w !sudo tee % > /dev/null' |
         \ setlocal nomodified
 endif
+
