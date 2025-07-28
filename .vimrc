@@ -1,6 +1,6 @@
 " ---------------- MODE -------------------
-" light mode will never use lsp
-let g:light_mode = 0
+" lite mode will never use lsp
+let g:lite_mode = 0
 " -----------------------------------------
 
 set nu
@@ -40,7 +40,7 @@ set mouse=a
 set nobackup
 set nowritebackup
 set updatetime=300
-set signcolumn=yes
+"set signcolumn=yes
 set laststatus=2
 set omnifunc=syntaxcomplete#Complete
 set wildignore+=*/.git/*,*/tmp/*,*.swp,*.bak,*.pyc,*.pyo,*.class,*.o,*.obj,*.exe,*.dll,*.so,*.dylib
@@ -73,6 +73,7 @@ augroup end
 
 
 
+
 call plug#begin()
   Plug 'LunarWatcher/auto-pairs'
   Plug 'tpope/vim-fugitive'
@@ -85,12 +86,14 @@ call plug#begin()
   Plug 'kkoomen/vim-doge', { 'do': { -> doge#install() } }
   Plug 'github/copilot.vim', {'on': ['Copilot']}
   Plug 'dense-analysis/ale'
-  " light mode never use lsp and node.js
-  if g:light_mode
+  Plug 'lifepillar/vim-mucomplete'
+  if g:lite_mode
     Plug 'lifepillar/vim-mucomplete'
     Plug 'davidhalter/jedi-vim', {'for': 'python'}
   else
     Plug 'ycm-core/YouCompleteMe'
+    Plug 'SirVer/ultisnips'
+    Plug 'honza/vim-snippets'
   endif
 call plug#end()
 
@@ -121,7 +124,7 @@ let g:ale_linters = {'python': ['ruff']}
 
 " completion and lsp
 
-if g:light_mode
+if g:lite_mode
   if has('python3')
       " set jedi
       let g:jedi#goto_command = "<leader>d"
@@ -150,6 +153,32 @@ else
   let g:ycm_enable_diagnostic_signs = 0
   let g:ycm_show_diagnostics_ui = 0
   let g:ycm_enable_diagnostic_highlighting = 0
+  let g:ycm_key_invoke_completion = '<c-j>'
+  let g:ycm_auto_hover = ''
+  let g:ycm_signature_help_disable_syntax = 0
+
+
+  let g:ycm_semantic_triggers =  {
+    \   'c': ['->', '.', 're!^\s*#include\s',],
+    \   'objc': ['->', '.', 're!\[[_a-zA-Z]+\w*\s', 're!^\s*[^\W\d]\w*\s',
+    \            're!\[.*\]\s'],
+    \   'ocaml': ['.', '#'],
+    \   'cpp,cuda,objcpp': ['->', '.', '::'],
+    \   'perl': ['->'],
+    \   'php': ['->', '::'],
+    \   'cs,d,elixir,go,groovy,java,javascript,julia,perl6,scala,typescript,vb': ['.'],
+    \   'python': ['.', 're!^\s*import\s', 're!^\s*from\s'],
+    \   'ruby,rust': ['.', '::'],
+    \   'lua': ['.', ':'],
+    \   'erlang': [':'],
+    \ }
+
+    let g:UltiSnipsExpandTrigger="<tab>"
+    let g:UltiSnipsJumpForwardTrigger="<c-b>"
+    let g:UltiSnipsJumpBackwardTrigger="<c-z>"
+
+  " If you want :UltiSnipsEdit to split your window.
+  let g:UltiSnipsEditSplit="vertical"
 endif
 
 autocmd FileType python call SetPythonEnvironment()
@@ -231,6 +260,8 @@ nmap <silent> <leader>gd <Plug>(doge-generate)
 
 colorscheme lunaperche
 
+let g:python_highlight_all = 1
+
 " LinterStatus function (unchanged)
 function! LinterStatus() abort
     let l:counts = ale#statusline#Count(bufnr(''))
@@ -295,6 +326,7 @@ hi FileType guifg=#ABE9B3 ctermfg=121
 hi Fileformat guifg=#DDB6F2 ctermfg=183
 hi Position guifg=#F8BD96 ctermfg=223
 
+
 hi Comment ctermfg=green guifg=green
 " hi LineNr ctermfg=darkgrey guifg=darkgrey
 hi Constant ctermfg=Brown guifg=Brown
@@ -312,8 +344,7 @@ if has('gui_running')
 endif
 
 
-
-let g:completion_matching_strategy_list = ['exact', 'substring', 'fuzzy']
+"let g:completion_matching_strategy_list = ['exact', 'substring', 'fuzzy']
 
 "------------------------- UTILS -------------------------------
 
