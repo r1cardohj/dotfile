@@ -216,38 +216,6 @@ function! SetPythonEnvironment()
 endfunction
 
 
-<<<<<<< HEAD
-=======
-" autocmd vimenter * hi Normal guibg=NONE ctermbg=NONE
-" autocmd vimenter * hi SignColumn guibg=NONE ctermbg=NONE
-" autocmd vimenter * hi LineNr guibg=NONE ctermbg=NONE
-"hi Comment ctermfg=darkgrey guifg=darkgrey gui=italic cterm=italic
-hi Comment ctermfg=green guifg=green gui=italic cterm=italic
-hi LineNr ctermfg=darkgrey guifg=darkgrey
-hi Constant ctermfg=Brown guifg=Brown
-highlight Normal guifg=white guibg=black ctermbg=black
-
-" airline
-
-"
-let g:airline_theme='serene'
-"let g:airline_theme='kyotonight'
-"let g:airline_powerline_fonts = 1
-"let g:airline_theme='kyotonight'
-let g:airline#extensions#tabline#enabled = 1
-let g:airline#extensions#tabline#left_sep = ' '
-let g:airline#extensions#tabline#left_alt_sep = '|'
-let g:airline#extensions#tabline#formatter = 'unique_tail'
-let g:airline#extensions#virtualenv#enabled = 1
-
-" ctrlp
-if executable('rg')
-  set grepprg=rg\ --color=never
-  let g:ctrlp_user_command = 'rg %s --files --color=never --glob ""'
-  let g:ctrlp_use_caching = 0
-endif
-
->>>>>>> 7192e3e (change color)
 " emmet
 let g:user_emmet_leader_key='<c-e>'
 
