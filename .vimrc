@@ -33,8 +33,9 @@ set showcmd
 set tabstop=4
 set shiftwidth=4
 set background=dark
+set termguicolors
 set softtabstop=0
-set completeopt=menu,menuone,noselect
+set completeopt=menu,menuone,noselect,noinsert
 set nocompatible
 set mouse=a
 set nobackup
@@ -72,6 +73,7 @@ augroup complete
 augroup end
 
 
+let g:pencil_terminal_italics = 1
 
 
 call plug#begin()
@@ -83,10 +85,10 @@ call plug#begin()
   Plug 'Yggdroot/LeaderF', { 'do': ':LeaderfInstallCExtension' }
   Plug 'sheerun/vim-polyglot'
   Plug 'markonm/traces.vim'
-  Plug 'kkoomen/vim-doge', { 'do': { -> doge#install() } }
+  Plug 'junegunn/vim-slash'
   Plug 'github/copilot.vim', {'on': ['Copilot']}
   Plug 'dense-analysis/ale'
-  Plug 'lifepillar/vim-mucomplete'
+  Plug 'lunacookies/vim-substrata'
   if g:lite_mode
     Plug 'lifepillar/vim-mucomplete'
     Plug 'davidhalter/jedi-vim', {'for': 'python'}
@@ -155,7 +157,10 @@ else
   let g:ycm_enable_diagnostic_highlighting = 0
   let g:ycm_key_invoke_completion = '<c-j>'
   let g:ycm_auto_hover = ''
-  let g:ycm_signature_help_disable_syntax = 0
+  let g:ycm_signature_help_disable_syntax = 1
+  let g:ycm_collect_identifiers_from_tags_files = 1
+  let g:ycm_min_num_of_chars_for_completion = 2
+  let g:ycm_server_keep_logfiles = 0
 
 
   let g:ycm_semantic_triggers =  {
@@ -173,9 +178,9 @@ else
     \   'erlang': [':'],
     \ }
 
-    let g:UltiSnipsExpandTrigger="<tab>"
-    let g:UltiSnipsJumpForwardTrigger="<c-b>"
-    let g:UltiSnipsJumpBackwardTrigger="<c-z>"
+    let g:UltiSnipsExpandTrigger="<c-m>"
+    let g:UltiSnipsJumpForwardTrigger="<c-m>"
+    let g:UltiSnipsJumpBackwardTrigger="<c-b>"
 
   " If you want :UltiSnipsEdit to split your window.
   let g:UltiSnipsEditSplit="vertical"
@@ -250,17 +255,17 @@ set matchpairs+=<:>     " specially for html
 autocmd BufRead,BufNewFile *.htm,*.html,*.css setlocal tabstop=2 shiftwidth=2 softtabstop=2
 
 
-" doc generate
-let g:doge_enable_mappings = 0
-nmap <silent> <leader>gd <Plug>(doge-generate)
-
-
-
 " ------------------------- UI ----------------------------
 
-colorscheme lunaperche
+
+colorscheme substrata
 
 let g:python_highlight_all = 1
+
+" augroup illuminate_augroup
+"     autocmd!
+"     autocmd VimEnter * hi illuminatedWord cterm=bold gui=bold
+" augroup END
 
 " LinterStatus function (unchanged)
 function! LinterStatus() abort
@@ -278,21 +283,22 @@ endfunction
 
 " STATUSLINE MODE
 let g:currentmode={
- \ 'n' : 'NORMAL ',
+ \ 'n' : 'THINK',
  \ 'v' : 'VISUAL ',
  \ 'V' : 'V-LINE ',
- \ 'i' : 'INSERT ',
+ \ 'i' : 'CODING',
  \ 'R' : 'R ',
  \ 'Rv' : 'V-REPLACE ',
  \ 'c' : 'COMMAND ',
  \}
 
 set statusline=
-set statusline+=%#Icon#
-set statusline+=\ 💤
+"set statusline+=%#Icon#
+"set statusline+=\ 💤
 set statusline+=\ %#NormalC#%{(mode()=='n')?'\ NORMAL\ ':''}
 set statusline+=%#InsertC#%{(mode()=='i')?'\ INSERT\ ':''}
 set statusline+=%#VisualC#%{(mode()=='v')?'\ VISUAL\ ':''}
+set statusline+=%#CommandC#%{(mode()=='c')?'\ COMMAND\ ':''}
 set statusline+=%#Filename#
 set statusline+=\ %<%f\       " 显示相对路径, 用%<截断显示
 set statusline+=%#ReadOnly#
@@ -309,42 +315,30 @@ set statusline+=\ %{&fileencoding?&fileencoding:&encoding}
 set statusline+=\ [%{&fileformat}]
 set statusline+=%#Position#
 
+""  " hi LineNr ctermfg=darkgrey guifg=darkgrey
+"hi Constant ctermfg=Brown guifg=Brown
+""hi String ctermfg=Brown guifg=Brown
+"highlight Comment guifg=#7fbbb3 ctermfg=73
+""highlight String guifg=#7fbbb3 ctermfg=73
 
+"hi Normal guifg=white guibg=black ctermbg=black
 
-hi Icon guifg=#FBB1F9 ctermfg=213
-hi NormalC guifg=#ABE9B3 ctermfg=121
-hi InsertC guifg=#F2CDCD ctermfg=217
-hi VisualC guifg=#B5E8E0 ctermfg=158
-hi CommandC guifg=#F8BD96 ctermfg=223
-hi ReplaceC guifg=#F28FAD ctermfg=212
-hi VReplaceC guifg=#F28FAD ctermfg=212
-hi VLineC guifg=#DDB6F2 ctermfg=183
-hi Filename guifg=#89DCEB ctermfg=81
-hi ReadOnly guifg=#F28FAD ctermfg=212
-hi LineCol guifg=#F8BD96 ctermfg=223
-hi FileType guifg=#ABE9B3 ctermfg=121
-hi Fileformat guifg=#DDB6F2 ctermfg=183
-hi Position guifg=#F8BD96 ctermfg=223
-
-
-hi Comment ctermfg=green guifg=green
-" hi LineNr ctermfg=darkgrey guifg=darkgrey
-hi Constant ctermfg=Brown guifg=Brown
-hi String ctermfg=Brown guifg=Brown
-highlight Normal guifg=white guibg=black ctermbg=black
-
-
-" highlight Pmenu      guibg=#282c34 guifg=#c8d3f5 ctermbg=236 ctermfg=189
-" highlight PmenuSel   guibg=#a6e3a1 guifg=#1a1b26 ctermbg=121 ctermfg=234
-" highlight PmenuSbar  guibg=#44475a guifg=NONE ctermbg=237 ctermfg=NONE
-" highlight PmenuThumb guibg=#a6e3a1 guifg=NONE ctermbg=121 ctermfg=NONE
+let g:ale_sign_error = '●'
+let g:ale_sign_warning = '●'
+let g:ale_sign_info = '●'
+hi ALEWarning gui=underline cterm=underline
+hi ALEInfo   gui=underline cterm=underline
+hi ALEError  gui=underline cterm=underline
+hi ALEWarningSign cterm=none   ctermbg=none    ctermfg=15     gui=none   guifg=#FFE377
+hi ALEErrorSign   cterm=none   ctermbg=none    ctermfg=15     gui=none   guifg=#F75646
+hi ALEInfoSign    cterm=none   ctermbg=none    ctermfg=15     gui=none   guifg=#B0B0B0
 
 if has('gui_running')
     set pumblend=15
 endif
 
 
-"let g:completion_matching_strategy_list = ['exact', 'substring', 'fuzzy']
+let g:completion_matching_strategy_list = ['exact', 'substring', 'fuzzy']
 
 "------------------------- UTILS -------------------------------
 
