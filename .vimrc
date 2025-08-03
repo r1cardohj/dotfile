@@ -33,13 +33,13 @@ set showcmd
 set tabstop=4
 set shiftwidth=4
 set background=dark
-set termguicolors
 set softtabstop=0
 set completeopt=menu,menuone,noselect,noinsert
 set nocompatible
 set mouse=a
 set nobackup
 set nowritebackup
+set termguicolors
 set updatetime=300
 "set signcolumn=yes
 set laststatus=2
@@ -73,9 +73,6 @@ augroup complete
 augroup end
 
 
-let g:pencil_terminal_italics = 1
-
-
 call plug#begin()
   Plug 'LunarWatcher/auto-pairs'
   Plug 'tpope/vim-fugitive'
@@ -85,10 +82,10 @@ call plug#begin()
   Plug 'Yggdroot/LeaderF', { 'do': ':LeaderfInstallCExtension' }
   Plug 'sheerun/vim-polyglot'
   Plug 'markonm/traces.vim'
-  Plug 'junegunn/vim-slash'
   Plug 'github/copilot.vim', {'on': ['Copilot']}
   Plug 'dense-analysis/ale'
-  Plug 'lunacookies/vim-substrata'
+  Plug 'foxoman/vim-helix'
+  Plug 'lifepillar/gruvbox8'
   if g:lite_mode
     Plug 'lifepillar/vim-mucomplete'
     Plug 'davidhalter/jedi-vim', {'for': 'python'}
@@ -258,7 +255,7 @@ autocmd BufRead,BufNewFile *.htm,*.html,*.css setlocal tabstop=2 shiftwidth=2 so
 " ------------------------- UI ----------------------------
 
 
-colorscheme substrata
+colorscheme gruvbox8
 
 let g:python_highlight_all = 1
 
@@ -329,9 +326,9 @@ let g:ale_sign_info = '●'
 hi ALEWarning gui=underline cterm=underline
 hi ALEInfo   gui=underline cterm=underline
 hi ALEError  gui=underline cterm=underline
-hi ALEWarningSign cterm=none   ctermbg=none    ctermfg=15     gui=none   guifg=#FFE377
-hi ALEErrorSign   cterm=none   ctermbg=none    ctermfg=15     gui=none   guifg=#F75646
-hi ALEInfoSign    cterm=none   ctermbg=none    ctermfg=15     gui=none   guifg=#B0B0B0
+hi ALEWarningSign cterm=none   ctermbg=none    ctermfg=yellow     gui=none   guifg=#FFE377
+hi ALEErrorSign   cterm=none   ctermbg=none    ctermfg=red     gui=none   guifg=#F75646
+hi ALEInfoSign    cterm=none   ctermbg=none    ctermfg=grey     gui=none   guifg=#B0B0B0
 
 if has('gui_running')
     set pumblend=15
