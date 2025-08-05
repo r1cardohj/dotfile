@@ -39,7 +39,7 @@ set nocompatible
 set mouse=a
 set nobackup
 set nowritebackup
-set termguicolors
+"set termguicolors
 set updatetime=300
 "set signcolumn=yes
 set laststatus=2
@@ -84,8 +84,7 @@ call plug#begin()
   Plug 'markonm/traces.vim'
   Plug 'github/copilot.vim', {'on': ['Copilot']}
   Plug 'dense-analysis/ale'
-  Plug 'foxoman/vim-helix'
-  Plug 'lifepillar/gruvbox8'
+  Plug 'tomasr/molokai'
   if g:lite_mode
     Plug 'lifepillar/vim-mucomplete'
     Plug 'davidhalter/jedi-vim', {'for': 'python'}
@@ -255,7 +254,7 @@ autocmd BufRead,BufNewFile *.htm,*.html,*.css setlocal tabstop=2 shiftwidth=2 so
 " ------------------------- UI ----------------------------
 
 
-colorscheme gruvbox8
+colorscheme molokai
 
 let g:python_highlight_all = 1
 
@@ -312,10 +311,10 @@ set statusline+=\ %{&fileencoding?&fileencoding:&encoding}
 set statusline+=\ [%{&fileformat}]
 set statusline+=%#Position#
 
-""  " hi LineNr ctermfg=darkgrey guifg=darkgrey
+"hi LineNr ctermfg=darkgrey guifg=darkgrey
 "hi Constant ctermfg=Brown guifg=Brown
-""hi String ctermfg=Brown guifg=Brown
-"highlight Comment guifg=#7fbbb3 ctermfg=73
+"hi String ctermfg=Brown guifg=Brown
+"highlight Comment guifg=#7fbbb3 ctermfg=green
 ""highlight String guifg=#7fbbb3 ctermfg=73
 
 "hi Normal guifg=white guibg=black ctermbg=black
