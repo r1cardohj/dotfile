@@ -122,6 +122,8 @@ let g:ale_linters = {'python': ['ruff']}
 
 " completion and lsp
 
+" --------python settings ---------
+" if lite mode, we use jedi-vim
 if g:lite_mode
   if has('python3')
       " set jedi
@@ -138,15 +140,54 @@ if g:lite_mode
       let g:jedi#show_call_signatures = 2
   endif
 
+  " auto set venv
+  autocmd FileType python call SetPythonEnvironment()
+
+  function! SetPythonEnvironment()
+    " Get the current working directory
+    let l:project_root = getcwd()
+
+    " Path to the virtual environment Python interpreter
+    let l:venv_python = l:project_root . '/.venv/bin/python'
+    let l:venv2_python = l:project_root . '/venv/bin/python'
+    let l:venv3_python = l:project_root . '/env/bin/python'
+
+
+    " Check if the .venv directory exists
+    if filereadable(l:venv_python)
+      " If .venv exists, use its Python interpreter
+      let g:jedi#environment_path = l:venv_python
+    endif
+
+    if filereadable(l:venv2_python)
+      " If venv exists, use its Python interpreter
+      let g:jedi#environment_path = l:venv2_python
+    endif
+
+    if filereadable(l:venv3_python)
+      " If env exists, use its Python interpreter
+      let g:jedi#environment_path = l:venv3_python
+    endif
+
+  endfunction
+endif
+
+
+
+" ---------complete mode -----------
+
+if g:lite_mode
+
   let g:mucomplete#enable_auto_at_startup = 1
   let g:mucomplete#completion_delay = 200
 else
   nnoremap gd :YcmCompleter GoTo<cr>
   nnoremap gs :YcmCompleter GoToSymbol<cr>
   nnoremap gr :YcmCompleter GoToReferences<cr>
-  nnoremap K  :YcmCompleter GetDoc<cr>
   nnoremap gt :YcmCompleter GetType<cr>
   nnoremap <leader>rn :YcmCompleter RefactorRename<space>
+
+  nmap K <plug>(YCMHover)
 
   let g:ycm_enable_diagnostic_signs = 0
   let g:ycm_show_diagnostics_ui = 0
@@ -182,37 +223,6 @@ else
   let g:UltiSnipsEditSplit="vertical"
 endif
 
-autocmd FileType python call SetPythonEnvironment()
-
-
-
-function! SetPythonEnvironment()
-  " Get the current working directory
-  let l:project_root = getcwd()
-
-  " Path to the virtual environment Python interpreter
-  let l:venv_python = l:project_root . '/.venv/bin/python'
-  let l:venv2_python = l:project_root . '/venv/bin/python'
-  let l:venv3_python = l:project_root . '/env/bin/python'
-
-
-  " Check if the .venv directory exists
-  if filereadable(l:venv_python)
-    " If .venv exists, use its Python interpreter
-    let g:jedi#environment_path = l:venv_python
-  endif
-
-  if filereadable(l:venv2_python)
-	" If venv exists, use its Python interpreter
-	let g:jedi#environment_path = l:venv2_python
-  endif
-
-  if filereadable(l:venv3_python)
-	" If env exists, use its Python interpreter
-	let g:jedi#environment_path = l:venv3_python
-  endif
-
-endfunction
 
 
 " emmet
@@ -253,8 +263,6 @@ autocmd BufRead,BufNewFile *.htm,*.html,*.css setlocal tabstop=2 shiftwidth=2 so
 
 " ------------------------- UI ----------------------------
 
-
-colorscheme molokai
 
 let g:python_highlight_all = 1
 
@@ -311,11 +319,10 @@ set statusline+=\ %{&fileencoding?&fileencoding:&encoding}
 set statusline+=\ [%{&fileformat}]
 set statusline+=%#Position#
 
-"hi LineNr ctermfg=darkgrey guifg=darkgrey
-"hi Constant ctermfg=Brown guifg=Brown
+hi LineNr ctermfg=darkgrey guifg=darkgrey
+hi Constant ctermfg=Brown guifg=Brown
 "hi String ctermfg=Brown guifg=Brown
-"highlight Comment guifg=#7fbbb3 ctermfg=green
-""highlight String guifg=#7fbbb3 ctermfg=73
+highlight Comment guifg=#7fbbb3 ctermfg=green
 
 "hi Normal guifg=white guibg=black ctermbg=black
 
@@ -335,6 +342,7 @@ endif
 
 
 let g:completion_matching_strategy_list = ['exact', 'substring', 'fuzzy']
+
 
 "------------------------- UTILS -------------------------------
 
