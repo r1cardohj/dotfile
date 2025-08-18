@@ -82,8 +82,8 @@ call plug#begin()
   Plug 'Yggdroot/LeaderF', { 'do': ':LeaderfInstallCExtension' }
   Plug 'sheerun/vim-polyglot'
   Plug 'markonm/traces.vim'
+  Plug 'Valloric/ListToggle'
   Plug 'github/copilot.vim', {'on': ['Copilot']}
-  Plug 'dense-analysis/ale'
   Plug 'tomasr/molokai'
   if g:lite_mode
     Plug 'lifepillar/vim-mucomplete'
@@ -92,33 +92,12 @@ call plug#begin()
     Plug 'ycm-core/YouCompleteMe'
     Plug 'SirVer/ultisnips'
     Plug 'honza/vim-snippets'
+    Plug 'preservim/tagbar'
   endif
 call plug#end()
 
 
 " ------------------------------- coding ------------------------------------
-
-
-" ale config
-" it just a linter in my conf
-
-let g:ale_lint_delay = 5000
-nmap <silent> [g <Plug>(ale_previous_wrap)
-nmap <silent> ]g <Plug>(ale_next_wrap)
-let g:ale_virtualtext_cursor = 'current'
-let g:ale_lint_on_text_changed = 'never'
-let g:ale_lint_on_enter = 0
-let g:ale_lint_on_insert_leave = 0
-let g:ale_disable_lsp = 1
-nnoremap <leader>F :ALEFix<CR>
-let g:ale_echo_msg_format = '[%linter%] %s [%severity%]'
-
-
-let g:ale_fixers = {'*': ['remove_trailing_lines', 'trim_whitespace'], 'python': ['ruff', 'ruff_format', 'isort']}
-" In ~/.vim/vimrc, or somewhere similar.
-let g:ale_linters = {'python': ['ruff']}
-
-
 
 " completion and lsp
 
@@ -185,19 +164,25 @@ else
   nnoremap gs :YcmCompleter GoToSymbol<cr>
   nnoremap gr :YcmCompleter GoToReferences<cr>
   nnoremap gt :YcmCompleter GetType<cr>
+  nnoremap <leader>f :YcmCompleter FixIt<cr>
   nnoremap <leader>rn :YcmCompleter RefactorRename<space>
 
   nmap K <plug>(YCMHover)
 
-  let g:ycm_enable_diagnostic_signs = 0
-  let g:ycm_show_diagnostics_ui = 0
-  let g:ycm_enable_diagnostic_highlighting = 0
+  let g:ycm_enable_diagnostic_signs = 1
+  let g:ycm_show_diagnostics_ui = 1
+  let g:ycm_enable_diagnostic_highlighting = 1
   let g:ycm_key_invoke_completion = '<c-j>'
   let g:ycm_auto_hover = ''
   let g:ycm_signature_help_disable_syntax = 1
   let g:ycm_collect_identifiers_from_tags_files = 1
   let g:ycm_min_num_of_chars_for_completion = 2
+  let g:ycm_always_populate_location_list=1
+  let g:ycm_show_detailed_diag_in_popup=1
   let g:ycm_server_keep_logfiles = 0
+  let g:ycm_update_diagnostics_in_insert_mode = 0
+  let g:ycm_echo_current_diagnostic = 'virtual-text'
+
 
 
   let g:ycm_semantic_triggers =  {
@@ -219,10 +204,12 @@ else
     let g:UltiSnipsJumpForwardTrigger="<c-m>"
     let g:UltiSnipsJumpBackwardTrigger="<c-b>"
 
-  " If you want :UltiSnipsEdit to split your window.
-  let g:UltiSnipsEditSplit="vertical"
+    " If you want :UltiSnipsEdit to split your window.
+    let g:UltiSnipsEditSplit="vertical"
 endif
 
+" tagbar
+nmap <leader>tb :TagbarToggle<CR>
 
 
 " emmet
@@ -231,13 +218,18 @@ let g:user_emmet_leader_key='<c-e>'
 " copilot
 imap <silent><script><expr> <C-l> copilot#Accept("\<CR>")
 let g:copilot_no_tab_map = v:true
-nnoremap <leader>cc :CopilotChatOpen<CR>
-vmap <leader>cc <Plug>CopilotChatAddSelection
+
 
 " translaotr
 let g:translator_default_engines = ["bing"]
 nmap <silent> <Leader>w <Plug>TranslateW
 vmap <silent> <Leader>w <Plug>TranslateWV
+
+" flake8
+autocmd FileType python map <buffer> gl :call flake8#Flake8()<CR>
+let g:no_flake8_maps = 1
+nnoremap <leader>d :call flake8#Flake8ShowError()<cr>
+let g:flake8_show_in_gutter = 1
 
 
 " leaderf
@@ -266,25 +258,6 @@ autocmd BufRead,BufNewFile *.htm,*.html,*.css setlocal tabstop=2 shiftwidth=2 so
 
 let g:python_highlight_all = 1
 
-" augroup illuminate_augroup
-"     autocmd!
-"     autocmd VimEnter * hi illuminatedWord cterm=bold gui=bold
-" augroup END
-
-" LinterStatus function (unchanged)
-function! LinterStatus() abort
-    let l:counts = ale#statusline#Count(bufnr(''))
-
-    let l:all_errors = l:counts.error + l:counts.style_error
-    let l:all_non_errors = l:counts.total - l:all_errors
-
-    return l:counts.total == 0 ? 'OK' : printf(
-    \   'W(%d) E(%d)',
-    \   all_non_errors,
-    \   all_errors
-    \)
-endfunction
-
 " STATUSLINE MODE
 let g:currentmode={
  \ 'n' : 'THINK',
@@ -308,7 +281,9 @@ set statusline+=\ %<%f\       " 显示相对路径, 用%<截断显示
 set statusline+=%#ReadOnly#
 set statusline+=\ %r
 set statusline+=%{fugitive#statusline()}
-set statusline+=%{LinterStatus()}
+set statusline+=W\ %{youcompleteme#GetWarningCount()}\ 
+set statusline+=E\ %{youcompleteme#GetErrorCount()}\ 
+" set statusline+=%{LinterStatus()}
 set statusline+=%m
 set statusline+=%=
 set statusline+=%#LineCol#
@@ -322,7 +297,7 @@ set statusline+=%#Position#
 hi LineNr ctermfg=darkgrey guifg=darkgrey
 hi Constant ctermfg=Brown guifg=Brown
 "hi String ctermfg=Brown guifg=Brown
-highlight Comment guifg=#7fbbb3 ctermfg=green
+highlight Comment guifg=grey ctermfg=grey
 
 "hi Normal guifg=white guibg=black ctermbg=black
 
