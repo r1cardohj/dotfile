@@ -7,5 +7,7 @@
 	"python.linting.ruffEnabled": true,
 	"pyright.organizeimports.provider": "ruff",
     "python.analysis.typeCheckingMode": "off",
-	"diagnostic.displayByAle": true
+	"suggest.noselect": true,
+	"suggest.minTriggerInputLength": 2,
+	"suggest.triggerCompletionWait": 250
 }
