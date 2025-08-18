@@ -301,16 +301,6 @@ highlight Comment guifg=grey ctermfg=grey
 
 "hi Normal guifg=white guibg=black ctermbg=black
 
-let g:ale_sign_error = '●'
-let g:ale_sign_warning = '●'
-let g:ale_sign_info = '●'
-hi ALEWarning gui=underline cterm=underline
-hi ALEInfo   gui=underline cterm=underline
-hi ALEError  gui=underline cterm=underline
-hi ALEWarningSign cterm=none   ctermbg=none    ctermfg=yellow     gui=none   guifg=#FFE377
-hi ALEErrorSign   cterm=none   ctermbg=none    ctermfg=red     gui=none   guifg=#F75646
-hi ALEInfoSign    cterm=none   ctermbg=none    ctermfg=grey     gui=none   guifg=#B0B0B0
-
 if has('gui_running')
     set pumblend=15
 endif
