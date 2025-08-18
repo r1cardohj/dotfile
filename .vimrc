@@ -79,16 +79,18 @@ call plug#begin()
   Plug 'tpope/vim-commentary'
   Plug 'mattn/emmet-vim'
   Plug 'voldikss/vim-translator'
+  Plug 'Yggdroot/LeaderF', { 'do': ':LeaderfInstallCExtension' }
   Plug 'sheerun/vim-polyglot'
   Plug 'markonm/traces.vim'
   Plug 'github/copilot.vim', {'on': ['Copilot']}
+  Plug 'dense-analysis/ale'
+  Plug 'tomasr/molokai'
   if g:lite_mode
-    Plug 'Yggdroot/LeaderF', { 'do': ':LeaderfInstallCExtension' }
     Plug 'lifepillar/vim-mucomplete'
-    Plug 'dense-analysis/ale'
     Plug 'davidhalter/jedi-vim', {'for': 'python'}
   else
-    Plug 'neoclide/coc.nvim', {'branch': 'release'}
+    Plug 'ycm-core/YouCompleteMe'
+    Plug 'SirVer/ultisnips'
     Plug 'honza/vim-snippets'
   endif
 call plug#end()
@@ -107,17 +109,14 @@ let g:ale_virtualtext_cursor = 'current'
 let g:ale_lint_on_text_changed = 'never'
 let g:ale_lint_on_enter = 0
 let g:ale_lint_on_insert_leave = 0
-" default disable lsp
 let g:ale_disable_lsp = 1
-
 nnoremap <leader>F :ALEFix<CR>
 let g:ale_echo_msg_format = '[%linter%] %s [%severity%]'
 
-let g:ale_python_pylint_use_global = 0
 
 let g:ale_fixers = {'*': ['remove_trailing_lines', 'trim_whitespace'], 'python': ['ruff', 'ruff_format', 'isort']}
 " In ~/.vim/vimrc, or somewhere similar.
-let g:ale_linters = {'python': ['ruff', 'pylint']}
+let g:ale_linters = {'python': ['ruff']}
 
 
 
@@ -182,145 +181,46 @@ if g:lite_mode
   let g:mucomplete#enable_auto_at_startup = 1
   let g:mucomplete#completion_delay = 200
 else
-  " all in coc settings
-  
-  " use <tab> to trigger completion and navigate to the next complete item
-  function! CheckBackspace() abort
-    let col = col('.') - 1
-    return !col || getline('.')[col - 1]  =~# '\s'
-  endfunction
+  nnoremap gd :YcmCompleter GoTo<cr>
+  nnoremap gs :YcmCompleter GoToSymbol<cr>
+  nnoremap gr :YcmCompleter GoToReferences<cr>
+  nnoremap gt :YcmCompleter GetType<cr>
+  nnoremap <leader>rn :YcmCompleter RefactorRename<space>
 
-  " with coc snippets
-  inoremap <silent><expr> <TAB>
-      \ coc#pum#visible() ? coc#_select_confirm() :
-      \ coc#expandableOrJumpable() ? "\<C-r>=coc#rpc#request('doKeymap', ['snippets-expand-jump',''])\<CR>" :
-      \ CheckBackspace() ? "\<TAB>" :
-      \ coc#refresh()
+  nmap K <plug>(YCMHover)
 
-  let g:coc_snippet_next = '<tab>'
-  let g:coc_snippet_next = '<c-j>'
-  let g:coc_snippet_prev = '<c-k>'
-
-
-  " Use <c-space> to trigger completion
-  if has('nvim')
-    inoremap <silent><expr> <c-space> coc#refresh()
-  else
-    inoremap <silent><expr> <c-@> coc#refresh()
-  endif
-
-  " Use `[g` and `]g` to navigate diagnostics
-  " Use `:CocDiagnostics` to get all diagnostics of current buffer in location list
-  nmap <silent><nowait> [g <Plug>(coc-diagnostic-prev)
-  nmap <silent><nowait> ]g <Plug>(coc-diagnostic-next)
-
-  " GoTo code navigation
-  nmap <silent><nowait> gd <Plug>(coc-definition)
-  nmap <silent><nowait> gy <Plug>(coc-type-definition)
-  nmap <silent><nowait> gi <Plug>(coc-implementation)
-  nmap <silent><nowait> gr <Plug>(coc-references)
-
-  " Use K to show documentation in preview window
-  nnoremap <silent> K :call ShowDocumentation()<CR>
-
-  function! ShowDocumentation()
-    if CocAction('hasProvider', 'hover')
-      call CocActionAsync('doHover')
-    else
-      call feedkeys('K', 'in')
-    endif
-  endfunction
-
-  " Highlight the symbol and its references when holding the cursor
-  autocmd CursorHold * silent call CocActionAsync('highlight')
-
-  " Symbol renaming
-  nmap <leader>rn <Plug>(coc-rename)
-
-  " Formatting selected code
-  xmap <leader>F  <Plug>(coc-format-selected)
-  nmap <leader>F  <Plug>(coc-format-selected)
-
-  augroup mygroup
-    autocmd!
-    " Setup formatexpr specified filetype(s)
-    autocmd FileType typescript,json setl formatexpr=CocAction('formatSelected')
-  augroup end
-
-  " Applying code actions to the selected code block
-  " Example: `<leader>aap` for current paragraph
-  xmap <leader>a  <Plug>(coc-codeaction-selected)
-  nmap <leader>a  <Plug>(coc-codeaction-selected)
-
-  " Remap keys for applying code actions at the cursor position
-  nmap <leader>ac  <Plug>(coc-codeaction-cursor)
-  " Remap keys for apply code actions affect whole buffer
-  nmap <leader>as  <Plug>(coc-codeaction-source)
-  " Apply the most preferred quickfix action to fix diagnostic on the current line
-  nmap <leader>qf  <Plug>(coc-fix-current)
-
-  " Remap keys for applying refactor code actions
-  nmap <silent> <leader>re <Plug>(coc-codeaction-refactor)
-  xmap <silent> <leader>r  <Plug>(coc-codeaction-refactor-selected)
-  nmap <silent> <leader>r  <Plug>(coc-codeaction-refactor-selected)
-
-  " Run the Code Lens action on the current line
-  nmap <leader>cl  <Plug>(coc-codelens-action)
-
-  " Map function and class text objects
-  " NOTE: Requires 'textDocument.documentSymbol' support from the language server
-  xmap if <Plug>(coc-funcobj-i)
-  omap if <Plug>(coc-funcobj-i)
-  xmap af <Plug>(coc-funcobj-a)
-  omap af <Plug>(coc-funcobj-a)
-  xmap ic <Plug>(coc-classobj-i)
-  omap ic <Plug>(coc-classobj-i)
-  xmap ac <Plug>(coc-classobj-a)
-  omap ac <Plug>(coc-classobj-a)
-
-  " Remap <C-f> and <C-b> to scroll float windows/popups
-  if has('nvim-0.4.0') || has('patch-8.2.0750')
-    nnoremap <silent><nowait><expr> <C-f> coc#float#has_scroll() ? coc#float#scroll(1) : "\<C-f>"
-    nnoremap <silent><nowait><expr> <C-b> coc#float#has_scroll() ? coc#float#scroll(0) : "\<C-b>"
-    inoremap <silent><nowait><expr> <C-f> coc#float#has_scroll() ? "\<c-r>=coc#float#scroll(1)\<cr>" : "\<Right>"
-    inoremap <silent><nowait><expr> <C-b> coc#float#has_scroll() ? "\<c-r>=coc#float#scroll(0)\<cr>" : "\<Left>"
-    vnoremap <silent><nowait><expr> <C-f> coc#float#has_scroll() ? coc#float#scroll(1) : "\<C-f>"
-    vnoremap <silent><nowait><expr> <C-b> coc#float#has_scroll() ? coc#float#scroll(0) : "\<C-b>"
-  endif
-
-  " Use CTRL-S for selections ranges
-  " Requires 'textDocument/selectionRange' support of language server
-  nmap <silent> <C-s> <Plug>(coc-range-select)
-  xmap <silent> <C-s> <Plug>(coc-range-select)
-
-  " Add `:Format` command to format current buffer
-  command! -nargs=0 Format :call CocActionAsync('format')
-
-  " Add `:Fold` command to fold current buffer
-  command! -nargs=? Fold :call     CocAction('fold', <f-args>)
-
-  " Add `:OR` command for organize imports of the current buffer
-  command! -nargs=0 OR   :call     CocActionAsync('runCommand', 'editor.action.organizeImport')
+  let g:ycm_enable_diagnostic_signs = 0
+  let g:ycm_show_diagnostics_ui = 0
+  let g:ycm_enable_diagnostic_highlighting = 0
+  let g:ycm_key_invoke_completion = '<c-j>'
+  let g:ycm_auto_hover = ''
+  let g:ycm_signature_help_disable_syntax = 1
+  let g:ycm_collect_identifiers_from_tags_files = 1
+  let g:ycm_min_num_of_chars_for_completion = 2
+  let g:ycm_server_keep_logfiles = 0
 
 
-  " Mappings for CoCList
-  nnoremap <silent><nowait> <space><space> : <C-u>CocList<cr>
+  let g:ycm_semantic_triggers =  {
+    \   'c': ['->', '.', 're!^\s*#include\s',],
+    \   'objc': ['->', '.', 're!\[[_a-zA-Z]+\w*\s', 're!^\s*[^\W\d]\w*\s',
+    \            're!\[.*\]\s'],
+    \   'ocaml': ['.', '#'],
+    \   'cpp,cuda,objcpp': ['->', '.', '::'],
+    \   'perl': ['->'],
+    \   'php': ['->', '::'],
+    \   'cs,d,elixir,go,groovy,java,javascript,julia,perl6,scala,typescript,vb': ['.'],
+    \   'python': ['.', 're!^\s*import\s', 're!^\s*from\s'],
+    \   'ruby,rust': ['.', '::'],
+    \   'lua': ['.', ':'],
+    \   'erlang': [':'],
+    \ }
 
-  nnoremap <silent><nowait> <space>ff  :<C-u>CocList files<cr>
-  nnoremap <silent><nowait> <space>fg :<C-u>CocList grep<cr>
-  nnoremap <silent><nowait> <space>fb :<C-u>CocList buffer<cr>
-  " Show all diagnostics
-  nnoremap <silent><nowait> <space>a  :<C-u>CocList diagnostics<cr>
-  " Show commands
-  nnoremap <silent><nowait> <space>c  :<C-u>CocList commands<cr>
-  " Find symbol of current document
-  nnoremap <silent><nowait> <space>o  :<C-u>CocList outline<cr>
-  " Search workspace symbols
-  nnoremap <silent><nowait> <space>s  :<C-u>CocList -I symbols<cr>
-  " Do default action for next item
-  nnoremap <silent><nowait> <space>j  :<C-u>CocNext<CR>
-  " Do default action for previous item
-  nnoremap <silent><nowait> <space>k  :<C-u>CocPrev<CR>
+    let g:UltiSnipsExpandTrigger="<c-m>"
+    let g:UltiSnipsJumpForwardTrigger="<c-m>"
+    let g:UltiSnipsJumpBackwardTrigger="<c-b>"
+
+  " If you want :UltiSnipsEdit to split your window.
+  let g:UltiSnipsEditSplit="vertical"
 endif
 
 
@@ -341,22 +241,20 @@ vmap <silent> <Leader>w <Plug>TranslateWV
 
 
 " leaderf
-if g:lite_mode
-  let g:Lf_HideHelp = 1
-  let g:Lf_UseCache = 0
-  let g:Lf_UseVersionControlTool = 0
-  let g:Lf_IgnoreCurrentBufferName = 1
-  let g:Lf_WindowPosition = 'popup'
-  let g:Lf_PreviewResult = {'Function': 0, 'BufTag': 0, 'File': 0, 'Buffer': 0}
-  let g:Lf_PopupHeight = 0.3
+let g:Lf_HideHelp = 1
+let g:Lf_UseCache = 0
+let g:Lf_UseVersionControlTool = 0
+let g:Lf_IgnoreCurrentBufferName = 1
+let g:Lf_WindowPosition = 'popup'
+let g:Lf_PreviewResult = {'Function': 0, 'BufTag': 0, 'File': 0, 'Buffer': 0}
+let g:Lf_PopupHeight = 0.3
 
-  let g:Lf_ShortcutF = "<leader>ff"
-  noremap <leader>fb :<C-U><C-R>=printf("Leaderf buffer %s", "")<CR><CR>
-  noremap <leader>fm :<C-U><C-R>=printf("Leaderf mru %s", "")<CR><CR>
-  noremap <leader>ft :<C-U><C-R>=printf("Leaderf bufTag %s", "")<CR><CR>
-  noremap <leader>fl :<C-U><C-R>=printf("Leaderf line %s", "")<CR><CR>
-  noremap <leader>fg :<C-U><C-R>=printf("Leaderf rg %s", "")<CR><CR>
-endif
+let g:Lf_ShortcutF = "<leader>ff"
+noremap <leader>fb :<C-U><C-R>=printf("Leaderf buffer %s", "")<CR><CR>
+noremap <leader>fm :<C-U><C-R>=printf("Leaderf mru %s", "")<CR><CR>
+noremap <leader>ft :<C-U><C-R>=printf("Leaderf bufTag %s", "")<CR><CR>
+noremap <leader>fl :<C-U><C-R>=printf("Leaderf line %s", "")<CR><CR>
+noremap <leader>fg :<C-U><C-R>=printf("Leaderf rg %s", "")<CR><CR>
 
 "html/xml
 set matchpairs+=<:>     " specially for html
@@ -364,6 +262,7 @@ autocmd BufRead,BufNewFile *.htm,*.html,*.css setlocal tabstop=2 shiftwidth=2 so
 
 
 " ------------------------- UI ----------------------------
+
 
 let g:python_highlight_all = 1
 
@@ -409,11 +308,7 @@ set statusline+=\ %<%f\       " 显示相对路径, 用%<截断显示
 set statusline+=%#ReadOnly#
 set statusline+=\ %r
 set statusline+=%{fugitive#statusline()}
-if g:lite_mode
-  set statusline+=%{LinterStatus()}
-else
-  set statusline+=%{coc#status()}%{get(b:,'coc_current_function','')}
-endif
+set statusline+=%{LinterStatus()}
 set statusline+=%m
 set statusline+=%=
 set statusline+=%#LineCol#
@@ -427,10 +322,9 @@ set statusline+=%#Position#
 hi LineNr ctermfg=darkgrey guifg=darkgrey
 hi Constant ctermfg=Brown guifg=Brown
 "hi String ctermfg=Brown guifg=Brown
-highlight Comment guifg=grey ctermfg=grey
+highlight Comment guifg=#7fbbb3 ctermfg=green
 
 "hi Normal guifg=white guibg=black ctermbg=black
-
 
 let g:ale_sign_error = '●'
 let g:ale_sign_warning = '●'
@@ -446,9 +340,8 @@ if has('gui_running')
     set pumblend=15
 endif
 
-hi CocSearch guifg=NONE guibg=NONE ctermfg=yellow
 
-"let g:completion_matching_strategy_list = ['exact', 'substring']
+let g:completion_matching_strategy_list = ['exact', 'substring', 'fuzzy']
 
 
 "------------------------- UTILS -------------------------------
