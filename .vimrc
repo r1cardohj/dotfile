@@ -83,6 +83,7 @@ call plug#begin()
   Plug 'sheerun/vim-polyglot'
   Plug 'markonm/traces.vim'
   Plug 'Valloric/ListToggle'
+  Plug 'dense-analysis/ale'
   Plug 'github/copilot.vim', {'on': ['Copilot']}
   Plug 'tomasr/molokai'
   if g:lite_mode
@@ -184,7 +185,6 @@ else
   let g:ycm_echo_current_diagnostic = 'virtual-text'
 
 
-
   let g:ycm_semantic_triggers =  {
     \   'c': ['->', '.', 're!^\s*#include\s',],
     \   'objc': ['->', '.', 're!\[[_a-zA-Z]+\w*\s', 're!^\s*[^\W\d]\w*\s',
@@ -210,6 +210,28 @@ endif
 
 " tagbar
 nmap <leader>tb :TagbarToggle<CR>
+
+
+" ale
+
+let g:ale_lint_delay = 5000
+nmap <silent> [g <Plug>(ale_previous_wrap)
+nmap <silent> ]g <Plug>(ale_next_wrap)
+let g:ale_virtualtext_cursor = 'current'
+let g:ale_lint_on_text_changed = 'never'
+let g:ale_lint_on_enter = 0
+let g:ale_lint_on_insert_leave = 0
+let g:ale_disable_lsp = 1
+nnoremap <leader>F :ALEFix<CR>
+let g:ale_echo_msg_format = '[%linter%] %s [%severity%]'
+
+
+let g:ale_fixers = {'*': ['remove_trailing_lines', 'trim_whitespace'], 'python': ['ruff', 'ruff_format', 'isort']}
+" In ~/.vim/vimrc, or somewhere similar.
+let g:ale_linters = {'python': ['ruff']}
+
+" Only run linters named in ale_linters settings.
+let g:ale_linters_explicit = 1
 
 
 " emmet
