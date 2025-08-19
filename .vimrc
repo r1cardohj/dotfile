@@ -83,9 +83,9 @@ call plug#begin()
   Plug 'sheerun/vim-polyglot'
   Plug 'markonm/traces.vim'
   Plug 'Valloric/ListToggle'
-  Plug 'dense-analysis/ale'
+  Plug 'romainl/Apprentice'
+  Plug 'dense-analysis/ale', {'for': ['python']}
   Plug 'github/copilot.vim', {'on': ['Copilot']}
-  Plug 'tomasr/molokai'
   if g:lite_mode
     Plug 'lifepillar/vim-mucomplete'
     Plug 'davidhalter/jedi-vim', {'for': 'python'}
@@ -165,7 +165,8 @@ else
   nnoremap gs :YcmCompleter GoToSymbol<cr>
   nnoremap gr :YcmCompleter GoToReferences<cr>
   nnoremap gt :YcmCompleter GetType<cr>
-  nnoremap <leader>f :YcmCompleter FixIt<cr>
+  nnoremap <leader>F :YcmCompleter Format<cr>
+  nnoremap <leader>qf :YcmCompleter FixIt<cr>
   nnoremap <leader>rn :YcmCompleter RefactorRename<space>
 
   nmap K <plug>(YCMHover)
@@ -247,12 +248,6 @@ let g:translator_default_engines = ["bing"]
 nmap <silent> <Leader>w <Plug>TranslateW
 vmap <silent> <Leader>w <Plug>TranslateWV
 
-" flake8
-autocmd FileType python map <buffer> gl :call flake8#Flake8()<CR>
-let g:no_flake8_maps = 1
-nnoremap <leader>d :call flake8#Flake8ShowError()<cr>
-let g:flake8_show_in_gutter = 1
-
 
 " leaderf
 let g:Lf_HideHelp = 1
@@ -277,6 +272,7 @@ autocmd BufRead,BufNewFile *.htm,*.html,*.css setlocal tabstop=2 shiftwidth=2 so
 
 " ------------------------- UI ----------------------------
 
+colorscheme apprentice
 
 let g:python_highlight_all = 1
 
