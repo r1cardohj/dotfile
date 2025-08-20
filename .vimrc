@@ -83,8 +83,9 @@ call plug#begin()
   Plug 'sheerun/vim-polyglot'
   Plug 'markonm/traces.vim'
   Plug 'Valloric/ListToggle'
+  Plug 'romainl/Apprentice'
+  Plug 'dense-analysis/ale', {'for': ['python']}
   Plug 'github/copilot.vim', {'on': ['Copilot']}
-  Plug 'tomasr/molokai'
   if g:lite_mode
     Plug 'lifepillar/vim-mucomplete'
     Plug 'davidhalter/jedi-vim', {'for': 'python'}
@@ -164,7 +165,8 @@ else
   nnoremap gs :YcmCompleter GoToSymbol<cr>
   nnoremap gr :YcmCompleter GoToReferences<cr>
   nnoremap gt :YcmCompleter GetType<cr>
-  nnoremap <leader>f :YcmCompleter FixIt<cr>
+  nnoremap <leader>F :YcmCompleter Format<cr>
+  nnoremap <leader>qf :YcmCompleter FixIt<cr>
   nnoremap <leader>rn :YcmCompleter RefactorRename<space>
 
   nmap K <plug>(YCMHover)
@@ -182,7 +184,6 @@ else
   let g:ycm_server_keep_logfiles = 0
   let g:ycm_update_diagnostics_in_insert_mode = 0
   let g:ycm_echo_current_diagnostic = 'virtual-text'
-
 
 
   let g:ycm_semantic_triggers =  {
@@ -212,6 +213,28 @@ endif
 nmap <leader>tb :TagbarToggle<CR>
 
 
+" ale
+
+let g:ale_lint_delay = 5000
+nmap <silent> [g <Plug>(ale_previous_wrap)
+nmap <silent> ]g <Plug>(ale_next_wrap)
+let g:ale_virtualtext_cursor = 'current'
+let g:ale_lint_on_text_changed = 'never'
+let g:ale_lint_on_enter = 0
+let g:ale_lint_on_insert_leave = 0
+let g:ale_disable_lsp = 1
+nnoremap <leader>F :ALEFix<CR>
+let g:ale_echo_msg_format = '[%linter%] %s [%severity%]'
+
+
+let g:ale_fixers = {'*': ['remove_trailing_lines', 'trim_whitespace'], 'python': ['ruff', 'ruff_format', 'isort']}
+" In ~/.vim/vimrc, or somewhere similar.
+let g:ale_linters = {'python': ['ruff']}
+
+" Only run linters named in ale_linters settings.
+let g:ale_linters_explicit = 1
+
+
 " emmet
 let g:user_emmet_leader_key='<c-e>'
 
@@ -224,12 +247,6 @@ let g:copilot_no_tab_map = v:true
 let g:translator_default_engines = ["bing"]
 nmap <silent> <Leader>w <Plug>TranslateW
 vmap <silent> <Leader>w <Plug>TranslateWV
-
-" flake8
-autocmd FileType python map <buffer> gl :call flake8#Flake8()<CR>
-let g:no_flake8_maps = 1
-nnoremap <leader>d :call flake8#Flake8ShowError()<cr>
-let g:flake8_show_in_gutter = 1
 
 
 " leaderf
@@ -255,6 +272,7 @@ autocmd BufRead,BufNewFile *.htm,*.html,*.css setlocal tabstop=2 shiftwidth=2 so
 
 " ------------------------- UI ----------------------------
 
+colorscheme apprentice
 
 let g:python_highlight_all = 1
 
