@@ -13,10 +13,11 @@ set background=dark
 set pumheight=10
 set noswapfile
 set omnifunc=syntaxcomplete#Complete
-set completeopt=menu,menuone,noselect,noinsert
+set completeopt=menu,menuone
 set belloff+=ctrlg " Add only if Vim beeps during completion
 set nowritebackup
 set updatetime=300
+set noshowmode
 
 let mapleader = "\<space>"
 
@@ -31,15 +32,27 @@ Plug 'vim-airline/vim-airline'
 Plug 'tpope/vim-commentary'
 Plug 'markonm/traces.vim'
 Plug 'dense-analysis/ale'
-Plug 'lifepillar/vim-mucomplete'
+Plug 'fatih/vim-go'
+Plug 'ervandew/supertab'
+Plug 'SirVer/ultisnips'
 Plug 'davidhalter/jedi-vim', {'for': 'python'}
 call plug#end()
 
+" ==================== Completion + Snippet ====================
+" Ultisnips has native support for SuperTab. SuperTab does omnicompletion by
+" pressing tab. I like this better than autocompletion, but it's still fast.
+let g:SuperTabDefaultCompletionType = "context"
+let g:SuperTabContextTextOmniPrecedence = ['&omnifunc', '&completefunc']
+let g:SuperTabLongestEnhanced = 1
+
+let g:UltiSnipsExpandTrigger="<tab>"
+let g:UltiSnipsJumpForwardTrigger="<tab>"
+let g:UltiSnipsJumpBackwardTrigger="<s-tab>"
 
 " completion
 
-let g:mucomplete#enable_auto_at_startup = 1
-let g:mucomplete#completion_delay = 200
+" let g:mucomplete#enable_auto_at_startup = 1
+" let g:mucomplete#completion_delay = 200
 
 
 " ale config
@@ -73,8 +86,9 @@ if has('python3')
 		let g:jedi#rename_command = "<leader>rn"
 		let g:jedi#rename_command_keep_name = "<leader>R"
 		let g:jedi#popup_select_first = 0
-		let g:jedi#popup_on_dot = 1
+		let g:jedi#popup_on_dot = 0
 		let g:jedi#show_call_signatures = 2
+		let g:SuperTabDefaultCompletionType = "<c-x><c-o>"
 endif
 
 " auto set venv
@@ -122,3 +136,36 @@ noremap <leader>fm :<C-U><C-R>=printf("Leaderf mru %s", "")<CR><CR>
 noremap <leader>ft :<C-U><C-R>=printf("Leaderf bufTag %s", "")<CR><CR>
 noremap <leader>fl :<C-U><C-R>=printf("Leaderf line %s", "")<CR><CR>
 noremap <leader>fg :<C-U><C-R>=printf("Leaderf rg %s", "")<CR><CR>
+
+" ==================== vim-go ====================
+let g:go_fmt_fail_silently = 1
+let g:go_debug_windows = {
+      \ 'vars':  'leftabove 35vnew',
+      \ 'stack': 'botright 10new',
+\ }
+
+
+let g:go_gopls_matcher = "fuzzy"
+let g:go_gopls_staticcheck = "gopls"
+let g:go_diagnostics_enabled = 1
+let g:go_test_show_name = 1
+" let g:go_list_type = "quickfix"
+
+let g:go_autodetect_gopath = 1
+
+let g:go_gopls_complete_unimported = 1
+let g:go_gopls_gofumpt = 1
+
+" 2 is for errors and warnings
+let g:go_diagnostics_level = 2
+let g:go_doc_popup_window = 1
+let g:go_doc_balloon = 1
+
+let g:go_imports_mode="gopls"
+let g:go_imports_autosave=1
+
+let g:go_highlight_build_constraints = 1
+let g:go_highlight_operators = 1
+
+let g:go_fold_enable = []
+
