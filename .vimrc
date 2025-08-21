@@ -9,158 +9,116 @@ set ignorecase
 set hlsearch
 set ruler
 set incsearch
+set background=dark
 set pumheight=10
 set noswapfile
 set omnifunc=syntaxcomplete#Complete
+set completeopt=menu,menuone,noselect,noinsert
+set belloff+=ctrlg " Add only if Vim beeps during completion
 set nowritebackup
 set updatetime=300
 
 let mapleader = "\<space>"
 
-colorscheme torte
+colorscheme lunaperche
 
 call plug#begin()
 Plug 'tpope/vim-sensible'
 Plug 'tpope/vim-fugitive'
 Plug 'sheerun/vim-polyglot'
+Plug 'Yggdroot/LeaderF', { 'do': ':LeaderfInstallCExtension' }
 Plug 'vim-airline/vim-airline'
 Plug 'tpope/vim-commentary'
 Plug 'markonm/traces.vim'
-Plug 'neoclide/coc.nvim', {'branch': 'release'}
-Plug 'honza/vim-snippets'
+Plug 'dense-analysis/ale'
+Plug 'lifepillar/vim-mucomplete'
+Plug 'davidhalter/jedi-vim', {'for': 'python'}
 call plug#end()
 
-" coc
 
-inoremap <silent><expr> <TAB>
-      \ coc#pum#visible() ? coc#pum#next(1) :
-      \ CheckBackspace() ? "\<Tab>" :
-      \ coc#refresh()
-inoremap <expr><S-TAB> coc#pum#visible() ? coc#pum#prev(1) : "\<C-h>"
+" completion
 
-" Make <CR> to accept selected completion item or notify coc.nvim to format
-" <C-g>u breaks current undo, please make your own choice
-inoremap <silent><expr> <CR> coc#pum#visible() ? coc#pum#confirm()
-                              \: "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
+let g:mucomplete#enable_auto_at_startup = 1
+let g:mucomplete#completion_delay = 200
 
-function! CheckBackspace() abort
-  let col = col('.') - 1
-  return !col || getline('.')[col - 1]  =~# '\s'
-endfunction
 
-let g:coc_snippet_next = '<tab>'
+" ale config
 
-inoremap <silent><expr> <c-@> coc#refresh()
+let g:ale_lint_delay = 5000
+nmap <silent> [g <Plug>(ale_previous_wrap)
+nmap <silent> ]g <Plug>(ale_next_wrap)
+let g:ale_virtualtext_cursor = 'current'
+let g:ale_lint_on_text_changed = 'never'
+let g:ale_lint_on_enter = 0
+let g:ale_lint_on_insert_leave = 0
+let g:ale_disable_lsp = 1
+nnoremap <leader>F :ALEFix<CR>
+let g:ale_echo_msg_format = '[%linter%] %s [%severity%]'
 
-nmap <silent><nowait> [d <Plug>(coc-diagnostic-prev)
-nmap <silent><nowait> ]d <Plug>(coc-diagnostic-next)
 
-nmap <silent><nowait> gd <Plug>(coc-definition)
-nmap <silent><nowait> gy <Plug>(coc-type-definition)
-nmap <silent><nowait> gi <Plug>(coc-implementation)
-nmap <silent><nowait> gr <Plug>(coc-references)
+let g:ale_fixers = {'*': ['remove_trailing_lines', 'trim_whitespace'], 'python': ['ruff', 'ruff_format', 'isort']}
+" In ~/.vim/vimrc, or somewhere similar.
+let g:ale_linters = {'python': ['ruff']}
 
-nnoremap <silent> K :call ShowDocumentation()<CR>
+" python support
 
-function! ShowDocumentation()
-  if CocAction('hasProvider', 'hover')
-    call CocActionAsync('doHover')
-  else
-    call feedkeys('K', 'in')
-  endif
-endfunction
-
-autocmd CursorHold * silent call CocActionAsync('highlight')
-
-nmap <leader>rn <Plug>(coc-rename)
-
-xmap <leader>F  <Plug>(coc-format-selected)
-nmap <leader>F  <Plug>(coc-format-selected)
-
-augroup mygroup
-  autocmd!
-  " Setup formatexpr specified filetype(s)
-  autocmd FileType typescript,json,go,python setl formatexpr=CocAction('formatSelected')
-augroup end
-
-" Applying code actions to the selected code block
-" Example: `<leader>aap` for current paragraph
-xmap <leader>a  <Plug>(coc-codeaction-selected)
-nmap <leader>a  <Plug>(coc-codeaction-selected)
-
-" Remap keys for applying code actions at the cursor position
-nmap <leader>ac  <Plug>(coc-codeaction-cursor)
-" Remap keys for apply code actions affect whole buffer
-nmap <leader>as  <Plug>(coc-codeaction-source)
-" Apply the most preferred quickfix action to fix diagnostic on the current line
-nmap <leader>qf  <Plug>(coc-fix-current)
-
-" Remap keys for applying refactor code actions
-nmap <silent> <leader>re <Plug>(coc-codeaction-refactor)
-xmap <silent> <leader>r  <Plug>(coc-codeaction-refactor-selected)
-nmap <silent> <leader>r  <Plug>(coc-codeaction-refactor-selected)
-
-" Run the Code Lens action on the current line
-nmap <leader>cl  <Plug>(coc-codelens-action)
-
-" Map function and class text objects
-" NOTE: Requires 'textDocument.documentSymbol' support from the language server
-xmap if <Plug>(coc-funcobj-i)
-omap if <Plug>(coc-funcobj-i)
-xmap af <Plug>(coc-funcobj-a)
-omap af <Plug>(coc-funcobj-a)
-xmap ic <Plug>(coc-classobj-i)
-omap ic <Plug>(coc-classobj-i)
-xmap ac <Plug>(coc-classobj-a)
-omap ac <Plug>(coc-classobj-a)
-
-" Remap <C-f> and <C-b> to scroll float windows/popups
-if has('nvim-0.4.0') || has('patch-8.2.0750')
-  nnoremap <silent><nowait><expr> <C-f> coc#float#has_scroll() ? coc#float#scroll(1) : "\<C-f>"
-  nnoremap <silent><nowait><expr> <C-b> coc#float#has_scroll() ? coc#float#scroll(0) : "\<C-b>"
-  inoremap <silent><nowait><expr> <C-f> coc#float#has_scroll() ? "\<c-r>=coc#float#scroll(1)\<cr>" : "\<Right>"
-  inoremap <silent><nowait><expr> <C-b> coc#float#has_scroll() ? "\<c-r>=coc#float#scroll(0)\<cr>" : "\<Left>"
-  vnoremap <silent><nowait><expr> <C-f> coc#float#has_scroll() ? coc#float#scroll(1) : "\<C-f>"
-  vnoremap <silent><nowait><expr> <C-b> coc#float#has_scroll() ? coc#float#scroll(0) : "\<C-b>"
+if has('python3')
+		" set jedi
+		let g:jedi#goto_command = "<leader>d"
+		let g:jedi#goto_assignments_command = "ga"
+		let g:jedi#goto_stubs_command = "gs"
+		let g:jedi#goto_definitions_command = "gd"
+		let g:jedi#documentation_command = "K"
+		let g:jedi#usages_command = "gr"
+		let g:jedi#rename_command = "<leader>rn"
+		let g:jedi#rename_command_keep_name = "<leader>R"
+		let g:jedi#popup_select_first = 0
+		let g:jedi#popup_on_dot = 1
+		let g:jedi#show_call_signatures = 2
 endif
 
-" Use CTRL-S for selections ranges
-" Requires 'textDocument/selectionRange' support of language server
-nmap <silent> <C-s> <Plug>(coc-range-select)
-xmap <silent> <C-s> <Plug>(coc-range-select)
+" auto set venv
+autocmd FileType python call SetPythonEnvironment()
 
-" Add `:Format` command to format current buffer
-command! -nargs=0 Format :call CocActionAsync('format')
+function! SetPythonEnvironment()
+	" Get the current working directory
+	let l:project_root = getcwd()
 
-" Add `:Fold` command to fold current buffer
-command! -nargs=? Fold :call     CocAction('fold', <f-args>)
+	" Path to the virtual environment Python interpreter
+	let l:venv_python = l:project_root . '/.venv/bin/python'
+	let l:venv2_python = l:project_root . '/venv/bin/python'
+	let l:venv3_python = l:project_root . '/env/bin/python'
 
-" Add `:OR` command for organize imports of the current buffer
-command! -nargs=0 OR   :call     CocActionAsync('runCommand', 'editor.action.organizeImport')
 
-" Show all diagnostics
-nnoremap <silent><nowait> <space>d  :<C-u>CocList diagnostics<cr>
-" Show commands
-nnoremap <silent><nowait> <space>c  :<C-u>CocList commands<cr>
-" Find symbol of current document
-nnoremap <silent><nowait> <space>o  :<C-u>CocList outline<cr>
-" Search workspace symbols
-nnoremap <silent><nowait> <space>s  :<C-u>CocList -I symbols<cr>
-" Do default action for next item
-nnoremap <silent><nowait> <space>j  :<C-u>CocNext<CR>
-" Do default action for previous item
-nnoremap <silent><nowait> <space>k  :<C-u>CocPrev<CR>
+	" Check if the .venv directory exists
+	if filereadable(l:venv_python)
+		" If .venv exists, use its Python interpreter
+		let g:jedi#environment_path = l:venv_python
+	endif
 
-nnoremap <silent><nowait> <space>ff  :<C-u>CocList files<cr>
-nnoremap <silent><nowait> <space>fg  :<C-u>CocList grep<cr>
+	if filereadable(l:venv2_python)
+		" If venv exists, use its Python interpreter
+		let g:jedi#environment_path = l:venv2_python
+	endif
 
-" coc-git
-nmap [g <Plug>(coc-git-prevchunk)
-nmap ]g <Plug>(coc-git-nextchunk)
-" navigate conflicts of current buffer
-nmap [c <Plug>(coc-git-prevconflict)
-nmap ]c <Plug>(coc-git-nextconflict)
-" show chunk diff at current position
-nmap gs <Plug>(coc-git-chunkinfo)
-" show commit contains current position
-nmap gc <Plug>(coc-git-commit)
+	if filereadable(l:venv3_python)
+		" If env exists, use its Python interpreter
+		let g:jedi#environment_path = l:venv3_python
+	endif
+endfunction
+
+" leaderf
+let g:Lf_HideHelp = 1
+let g:Lf_UseCache = 0
+let g:Lf_UseVersionControlTool = 0
+let g:Lf_IgnoreCurrentBufferName = 1
+let g:Lf_WindowPosition = 'popup'
+let g:Lf_PreviewResult = {'Function': 0, 'BufTag': 0, 'File': 0, 'Buffer': 0}
+let g:Lf_PopupHeight = 0.3
+
+let g:Lf_ShortcutF = "<leader>ff"
+noremap <leader>fb :<C-U><C-R>=printf("Leaderf buffer %s", "")<CR><CR>
+noremap <leader>fm :<C-U><C-R>=printf("Leaderf mru %s", "")<CR><CR>
+noremap <leader>ft :<C-U><C-R>=printf("Leaderf bufTag %s", "")<CR><CR>
+noremap <leader>fl :<C-U><C-R>=printf("Leaderf line %s", "")<CR><CR>
+noremap <leader>fg :<C-U><C-R>=printf("Leaderf rg %s", "")<CR><CR>
