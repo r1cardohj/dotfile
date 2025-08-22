@@ -1,0 +1,13 @@
+{
+
+	"pyright.inlayHints.variableTypes": false,
+	"pyright.inlayHints.parameterTypes": false,
+	"pyright.inlayHints.functionReturnTypes": false,
+	"python.formatting.provider": "ruff",
+	"python.linting.ruffEnabled": true,
+	"pyright.organizeimports.provider": "ruff",
+    "python.analysis.typeCheckingMode": "off",
+	"suggest.noselect": true,
+	"suggest.minTriggerInputLength": 2,
+	"suggest.triggerCompletionWait": 250
+}

@@ -34,6 +34,7 @@ Plug 'markonm/traces.vim'
 Plug 'dense-analysis/ale'
 Plug 'fatih/vim-go'
 Plug 'ervandew/supertab'
+Plug 'milkypostman/vim-togglelist'
 Plug 'SirVer/ultisnips'
 Plug 'davidhalter/jedi-vim', {'for': 'python'}
 call plug#end()
@@ -71,7 +72,7 @@ let g:ale_echo_msg_format = '[%linter%] %s [%severity%]'
 
 let g:ale_fixers = {'*': ['remove_trailing_lines', 'trim_whitespace'], 'python': ['ruff', 'ruff_format', 'isort']}
 " In ~/.vim/vimrc, or somewhere similar.
-let g:ale_linters = {'python': ['ruff']}
+let g:ale_linters = {'python': ['ruff', 'pylint']}
 
 " python support
 
@@ -150,9 +151,8 @@ let g:go_debug_windows = {
 
 let g:go_gopls_matcher = "fuzzy"
 let g:go_gopls_staticcheck = "gopls"
-let g:go_diagnostics_enabled = 1
+let g:go_diagnostics_enabled = 0
 let g:go_test_show_name = 1
-" let g:go_list_type = "quickfix"
 
 let g:go_autodetect_gopath = 1
 
@@ -172,3 +172,5 @@ let g:go_highlight_operators = 1
 
 let g:go_fold_enable = []
 
+nmap <script> <silent> <leader>l :call ToggleLocationList()<CR>
+nmap <script> <silent> <leader>q :call ToggleQuickfixList()<CR>
