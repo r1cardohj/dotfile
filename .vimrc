@@ -27,6 +27,7 @@ call plug#begin()
 Plug 'tpope/vim-sensible'
 Plug 'tpope/vim-fugitive'
 Plug 'sheerun/vim-polyglot'
+Plug 'raimondi/delimitmate'
 Plug 'Yggdroot/LeaderF', { 'do': ':LeaderfInstallCExtension' }
 Plug 'vim-airline/vim-airline'
 Plug 'tpope/vim-commentary'
@@ -64,7 +65,7 @@ nmap <silent> ]g <Plug>(ale_next_wrap)
 let g:ale_virtualtext_cursor = 'current'
 let g:ale_lint_on_text_changed = 'never'
 let g:ale_lint_on_enter = 0
-let g:ale_lint_on_insert_leave = 0
+let g:ale_lint_on_insert_leave = 1
 let g:ale_disable_lsp = 1
 nnoremap <leader>F :ALEFix<CR>
 let g:ale_echo_msg_format = '[%linter%] %s [%severity%]'
@@ -72,7 +73,7 @@ let g:ale_echo_msg_format = '[%linter%] %s [%severity%]'
 
 let g:ale_fixers = {'*': ['remove_trailing_lines', 'trim_whitespace'], 'python': ['ruff', 'ruff_format', 'isort']}
 " In ~/.vim/vimrc, or somewhere similar.
-let g:ale_linters = {'python': ['ruff', 'pylint']}
+let g:ale_linters = {'python': ['ruff']}
 
 " python support
 
@@ -130,9 +131,9 @@ let g:Lf_HideHelp = 1
 let g:Lf_UseCache = 0
 let g:Lf_UseVersionControlTool = 0
 let g:Lf_IgnoreCurrentBufferName = 1
-let g:Lf_WindowPosition = 'popup'
+"let g:Lf_WindowPosition = 'popup'
 let g:Lf_PreviewResult = {'Function': 0, 'BufTag': 0, 'File': 0, 'Buffer': 0}
-let g:Lf_PopupHeight = 0.3
+"let g:Lf_PopupHeight = 0.3
 
 let g:Lf_ShortcutF = "<leader>ff"
 noremap <leader>fb :<C-U><C-R>=printf("Leaderf buffer %s", "")<CR><CR>
