@@ -2,7 +2,7 @@ local vim = vim
 local Plug = vim.fn['plug#']
 
 vim.g.mapleader = ' '
-vim.g.background = "dark"
+vim.g.background = 'dark'
 vim.wo.number = true
 vim.opt.swapfile = false
 
@@ -17,8 +17,6 @@ Plug('nvim-treesitter/nvim-treesitter')
 Plug('mason-org/mason.nvim')
 Plug('mason-org/mason-lspconfig.nvim')
 Plug('folke/which-key.nvim')
-Plug('nvim-lua/plenary.nvim')
-Plug('nvim-telescope/telescope.nvim')
 Plug('nvim-mini/mini.nvim', {['branch'] = 'stable'})
 
 -- tool
@@ -37,22 +35,23 @@ Plug('saghen/blink.cmp', {['tag'] = 'v1.6.0'})
 Plug('dgagn/diagflow.nvim')
 Plug ('ellisonleao/gruvbox.nvim')
 Plug ('folke/tokyonight.nvim')
+Plug('loctvl842/monokai-pro.nvim')
 
 vim.call('plug#end')
 
 -- enable all core
 
--- This is your opts table
-require("telescope").setup {}
 require('mini.starter').setup()
 require('mini.files').setup()
+require('mini.pick').setup()
+require('mini.snippets').setup()
 require("inc_rename").setup()
 require('mini.tabline').setup()
 require('gitsigns').setup()
 require('nvim-autopairs').setup({
   disable_filetype = { "TelescopePrompt" , "vim" },
 })
-vim.cmd('silent! colorscheme tokyonight-storm')
+vim.cmd('silent! colorscheme gruvbox')
 require("mason").setup({
 	ui = {
         icons = {
@@ -195,12 +194,15 @@ require('blink.cmp').setup ({
       default = { 'lsp', 'path', 'snippets', 'buffer' },
     },
 
+    snippets = { preset = 'mini_snippets' },
+
     -- (Default) Rust fuzzy matcher for typo resistance and significantly better performance
     -- You may use a lua implementation instead by using `implementation = "lua"` or fallback to the lua implementation,
     -- when the Rust fuzzy matcher is not available, by using `implementation = "prefer_rust"`
     --
     -- See the fuzzy documentation for more information
-    fuzzy = { implementation = "prefer_rust_with_warning" }
+    fuzzy = { implementation = "prefer_rust_with_warning" },
+    signature = { enabled = true }
 })
 
 
@@ -224,9 +226,9 @@ vim.keymap.set('n', 'K', '<cmd>Lspsaga hover_doc<cr>')
 
 kb.add({
   { "<leader>f", group = "file" }, -- group
-  { "<leader>ff", "<cmd>Telescope find_files<cr>", desc = "Find File", mode = "n" },
-  { "<leader>fg", "<cmd>Telescope live_grep<cr>", desc= "Live Grep", mode = "n"},
-  { "<leader>fb", "<cmd>Telescope buffers<cr>", desc="Buffers", mode = "n"},
+  { "<leader>ff", "<cmd>Pick files <cr>", desc = "Find File", mode = "n" },
+  { "<leader>fg", "<cmd>Pick grep_live<cr>", desc= "Live Grep", mode = "n"},
+  { "<leader>fb", "<cmd>Pick buffers<cr>", desc="Buffers", mode = "n"},
 })
 
 kb.add({
@@ -240,7 +242,7 @@ kb.add({
 
 kb.add({
   { "<leader>c", group = "Code(lsp)"},
-  { "<leader>ca", "<cmd>Lspsaga code_action<cr>", desc = "Code Action", mode='n'},
+  { "<leader>ca", "<cmd>Lspsaga ode_action<cr>", desc = "Code Action", mode='n'},
 })
 
 kb.add({
@@ -252,12 +254,68 @@ kb.add({
   { "gpt", "<cmd>Lspsaga peek_type_definition<cr>", desc="Go to Peek Type Def", mode="n"},
 })
 
+local gitsigns = require('gitsigns')
+
 kb.add({
   { "[d", "<cmd>Lspsaga diagnostic_jump_prev<cr>", desc = "Prev diagnostics", mode='n'},
   { "]d", "<cmd>Lspsaga diagnostic_jump_next<cr>", desc = "Next diagnostics", mode='n'},
+  { "[h",
+    function ()
+      if vim.wo.diff then
+        vim.cmd.normal({']h', bang = true})
+      else
+        gitsigns.nav_hunk('prev')
+      end
+    end,
+    desc = "Prev Hunk(git)",
+    mode = 'n'
+  },
+  { "]h",
+    function ()
+      if vim.wo.diff then
+        vim.cmd.normal({']h', bang = true})
+      else
+        gitsigns.nav_hunk('next')
+      end
+    end,
+    desc = "Next Hunk(git)",
+    mode = 'n'
+  }
 })
 
 kb.add({
   { "<leader>t", group = "toggle"},
-  { "<leader>tt", "<cmd>Lspsaga term_toggle<cr>", desc="toggle terminal", mode="n"}
+  { "<leader>tt", "<cmd>Lspsaga term_toggle<cr>", desc="toggle terminal", mode="n"},
+  { "<leader>td", group = "diagnostic"},
+  { "<leader>tdb", "<cmd>Lspsaga show_buf_diagnostics<cr>", desc="toggle buffer diagnostic", mode="n"},
+  { "<leader>tdw", "<cmd>Lspsaga show_workspace_diagnostics<cr>", desc="toggle workspace diagnostic", mode="n"},
+  { "<leader>tg", group = "git"},
+  { "<leader>tgb", gitsigns.toggle_current_line_blame, desc="toggle git blame", mode="n"},
+  { "<leader>tgw", gitsigns.toggle_word_diff, desc="toggle git word diff", mode="n"}
+})
+
+kb.add({
+  { "<leader>h", group = "Git Hunk"},
+  { "<leader>hs", gitsigns.stage_hunk, desc="Stage hunk", mode="n"},
+  { "<leader>hr", gitsigns.reset_hunk, desc="Reset hunk", mode="n"},
+  { "<leader>hs", function ()
+    gitsigns.stage_hunk({ vim.fn.line('.'), vim.fn.line('v')})
+  end, desc="Stage hunk", mode="v"},
+  { "<leader>hr", function ()
+    gitsigns.reset_hunk({vim.fn.line('.'), vim.fn.line('v')})
+  end, desc="Reset hunk", mode="v"},
+  { "<leader>hS", gitsigns.stage_buffer, desc="Stage buffer", mode="n"},
+  { "<leader>hR", gitsigns.reset_buffer, desc="Reset buffer", mode="n"},
+  { "<leader>hp", gitsigns.preview_hunk_inline, desc='Preview hunk', mode="n"},
+  { "<leader>hb", function ()
+    gitsigns.blame_line({ full = true })
+  end, desc="Git Blame", mode="n"},
+  { "<leader>hd", gitsigns.diffthis, desc="Diff this", mode="n"},
+  { "<leader>hD", function ()
+    gitsigns.diffthis('~')
+  end, desc="Diff this(D)", mode="n"},
+  { "<leader>hq", gitsigns.setqflist, desc="Git qflist", mode="n"},
+  { "<leader>hQ", function ()
+    gitsigns.setqflist('all')
+  end, desc="Git qflist(all)", mode="n"},
 })
