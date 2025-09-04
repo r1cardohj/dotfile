@@ -1,3 +1,13 @@
+-- install vim plug --
+local data_dir = vim.fn.stdpath('data')
+if vim.fn.empty(vim.fn.glob(data_dir .. '/site/autoload/plug.vim')) == 1 then
+  vim.cmd('silent !curl -fLo ' .. data_dir .. '/site/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim')
+  vim.o.runtimepath = vim.o.runtimepath
+  vim.cmd('autocmd VimEnter * PlugInstall --sync | source $MYVIMRC')
+end
+
+--- config start -----
+
 local vim = vim
 local Plug = vim.fn['plug#']
 
@@ -5,6 +15,25 @@ vim.g.mapleader = ' '
 vim.g.background = 'dark'
 vim.wo.number = true
 vim.opt.swapfile = false
+vim.opt.clipboard = 'unnamedplus'
+vim.opt.mouse = 'a'
+vim.opt.tabstop = 4
+vim.opt.softtabstop = 4
+vim.opt.shiftwidth = 4
+vim.opt.expandtab = true 
+vim.opt.termguicolors = true
+vim.opt.cursorline = true
+vim.opt.incsearch = true
+vim.opt.ignorecase = true
+vim.opt.smartcase = true
+vim.g.loaded_netrw = 1
+vim.g.loaded_netrwPlugin = 1
+vim.opt.updatetime = 300
+vim.opt.backup = false
+vim.opt.writebackup = false
+vim.opt.showmode = false
+vim.wo.relativenumber = true
+
 
 
 -- #### plugin ####
@@ -51,7 +80,7 @@ require('gitsigns').setup()
 require('nvim-autopairs').setup({
   disable_filetype = { "TelescopePrompt" , "vim" },
 })
-vim.cmd('silent! colorscheme gruvbox')
+vim.cmd('silent! colorscheme tokyonight-moon')
 require("mason").setup({
 	ui = {
         icons = {
@@ -109,47 +138,6 @@ require('mini.statusline').setup({
 })
 require('mini.pairs').setup()
 require('mini.icons').setup()
-require('mini.basics').setup({
-	  -- Options. Set field to `false` to disable.
-  options = {
-    -- Basic options ('number', 'ignorecase', and many more)
-    basic = true,
-
-    -- Extra UI features ('winblend', 'listchars', 'pumheight', ...)
-    extra_ui = true,
-
-    -- Presets for window borders ('single', 'double', ...)
-    win_borders = 'default',
-  },
-
-  -- Mappings. Set field to `false` to disable.
-  mappings = {
-    -- Basic mappings (better 'jk', save with Ctrl+S, ...)
-    basic = false,
-
-    -- Prefix for mappings that toggle common options ('wrap', 'spell', ...).
-    -- Supply empty string to not create these mappings.
-    option_toggle_prefix = [[\]],
-
-    -- Window navigation with <C-hjkl>, resize with <C-arrow>
-    windows = false,
-
-    -- Move cursor in Insert, Command, and Terminal mode with <M-hjkl>
-    move_with_alt = false,
-  },
-
-  -- Autocommands. Set field to `false` to disable
-  autocommands = {
-    -- Basic autocommands (highlight on yank, start Insert in terminal, ...)
-    basic = true,
-
-    -- Set 'relativenumber' only in linewise and blockwise Visual mode
-    relnum_in_visual_mode = false,
-  },
-
-  -- Whether to disable showing non-error feedback
-  silent = false,
-})
 require('guess-indent').setup{}
 
 
