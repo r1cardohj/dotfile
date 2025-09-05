@@ -1,11 +1,3 @@
--- install vim plug --
-local data_dir = vim.fn.stdpath('data')
-if vim.fn.empty(vim.fn.glob(data_dir .. '/site/autoload/plug.vim')) == 1 then
-  vim.cmd('silent !curl -fLo ' .. data_dir .. '/site/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim')
-  vim.o.runtimepath = vim.o.runtimepath
-  vim.cmd('autocmd VimEnter * PlugInstall --sync | source $MYVIMRC')
-end
-
 --- config start -----
 
 local vim = vim
@@ -13,14 +5,17 @@ local Plug = vim.fn['plug#']
 
 vim.g.mapleader = ' '
 vim.g.background = 'dark'
+vim.g.ai_cmp = true
 vim.wo.number = true
 vim.opt.swapfile = false
 vim.opt.clipboard = 'unnamedplus'
 vim.opt.mouse = 'a'
 vim.opt.tabstop = 4
+vim.opt.signcolumn = 'yes'
 vim.opt.softtabstop = 4
+vim.opt.completeopt = { 'menuone', 'longest', 'preview'}
 vim.opt.shiftwidth = 4
-vim.opt.expandtab = true 
+vim.opt.expandtab = true
 vim.opt.termguicolors = true
 vim.opt.cursorline = true
 vim.opt.incsearch = true
@@ -32,6 +27,13 @@ vim.opt.updatetime = 300
 vim.opt.backup = false
 vim.opt.writebackup = false
 vim.opt.showmode = false
+vim.opt.wildignore:append({
+  '*.pyc',
+  '*.pyo',
+  '*/__pycache__',
+  '*/__pycache__/*',
+  '*.so',
+})
 vim.wo.relativenumber = true
 
 
@@ -57,21 +59,33 @@ Plug('tpope/vim-fugitive')
 Plug('lewis6991/gitsigns.nvim')
 
 
--- completion stuff
-Plug('saghen/blink.cmp', {['tag'] = 'v1.6.0'})
+-- complete
+Plug('neovim/nvim-lspconfig')
+Plug('hrsh7th/cmp-nvim-lsp')
+Plug('hrsh7th/cmp-buffer')
+Plug('hrsh7th/cmp-path')
+Plug('hrsh7th/cmp-cmdline')
+Plug('hrsh7th/nvim-cmp')
+Plug('ray-x/lsp_signature.nvim')
+
 
 -- ui
 Plug('dgagn/diagflow.nvim')
-Plug ('ellisonleao/gruvbox.nvim')
-Plug ('folke/tokyonight.nvim')
-Plug('loctvl842/monokai-pro.nvim')
+Plug('ellisonleao/gruvbox.nvim')
+Plug('folke/tokyonight.nvim')
 
 vim.call('plug#end')
 
 -- enable all core
 
 require('mini.starter').setup()
-require('mini.files').setup()
+require "lsp_signature".setup({
+  bind = true,
+  handler_opts = {
+    border = "rounded"
+  }
+})
+
 require('mini.pick').setup()
 require('mini.snippets').setup()
 require("inc_rename").setup()
@@ -80,7 +94,7 @@ require('gitsigns').setup()
 require('nvim-autopairs').setup({
   disable_filetype = { "TelescopePrompt" , "vim" },
 })
-vim.cmd('silent! colorscheme tokyonight-moon')
+vim.cmd('silent! colorscheme tokyonight')
 require("mason").setup({
 	ui = {
         icons = {
@@ -140,7 +154,13 @@ require('mini.pairs').setup()
 require('mini.icons').setup()
 require('guess-indent').setup{}
 
-
+-- files
+require('mini.files').setup({
+  windows = {
+    width_focus = 30,
+    width_preview = 30,
+  }
+})
 
 -- treesitter
 require'nvim-treesitter.configs'.setup {
@@ -161,36 +181,106 @@ require'nvim-treesitter.configs'.setup {
   },
 }
 
--- completion
+-- completion stuff
+local cmp = require'cmp'
 
-require('blink.cmp').setup ({
-  keymap = {
-    preset = 'super-tab' },
+local has_words_before = function()
+  unpack = unpack or table.unpack
+  local line, col = unpack(vim.api.nvim_win_get_cursor(0))
+  return col ~= 0 and vim.api.nvim_buf_get_lines(0, line - 1, line, true)[1]:sub(col, col):match("%s") == nil
+end
 
-    appearance = {
-      -- 'mono' (default) for 'Nerd Font Mono' or 'normal' for 'Nerd Font'
-      -- Adjusts spacing to ensure icons are aligned
-      nerd_font_variant = 'mono'
-    },
 
-    -- (Default) Only show the documentation popup when manually triggered
-    completion = { documentation = { auto_show = false } },
+local ts_utils = require('nvim-treesitter.ts_utils')
 
-    -- Default list of enabled providers defined so that you can extend it
-    -- elsewhere in your config, without redefining it, due to `opts_extend`
-    sources = {
-      default = { 'lsp', 'path', 'snippets', 'buffer' },
-    },
+local function is_in_string()
+  local node = ts_utils.get_node_at_cursor()
+  while node do
+    if node:type() == "string" or node:type() == "string_literal" then
+      return true
+    end
+    node = node:parent()
+  end
+  return false
+end
 
-    snippets = { preset = 'mini_snippets' },
+cmp.setup({
+  snippet = {
+    -- REQUIRED - you must specify a snippet engine
+    expand = function(args)
+      vim.fn["vsnip#anonymous"](args.body) -- For `vsnip` users.
+      -- require('luasnip').lsp_expand(args.body) -- For `luasnip` users.
+      -- require('snippy').expand_snippet(args.body) -- For `snippy` users.
+      -- vim.fn["UltiSnips#Anon"](args.body) -- For `ultisnips` users.
+      -- vim.snippet.expand(args.body) -- For native neovim snippets (Neovim v0.10+)
 
-    -- (Default) Rust fuzzy matcher for typo resistance and significantly better performance
-    -- You may use a lua implementation instead by using `implementation = "lua"` or fallback to the lua implementation,
-    -- when the Rust fuzzy matcher is not available, by using `implementation = "prefer_rust"`
-    --
-    -- See the fuzzy documentation for more information
-    fuzzy = { implementation = "prefer_rust_with_warning" },
-    signature = { enabled = true }
+      -- For `mini.snippets` users:
+      -- local insert = MiniSnippets.config.expand.insert or MiniSnippets.default_insert
+      -- insert({ body = args.body }) -- Insert at cursor
+      -- cmp.resubscribe({ "TextChangedI", "TextChangedP" })
+      -- require("cmp.config").set_onetime({ sources = {} })
+    end,
+  },
+  completion = {
+    keyword_length = 1,
+    autocomplete = false,
+  },
+  window = {
+    -- completion = cmp.config.window.bordered(),
+    -- documentation = cmp.config.window.bordered(),
+  },
+  mapping = cmp.mapping.preset.insert({
+    ['<C-b>'] = cmp.mapping.scroll_docs(-4),
+    ['<C-f>'] = cmp.mapping.scroll_docs(4),
+    ['<C-Space>'] = cmp.mapping.complete(),
+    -- ['<C-e>'] = cmp.mapping.abort(),
+    ['<Tab>'] = cmp.mapping(function(fallback)
+        if cmp.visible() then
+          -- You could replace select_next_item() with confirm({ select = true }) to get VS Code autocompletion behavior
+          cmp.select_next_item()
+        elseif vim.snippet.active({ direction = 1 }) then
+          vim.schedule(function()
+            vim.snippet.jump(1)
+          end)
+        elseif has_words_before() then
+          cmp.complete()
+        else
+          fallback()
+        end
+      end, { "i", "s" }),
+      ["<S-Tab>"] = cmp.mapping(function(fallback)
+        if cmp.visible() then
+          cmp.select_prev_item()
+        elseif vim.snippet.active({ direction = -1 }) then
+          vim.schedule(function()
+            vim.snippet.jump(-1)
+          end)
+        else
+          fallback()
+        end
+      end, { "i", "s" }),
+  }),
+  sources = cmp.config.sources({
+    { name = 'nvim_lsp' },
+    --{ name = 'vsnip' }, -- For vsnip users.
+    -- { name = 'luasnip' }, -- For luasnip users.
+    -- { name = 'ultisnips' }, -- For ultisnips users.
+    -- { name = 'snippy' }, -- For snippy users.
+  }, {
+    { name = 'buffer' },
+  })
+})
+
+-- auto trigger in input.
+vim.api.nvim_create_autocmd('TextChangedI', {
+  pattern = '*',
+  callback = function()
+    local col = vim.fn.col('.') - 1
+    local line = vim.fn.getline('.')
+    if col > 0 and line:sub(col, col) == '.' and not is_in_string() then
+      require('cmp').complete()
+    end
+  end,
 })
 
 
