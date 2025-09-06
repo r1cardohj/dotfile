@@ -67,6 +67,7 @@ Plug('hrsh7th/cmp-path')
 Plug('hrsh7th/cmp-cmdline')
 Plug('hrsh7th/nvim-cmp')
 Plug('ray-x/lsp_signature.nvim')
+Plug('zbirenbaum/copilot.lua')
 
 
 -- ui
@@ -87,9 +88,19 @@ require "lsp_signature".setup({
 })
 
 require('mini.pick').setup()
+require("copilot").setup({
+  suggestion = {
+    auto_trigger = true,
+    keymap = {
+      accept = "<C-l>"
+    }
+  }
+})
 require('mini.snippets').setup()
 require("inc_rename").setup()
 require('mini.tabline').setup()
+require('mini.icons').config.style = 'ascii'
+require('mini.icons').setup()
 require('gitsigns').setup()
 require('nvim-autopairs').setup({
   disable_filetype = { "TelescopePrompt" , "vim" },
@@ -151,7 +162,6 @@ require('mini.statusline').setup({
   use_icons = false,
 })
 require('mini.pairs').setup()
-require('mini.icons').setup()
 require('guess-indent').setup{}
 
 -- files
@@ -244,6 +254,7 @@ cmp.setup({
           end)
         elseif has_words_before() then
           cmp.complete()
+          cmp.select_next_item()
         else
           fallback()
         end
@@ -299,6 +310,7 @@ require('lspsaga').setup({
 
 -- which-key and my key-binding
 local kb = require("which-key")
+require('which-key').setup()
 
 vim.keymap.set('n', 'K', '<cmd>Lspsaga hover_doc<cr>')
 
