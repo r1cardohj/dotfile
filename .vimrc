@@ -18,27 +18,56 @@ set belloff+=ctrlg " Add only if Vim beeps during completion
 set nowritebackup
 set updatetime=300
 set noshowmode
+"set termguicolors
 
 let mapleader = "\<space>"
 
-colorscheme lunaperche
-
 call plug#begin()
+" ------ core ----
 Plug 'tpope/vim-sensible'
-Plug 'tpope/vim-fugitive'
 Plug 'sheerun/vim-polyglot'
-Plug 'raimondi/delimitmate'
-Plug 'Yggdroot/LeaderF', { 'do': ':LeaderfInstallCExtension' }
+Plug 'ctrlpvim/ctrlp.vim'
+Plug 'ervandew/supertab'
+Plug 'ludovicchabant/vim-gutentags'
+Plug 'prabirshrestha/vim-lsp'
+Plug 'preservim/tagbar'
+"Plug 'dense-analysis/ale'
+
+" ------ git -----
+Plug 'tpope/vim-fugitive'
+
+" ------ ui -----
+Plug 'morhetz/gruvbox'
+Plug 'tomasr/molokai'
+Plug 'mhinz/vim-startify'
 Plug 'vim-airline/vim-airline'
+Plug 'airblade/vim-gitgutter'
+
+" ------ tools ----
+Plug 'raimondi/delimitmate'
 Plug 'tpope/vim-commentary'
 Plug 'markonm/traces.vim'
-Plug 'dense-analysis/ale'
+Plug 'github/copilot.vim'
+
+" -------------- languages --------------
 Plug 'fatih/vim-go'
-Plug 'ervandew/supertab'
-Plug 'milkypostman/vim-togglelist'
-Plug 'SirVer/ultisnips'
 Plug 'davidhalter/jedi-vim', {'for': 'python'}
+Plug 'SirVer/ultisnips'
+Plug 'honza/vim-snippets', {'for': 'python'}
+
 call plug#end()
+
+
+let g:gruvbox_italic=1
+let g:gruvbox_termcolors=256
+let g:gruvbox_contrast_dark='hard'
+let g:gruvbox_invert_selection=0
+
+colorscheme gruvbox
+
+let g:bufferline_echo = 0
+let g:airline#extensions#tabline#enabled = 1
+let g:airline#extensions#tabline#formatter = 'unique_tail'
 
 " ==================== Completion + Snippet ====================
 " Ultisnips has native support for SuperTab. SuperTab does omnicompletion by
@@ -51,29 +80,31 @@ let g:UltiSnipsExpandTrigger="<tab>"
 let g:UltiSnipsJumpForwardTrigger="<tab>"
 let g:UltiSnipsJumpBackwardTrigger="<s-tab>"
 
-" completion
+imap <silent><script><expr> <C-l> copilot#Accept("\<CR>")
+let g:copilot_no_tab_map = v:true
 
-" let g:mucomplete#enable_auto_at_startup = 1
-" let g:mucomplete#completion_delay = 200
+" tag and ctrlp
+nmap tb :TagbarToggle<CR>
 
+let g:ctrlp_extensions = ['tag', 'buffertag', 'line']
 
 " ale config
 
-let g:ale_lint_delay = 5000
-nmap <silent> [g <Plug>(ale_previous_wrap)
-nmap <silent> ]g <Plug>(ale_next_wrap)
-let g:ale_virtualtext_cursor = 'current'
-let g:ale_lint_on_text_changed = 'never'
-let g:ale_lint_on_enter = 0
-let g:ale_lint_on_insert_leave = 1
-let g:ale_disable_lsp = 1
-nnoremap <leader>F :ALEFix<CR>
-let g:ale_echo_msg_format = '[%linter%] %s [%severity%]'
+" let g:ale_lint_delay = 5000
+" nmap <silent> [g <Plug>(ale_previous_wrap)
+" nmap <silent> ]g <Plug>(ale_next_wrap)
+" let g:ale_virtualtext_cursor = 'current'
+" let g:ale_lint_on_text_changed = 'never'
+" let g:ale_lint_on_enter = 0
+" let g:ale_lint_on_insert_leave = 1
+" let g:ale_disable_lsp = 1
+" nnoremap <leader>F :ALEFix<CR>
+" let g:ale_echo_msg_format = '[%linter%] %s [%severity%]'
 
 
-let g:ale_fixers = {'*': ['remove_trailing_lines', 'trim_whitespace'], 'python': ['ruff', 'ruff_format', 'isort']}
-" In ~/.vim/vimrc, or somewhere similar.
-let g:ale_linters = {'python': ['ruff']}
+" let g:ale_fixers = {'*': ['remove_trailing_lines', 'trim_whitespace'], 'python': ['ruff', 'ruff_format', 'isort']}
+" " In ~/.vim/vimrc, or somewhere similar.
+" let g:ale_linters = {'python': ['ruff']}
 
 " python support
 
@@ -88,7 +119,7 @@ if has('python3')
 		let g:jedi#rename_command = "<leader>rn"
 		let g:jedi#rename_command_keep_name = "<leader>R"
 		let g:jedi#popup_select_first = 0
-		let g:jedi#popup_on_dot = 0
+		let g:jedi#popup_on_dot = 1
 		let g:jedi#show_call_signatures = 2
 endif
 
@@ -126,21 +157,11 @@ function! SetPythonEnvironment()
 	endif
 endfunction
 
-" leaderf
-let g:Lf_HideHelp = 1
-let g:Lf_UseCache = 0
-let g:Lf_UseVersionControlTool = 0
-let g:Lf_IgnoreCurrentBufferName = 1
-"let g:Lf_WindowPosition = 'popup'
-let g:Lf_PreviewResult = {'Function': 0, 'BufTag': 0, 'File': 0, 'Buffer': 0}
-"let g:Lf_PopupHeight = 0.3
+" git
 
-let g:Lf_ShortcutF = "<leader>ff"
-noremap <leader>fb :<C-U><C-R>=printf("Leaderf buffer %s", "")<CR><CR>
-noremap <leader>fm :<C-U><C-R>=printf("Leaderf mru %s", "")<CR><CR>
-noremap <leader>ft :<C-U><C-R>=printf("Leaderf bufTag %s", "")<CR><CR>
-noremap <leader>fl :<C-U><C-R>=printf("Leaderf line %s", "")<CR><CR>
-noremap <leader>fg :<C-U><C-R>=printf("Leaderf rg %s", "")<CR><CR>
+nmap ]h <Plug>(GitGutterNextHunk)
+nmap [h <Plug>(GitGutterPrevHunk)
+
 
 " ==================== vim-go ====================
 let g:go_fmt_fail_silently = 1
@@ -173,5 +194,64 @@ let g:go_highlight_operators = 1
 
 let g:go_fold_enable = []
 
-nmap <script> <silent> <leader>l :call ToggleLocationList()<CR>
-nmap <script> <silent> <leader>q :call ToggleQuickfixList()<CR>
+" lsp
+function! s:on_lsp_buffer_enabled() abort
+	if &filetype != "python"
+    setlocal omnifunc=lsp#complete
+    if exists('+tagfunc') | setlocal tagfunc=lsp#tagfunc | endif
+    nmap <buffer> gd <plug>(lsp-definition)
+    nmap <buffer> gs <plug>(lsp-document-symbol-search)
+    nmap <buffer> gS <plug>(lsp-workspace-symbol-search)
+    nmap <buffer> gr <plug>(lsp-references)
+    nmap <buffer> gi <plug>(lsp-implementation)
+    nmap <buffer> gt <plug>(lsp-type-definition)
+    nmap <buffer> <leader>rn <plug>(lsp-rename)
+    nmap <buffer> K <plug>(lsp-hover)
+    nnoremap <buffer> <expr><c-f> lsp#scroll(+4)
+    nnoremap <buffer> <expr><c-d> lsp#scroll(-4)
+	endif
+
+    nmap <buffer> [d <plug>(lsp-previous-diagnostic)
+    nmap <buffer> ]d <plug>(lsp-next-diagnostic)
+		nmap <buffer> <leader>F :LspDocumentFormat<CR>
+		nmap <buffer> <leader>ca :LspCodeAction<CR>
+		nmap <buffer> <leader>cl :LspCodeLens<CR>
+		nmap <buffer> td :LspDocumentDiagnostics<CR>
+		setlocal signcolumn=yes
+    let g:lsp_format_sync_timeout = 1000
+    autocmd! BufWritePre *.rs,*.go,*.py call execute('LspDocumentFormatSync')
+    
+    " refer to doc to add more commands
+endfunction
+
+let g:lsp_diagnostics_virtual_text_enabled = 0
+let g:lsp_diagnostics_float_cursor = 1
+let g:lsp_use_native_client = 1
+let g:lsp_diagnostics_highlights_insert_mode_enabled = 0
+let g:lsp_document_code_action_signs_enabled = 0
+let g:lsp_diagnostics_signs_error = {'text': '✗'}
+let g:lsp_diagnostics_signs_warning = {'text': '!!'}
+let g:lsp_diagnostics_signs_warning = {'text': '??'}
+
+
+if executable('zubanls')
+	au User lsp_setup call lsp#register_server({
+			\ 'name': 'Zuban',
+			\ 'cmd': ['zuban', 'server'],
+			\ 'allowlist': ['python'],
+			\ })
+endif
+
+if executable('ruff')
+	au User lsp_setup call lsp#register_server({
+			\ 'name': 'ruff',
+			\ 'cmd': ['ruff', 'server'],
+			\ 'allowlist': ['python'],
+			\ })
+endif
+
+augroup lsp_install
+    au!
+    " call s:on_lsp_buffer_enabled only for languages that has the server registered.
+    autocmd User lsp_buffer_enabled call s:on_lsp_buffer_enabled()
+augroup END
