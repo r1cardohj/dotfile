@@ -57,7 +57,6 @@ Plug 'mattn/emmet-vim'
 
 call plug#end()
 
-
 let g:gruvbox_italic=1
 let g:gruvbox_contrast_dark='hard'
 let g:gruvbox_invert_selection=0
@@ -130,37 +129,22 @@ function! SetPythonEnvironment()
 
 	" use jedi
 	let g:SuperTabDefaultCompletionType = "<c-x><c-o>"
+	let l:venv_paths = ['.venv/bin/python', 'venv/bin/python', 'env/bin/python']
+    for venv in l:venv_paths
+			let l:venv_python = getcwd() . '/' . venv
+			if filereadable(l:venv_python)
+					let g:jedi#environment_path = l:venv_python
+					break
+			endif
+	endfor
 
-	" Get the current working directory
-	let l:project_root = getcwd()
-
-	" Path to the virtual environment Python interpreter
-	let l:venv_python = l:project_root . '/.venv/bin/python'
-	let l:venv2_python = l:project_root . '/venv/bin/python'
-	let l:venv3_python = l:project_root . '/env/bin/python'
-
-
-	" Check if the .venv directory exists
-	if filereadable(l:venv_python)
-		" If .venv exists, use its Python interpreter
-		let g:jedi#environment_path = l:venv_python
-	endif
-
-	if filereadable(l:venv2_python)
-		" If venv exists, use its Python interpreter
-		let g:jedi#environment_path = l:venv2_python
-	endif
-
-	if filereadable(l:venv3_python)
-		" If env exists, use its Python interpreter
-		let g:jedi#environment_path = l:venv3_python
-	endif
 endfunction
 
 " git
 
 nmap ]h <Plug>(GitGutterNextHunk)
 nmap [h <Plug>(GitGutterPrevHunk)
+
 
 
 " ==================== vim-go ====================
@@ -235,7 +219,7 @@ let g:lsp_diagnostics_signs_warning = {'text': '!!'}
 let g:lsp_diagnostics_signs_warning = {'text': '??'}
 
 
-if executable('zubanls')
+if executable('zuban')
 	au User lsp_setup call lsp#register_server({
 			\ 'name': 'Zuban',
 			\ 'cmd': ['zuban', 'server'],
