@@ -46,7 +46,7 @@ Plug 'raimondi/delimitmate'
 Plug 'tpope/vim-commentary'
 Plug 'markonm/traces.vim'
 if executable('node')
-	Plug 'github/copilot.vim'
+	Plug 'github/copilot.vim', {'on': 'Copilot'}
 endif
 
 " -------------- languages --------------
