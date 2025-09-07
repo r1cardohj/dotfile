@@ -39,14 +39,15 @@ Plug 'airblade/vim-gitgutter'
 " ------ ui -----
 Plug 'morhetz/gruvbox'
 Plug 'tomasr/molokai'
-Plug 'mhinz/vim-startify'
 Plug 'vim-airline/vim-airline'
 
 " ------ tools ----
 Plug 'raimondi/delimitmate'
 Plug 'tpope/vim-commentary'
 Plug 'markonm/traces.vim'
-Plug 'github/copilot.vim'
+if executable('node')
+	Plug 'github/copilot.vim'
+endif
 
 " -------------- languages --------------
 Plug 'fatih/vim-go'
