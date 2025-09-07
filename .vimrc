@@ -30,7 +30,6 @@ Plug 'ctrlpvim/ctrlp.vim'
 Plug 'ervandew/supertab'
 Plug 'ludovicchabant/vim-gutentags'
 Plug 'prabirshrestha/vim-lsp'
-Plug 'preservim/tagbar'
 "Plug 'dense-analysis/ale'
 
 " ------ git -----
@@ -42,7 +41,6 @@ Plug 'morhetz/gruvbox'
 Plug 'tomasr/molokai'
 Plug 'mhinz/vim-startify'
 Plug 'vim-airline/vim-airline'
-Plug 'mattn/emmet-vim'
 
 " ------ tools ----
 Plug 'raimondi/delimitmate'
@@ -55,6 +53,7 @@ Plug 'fatih/vim-go'
 Plug 'davidhalter/jedi-vim', {'for': 'python'}
 Plug 'SirVer/ultisnips'
 Plug 'honza/vim-snippets', {'for': 'python'}
+Plug 'mattn/emmet-vim'
 
 call plug#end()
 
@@ -86,7 +85,8 @@ let g:copilot_no_tab_map = v:true
 " tag and ctrlp
 nmap tb :TagbarToggle<CR>
 
-let g:ctrlp_extensions = ['tag', 'buffertag', 'line']
+let g:ctrlp_extensions = ['tag', 'buffertag', 'line', 'quickfix']
+nmap <C-q> :CtrlPQuickfix<CR>
 
 " ale config
 
@@ -225,7 +225,8 @@ function! s:on_lsp_buffer_enabled() abort
 endfunction
 
 let g:lsp_diagnostics_virtual_text_enabled = 0
-let g:lsp_diagnostics_float_cursor = 1
+"let g:lsp_diagnostics_float_cursor = 1
+let g:lsp_diagnostics_echo_cursor = 1
 let g:lsp_use_native_client = 1
 let g:lsp_diagnostics_highlights_insert_mode_enabled = 0
 let g:lsp_document_code_action_signs_enabled = 0
