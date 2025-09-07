@@ -35,13 +35,14 @@ Plug 'preservim/tagbar'
 
 " ------ git -----
 Plug 'tpope/vim-fugitive'
+Plug 'airblade/vim-gitgutter'
 
 " ------ ui -----
 Plug 'morhetz/gruvbox'
 Plug 'tomasr/molokai'
 Plug 'mhinz/vim-startify'
 Plug 'vim-airline/vim-airline'
-Plug 'airblade/vim-gitgutter'
+Plug 'mattn/emmet-vim'
 
 " ------ tools ----
 Plug 'raimondi/delimitmate'
@@ -59,13 +60,12 @@ call plug#end()
 
 
 let g:gruvbox_italic=1
-let g:gruvbox_termcolors=256
 let g:gruvbox_contrast_dark='hard'
 let g:gruvbox_invert_selection=0
 
+
 colorscheme gruvbox
 
-let g:bufferline_echo = 0
 let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#tabline#formatter = 'unique_tail'
 
@@ -255,3 +255,7 @@ augroup lsp_install
     " call s:on_lsp_buffer_enabled only for languages that has the server registered.
     autocmd User lsp_buffer_enabled call s:on_lsp_buffer_enabled()
 augroup END
+
+let g:user_emmet_install_global = 0
+autocmd FileType html,css EmmetInstall
+let g:user_emmet_leader_key='<C-e>'
