@@ -3,6 +3,7 @@ set ai
 
 set encoding=utf-8
 syntax on
+filetype on
 filetype plugin indent on
 
 set ignorecase
@@ -18,6 +19,7 @@ set belloff+=ctrlg " Add only if Vim beeps during completion
 set nowritebackup
 set updatetime=300
 set noshowmode
+set signcolumn=yes
 "set termguicolors
 
 let mapleader = "\<space>"
@@ -27,10 +29,7 @@ call plug#begin()
 Plug 'tpope/vim-sensible'
 Plug 'sheerun/vim-polyglot'
 Plug 'ctrlpvim/ctrlp.vim'
-Plug 'ervandew/supertab'
-Plug 'ludovicchabant/vim-gutentags'
-Plug 'prabirshrestha/vim-lsp'
-"Plug 'dense-analysis/ale'
+Plug 'neoclide/coc.nvim', {'branch': 'release'}
 
 " ------ git -----
 Plug 'tpope/vim-fugitive'
@@ -50,96 +49,21 @@ if executable('node')
 endif
 
 " -------------- languages --------------
-Plug 'fatih/vim-go'
-Plug 'davidhalter/jedi-vim', {'for': 'python'}
-Plug 'SirVer/ultisnips'
 Plug 'honza/vim-snippets', {'for': 'python'}
 Plug 'mattn/emmet-vim'
 
 call plug#end()
 
-let g:gruvbox_italic=1
-let g:gruvbox_contrast_dark='hard'
-let g:gruvbox_invert_selection=0
-
-
-colorscheme gruvbox
+colorscheme lunaperche
 
 let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#tabline#formatter = 'unique_tail'
 
-" ==================== Completion + Snippet ====================
-" Ultisnips has native support for SuperTab. SuperTab does omnicompletion by
-" pressing tab. I like this better than autocompletion, but it's still fast.
-let g:SuperTabDefaultCompletionType = "context"
-let g:SuperTabContextTextOmniPrecedence = ['&omnifunc', '&completefunc']
-let g:SuperTabLongestEnhanced = 1
-
-let g:UltiSnipsExpandTrigger="<tab>"
-let g:UltiSnipsJumpForwardTrigger="<tab>"
-let g:UltiSnipsJumpBackwardTrigger="<s-tab>"
+" copilot
 
 imap <silent><script><expr> <C-l> copilot#Accept("\<CR>")
 let g:copilot_no_tab_map = v:true
 
-" tag and ctrlp
-nmap tb :TagbarToggle<CR>
-
-let g:ctrlp_extensions = ['tag', 'buffertag', 'line', 'quickfix']
-nmap <C-q> :CtrlPQuickfix<CR>
-
-" ale config
-
-" let g:ale_lint_delay = 5000
-" nmap <silent> [g <Plug>(ale_previous_wrap)
-" nmap <silent> ]g <Plug>(ale_next_wrap)
-" let g:ale_virtualtext_cursor = 'current'
-" let g:ale_lint_on_text_changed = 'never'
-" let g:ale_lint_on_enter = 0
-" let g:ale_lint_on_insert_leave = 1
-" let g:ale_disable_lsp = 1
-" nnoremap <leader>F :ALEFix<CR>
-" let g:ale_echo_msg_format = '[%linter%] %s [%severity%]'
-
-
-" let g:ale_fixers = {'*': ['remove_trailing_lines', 'trim_whitespace'], 'python': ['ruff', 'ruff_format', 'isort']}
-" " In ~/.vim/vimrc, or somewhere similar.
-" let g:ale_linters = {'python': ['ruff']}
-
-" python support
-
-if has('python3')
-		" set jedi
-		let g:jedi#goto_command = "<leader>d"
-		let g:jedi#goto_assignments_command = "ga"
-		let g:jedi#goto_stubs_command = "gs"
-		let g:jedi#goto_definitions_command = "gd"
-		let g:jedi#documentation_command = "K"
-		let g:jedi#usages_command = "gr"
-		let g:jedi#rename_command = "<leader>rn"
-		let g:jedi#rename_command_keep_name = "<leader>R"
-		let g:jedi#popup_select_first = 0
-		let g:jedi#popup_on_dot = 1
-		let g:jedi#show_call_signatures = 2
-endif
-
-" auto set venv
-autocmd FileType python call SetPythonEnvironment()
-
-function! SetPythonEnvironment()
-
-	" use jedi
-	let g:SuperTabDefaultCompletionType = "<c-x><c-o>"
-	let l:venv_paths = ['.venv/bin/python', 'venv/bin/python', 'env/bin/python']
-    for venv in l:venv_paths
-			let l:venv_python = getcwd() . '/' . venv
-			if filereadable(l:venv_python)
-					let g:jedi#environment_path = l:venv_python
-					break
-			endif
-	endfor
-
-endfunction
 
 " git
 
@@ -147,101 +71,142 @@ nmap ]h <Plug>(GitGutterNextHunk)
 nmap [h <Plug>(GitGutterPrevHunk)
 
 
-
-" ==================== vim-go ====================
-let g:go_fmt_fail_silently = 1
-let g:go_debug_windows = {
-      \ 'vars':  'leftabove 35vnew',
-      \ 'stack': 'botright 10new',
-\ }
-
-
-let g:go_gopls_matcher = "fuzzy"
-let g:go_gopls_staticcheck = "gopls"
-let g:go_diagnostics_enabled = 0
-let g:go_test_show_name = 1
-
-let g:go_autodetect_gopath = 1
-
-let g:go_gopls_complete_unimported = 1
-let g:go_gopls_gofumpt = 1
-
-" 2 is for errors and warnings
-let g:go_diagnostics_level = 2
-let g:go_doc_popup_window = 1
-let g:go_doc_balloon = 1
-
-let g:go_imports_mode="gopls"
-let g:go_imports_autosave=1
-
-let g:go_highlight_build_constraints = 1
-let g:go_highlight_operators = 1
-
-let g:go_fold_enable = []
-
-" lsp
-function! s:on_lsp_buffer_enabled() abort
-	if &filetype != "python"
-    setlocal omnifunc=lsp#complete
-    if exists('+tagfunc') | setlocal tagfunc=lsp#tagfunc | endif
-    nmap <buffer> gd <plug>(lsp-definition)
-    nmap <buffer> gs <plug>(lsp-document-symbol-search)
-    nmap <buffer> gS <plug>(lsp-workspace-symbol-search)
-    nmap <buffer> gr <plug>(lsp-references)
-    nmap <buffer> gi <plug>(lsp-implementation)
-    nmap <buffer> gt <plug>(lsp-type-definition)
-    nmap <buffer> <leader>rn <plug>(lsp-rename)
-    nmap <buffer> K <plug>(lsp-hover)
-    nnoremap <buffer> <expr><c-f> lsp#scroll(+4)
-    nnoremap <buffer> <expr><c-d> lsp#scroll(-4)
-	endif
-
-    nmap <buffer> [d <plug>(lsp-previous-diagnostic)
-    nmap <buffer> ]d <plug>(lsp-next-diagnostic)
-		nmap <buffer> <leader>F :LspDocumentFormat<CR>
-		nmap <buffer> <leader>ca :LspCodeAction<CR>
-		nmap <buffer> <leader>cl :LspCodeLens<CR>
-		nmap <buffer> td :LspDocumentDiagnostics<CR>
-		setlocal signcolumn=yes
-    let g:lsp_format_sync_timeout = 1000
-    autocmd! BufWritePre *.rs,*.go,*.py call execute('LspDocumentFormatSync')
-    
-    " refer to doc to add more commands
-endfunction
-
-let g:lsp_diagnostics_virtual_text_enabled = 0
-"let g:lsp_diagnostics_float_cursor = 1
-let g:lsp_diagnostics_echo_cursor = 1
-let g:lsp_use_native_client = 1
-let g:lsp_diagnostics_highlights_insert_mode_enabled = 0
-let g:lsp_document_code_action_signs_enabled = 0
-let g:lsp_diagnostics_signs_error = {'text': '✗'}
-let g:lsp_diagnostics_signs_warning = {'text': '!!'}
-let g:lsp_diagnostics_signs_warning = {'text': '??'}
-
-
-if executable('zuban')
-	au User lsp_setup call lsp#register_server({
-			\ 'name': 'Zuban',
-			\ 'cmd': ['zuban', 'server'],
-			\ 'allowlist': ['python'],
-			\ })
-endif
-
-if executable('ruff')
-	au User lsp_setup call lsp#register_server({
-			\ 'name': 'ruff',
-			\ 'cmd': ['ruff', 'server'],
-			\ 'allowlist': ['python'],
-			\ })
-endif
-
-augroup lsp_install
-    au!
-    " call s:on_lsp_buffer_enabled only for languages that has the server registered.
-    autocmd User lsp_buffer_enabled call s:on_lsp_buffer_enabled()
-augroup END
+" emmet
 
 let g:user_emmet_install_global = 0
 autocmd FileType html,css EmmetInstall
 let g:user_emmet_leader_key='<C-e>'
+
+
+" coc
+
+inoremap <silent><expr> <TAB>
+      \ coc#pum#visible() ? coc#_select_confirm() :
+      \ coc#expandableOrJumpable() ? "\<C-r>=coc#rpc#request('doKeymap', ['snippets-expand-jump',''])\<CR>" :
+      \ CheckBackspace() ? "\<TAB>" :
+      \ coc#refresh()
+
+function! CheckBackspace() abort
+  let col = col('.') - 1
+  return !col || getline('.')[col - 1]  =~# '\s'
+endfunction
+
+let g:coc_snippet_next = '<tab>'
+
+" Use <c-space> to trigger completion
+if has('nvim')
+  inoremap <silent><expr> <c-space> coc#refresh()
+else
+  inoremap <silent><expr> <c-@> coc#refresh()
+endif
+
+" Use `:CocDiagnostics` to get all diagnostics of current buffer in location list
+nmap <silent><nowait> [d <Plug>(coc-diagnostic-prev)
+nmap <silent><nowait> ]d <Plug>(coc-diagnostic-next)
+
+" GoTo code navigation
+nmap <silent><nowait> gd <Plug>(coc-definition)
+nmap <silent><nowait> gy <Plug>(coc-type-definition)
+nmap <silent><nowait> gi <Plug>(coc-implementation)
+nmap <silent><nowait> gr <Plug>(coc-references)
+
+" Use K to show documentation in preview window
+nnoremap <silent> K :call ShowDocumentation()<CR>
+
+function! ShowDocumentation()
+  if CocAction('hasProvider', 'hover')
+    call CocActionAsync('doHover')
+  else
+    call feedkeys('K', 'in')
+  endif
+endfunction
+
+" Highlight the symbol and its references when holding the cursor
+autocmd CursorHold * silent call CocActionAsync('highlight')
+
+" Symbol renaming
+nmap <leader>rn <Plug>(coc-rename)
+
+" Formatting selected code
+xmap <leader>f  <Plug>(coc-format-selected)
+nmap <leader>f  <Plug>(coc-format-selected)
+
+augroup mygroup
+  autocmd!
+  " Setup formatexpr specified filetype(s)
+  autocmd FileType typescript,json setl formatexpr=CocAction('formatSelected')
+augroup end
+
+" Applying code actions to the selected code block
+" Example: `<leader>aap` for current paragraph
+xmap <leader>a  <Plug>(coc-codeaction-selected)
+nmap <leader>a  <Plug>(coc-codeaction-selected)
+
+" Remap keys for applying code actions at the cursor position
+nmap <leader>ac  <Plug>(coc-codeaction-cursor)
+" Remap keys for apply code actions affect whole buffer
+nmap <leader>as  <Plug>(coc-codeaction-source)
+" Apply the most preferred quickfix action to fix diagnostic on the current line
+nmap <leader>qf  <Plug>(coc-fix-current)
+
+" Remap keys for applying refactor code actions
+nmap <silent> <leader>re <Plug>(coc-codeaction-refactor)
+xmap <silent> <leader>r  <Plug>(coc-codeaction-refactor-selected)
+nmap <silent> <leader>r  <Plug>(coc-codeaction-refactor-selected)
+
+" Run the Code Lens action on the current line
+nmap <leader>cl  <Plug>(coc-codelens-action)
+
+" Map function and class text objects
+" NOTE: Requires 'textDocument.documentSymbol' support from the language server
+xmap if <Plug>(coc-funcobj-i)
+omap if <Plug>(coc-funcobj-i)
+xmap af <Plug>(coc-funcobj-a)
+omap af <Plug>(coc-funcobj-a)
+xmap ic <Plug>(coc-classobj-i)
+omap ic <Plug>(coc-classobj-i)
+xmap ac <Plug>(coc-classobj-a)
+omap ac <Plug>(coc-classobj-a)
+
+" Remap <C-f> and <C-b> to scroll float windows/popups
+if has('nvim-0.4.0') || has('patch-8.2.0750')
+  nnoremap <silent><nowait><expr> <C-f> coc#float#has_scroll() ? coc#float#scroll(1) : "\<C-f>"
+  nnoremap <silent><nowait><expr> <C-b> coc#float#has_scroll() ? coc#float#scroll(0) : "\<C-b>"
+  inoremap <silent><nowait><expr> <C-f> coc#float#has_scroll() ? "\<c-r>=coc#float#scroll(1)\<cr>" : "\<Right>"
+  inoremap <silent><nowait><expr> <C-b> coc#float#has_scroll() ? "\<c-r>=coc#float#scroll(0)\<cr>" : "\<Left>"
+  vnoremap <silent><nowait><expr> <C-f> coc#float#has_scroll() ? coc#float#scroll(1) : "\<C-f>"
+  vnoremap <silent><nowait><expr> <C-b> coc#float#has_scroll() ? coc#float#scroll(0) : "\<C-b>"
+endif
+
+" Use CTRL-S for selections ranges
+" Requires 'textDocument/selectionRange' support of language server
+nmap <silent> <C-s> <Plug>(coc-range-select)
+xmap <silent> <C-s> <Plug>(coc-range-select)
+
+" Add `:Format` command to format current buffer
+command! -nargs=0 Format :call CocActionAsync('format')
+
+" Add `:Fold` command to fold current buffer
+command! -nargs=? Fold :call     CocAction('fold', <f-args>)
+
+" Add `:OR` command for organize imports of the current buffer
+command! -nargs=0 OR   :call     CocActionAsync('runCommand', 'editor.action.organizeImport')
+
+" Add (Neo)Vim's native statusline support
+" NOTE: Please see `:h coc-status` for integrations with external plugins that
+" provide custom statusline: lightline.vim, vim-airline
+set statusline^=%{coc#status()}%{get(b:,'coc_current_function','')}
+
+" Mappings for CoCList
+" Show all diagnostics
+nnoremap <silent><nowait> <space>td  :<C-u>CocList diagnostics<cr>
+" Show commands
+nnoremap <silent><nowait> <space>cc  :<C-u>CocList commands<cr>
+" Find symbol of current document
+nnoremap <silent><nowait> <space>o  :<C-u>CocList outline<cr>
+" Search workspace symbols
+nnoremap <silent><nowait> <space>s  :<C-u>CocList -I symbols<cr>
+" Do default action for next item
+nnoremap <silent><nowait> <space>j  :<C-u>CocNext<CR>
+" Do default action for previous item
+nnoremap <silent><nowait> <space>k  :<C-u>CocPrev<CR>
