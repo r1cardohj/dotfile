@@ -19,8 +19,8 @@ set belloff+=ctrlg " Add only if Vim beeps during completion
 set nowritebackup
 set updatetime=300
 set noshowmode
-set signcolumn=yes
-"set termguicolors
+"set signcolumn=yes
+set termguicolors
 
 let mapleader = "\<space>"
 
@@ -29,16 +29,19 @@ call plug#begin()
 Plug 'tpope/vim-sensible'
 Plug 'sheerun/vim-polyglot'
 Plug 'ctrlpvim/ctrlp.vim'
-Plug 'neoclide/coc.nvim', {'branch': 'release'}
+if executable('node')
+  Plug 'neoclide/coc.nvim', {'branch': 'release'}
+endif
 
 " ------ git -----
 Plug 'tpope/vim-fugitive'
 Plug 'airblade/vim-gitgutter'
 
 " ------ ui -----
-Plug 'morhetz/gruvbox'
 Plug 'tomasr/molokai'
 Plug 'vim-airline/vim-airline'
+Plug 'ghifarit53/tokyonight-vim'
+Plug 'drsooch/gruber-darker-vim'
 
 " ------ tools ----
 Plug 'raimondi/delimitmate'
@@ -49,12 +52,15 @@ if executable('node')
 endif
 
 " -------------- languages --------------
-Plug 'honza/vim-snippets', {'for': 'python'}
+Plug 'honza/vim-snippets'
 Plug 'mattn/emmet-vim'
 
 call plug#end()
 
-colorscheme lunaperche
+let g:tokyonight_style = 'night'
+let g:tokyonight_disable_italic_comment = 1
+colorscheme GruberDarker
+
 
 let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#tabline#formatter = 'unique_tail'
@@ -192,9 +198,6 @@ command! -nargs=? Fold :call     CocAction('fold', <f-args>)
 " Add `:OR` command for organize imports of the current buffer
 command! -nargs=0 OR   :call     CocActionAsync('runCommand', 'editor.action.organizeImport')
 
-" Add (Neo)Vim's native statusline support
-" NOTE: Please see `:h coc-status` for integrations with external plugins that
-" provide custom statusline: lightline.vim, vim-airline
 set statusline^=%{coc#status()}%{get(b:,'coc_current_function','')}
 
 " Mappings for CoCList
