@@ -56,6 +56,26 @@ call plug#end()
 
 :colorscheme GruberDarker
 
+let g:tokyonight_style = 'night'
+let g:tokyonight_disable_italic_comment = 1
+colorscheme GruberDarker
+
+
+let g:airline#extensions#tabline#enabled = 1
+let g:airline#extensions#tabline#formatter = 'unique_tail'
+
+" copilot
+
+imap <silent><script><expr> <C-l> copilot#Accept("\<CR>")
+let g:copilot_no_tab_map = v:true
+
+
+" git
+
+nmap ]h <Plug>(GitGutterNextHunk)
+nmap [h <Plug>(GitGutterPrevHunk)
+
+
 " emmet
 
 let g:user_emmet_install_global = 0
