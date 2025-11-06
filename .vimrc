@@ -31,8 +31,7 @@ call plug#begin()
 Plug 'tpope/vim-sensible'
 Plug 'sheerun/vim-polyglot'
 Plug 'ctrlpvim/ctrlp.vim'
-Plug 'ervandew/supertab'
-Plug 'dense-analysis/ale'
+Plug 'ycm-core/YouCompleteMe'
 Plug 'drsooch/gruber-darker-vim'
 Plug 'ludovicchabant/vim-gutentags'
 Plug 'yegappan/taglist'
@@ -47,10 +46,11 @@ Plug 'tpope/vim-unimpaired'
 Plug 'tpope/vim-flagship'
 Plug 'tpope/vim-sleuth'
 Plug 'mhinz/vim-grepper', { 'on': ['Grepper', '<plug>(GrepperOperator)'] }
+Plug 'honza/vim-snippets'
+Plug 'SirVer/ultisnips'
 
 " -------------- languages --------------
 Plug 'mattn/emmet-vim'
-Plug 'davidhalter/jedi-vim'
 
 call plug#end()
 
@@ -65,7 +65,6 @@ let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#tabline#formatter = 'unique_tail'
 
 " copilot
-
 imap <silent><script><expr> <C-l> copilot#Accept("\<CR>")
 let g:copilot_no_tab_map = v:true
 
@@ -82,77 +81,70 @@ let g:user_emmet_install_global = 0
 autocmd FileType html,css EmmetInstall
 let g:user_emmet_leader_key='<C-e>'
 
-
-" ale
-
-let g:ale_lint_delay = 3000
-nmap <silent> [g <Plug>(ale_previous_wrap)
-nmap <silent> ]g <Plug>(ale_next_wrap)
-let g:ale_virtualtext_cursor = 'current'
-let g:ale_lint_on_text_changed = 'never'
-let g:ale_lint_on_enter = 0
-let g:ale_lint_on_insert_leave = 0
-let g:ale_completion_enabled = 1
-let g:ale_disable_lsp = 1
-nnoremap <leader>F :ALEFix<CR>
-let g:ale_echo_msg_format = '[%linter%] %s [%severity%]'
-
-
-let g:ale_fixers = {'*': ['remove_trailing_lines', 'trim_whitespace'], 'python': ['ruff', 'ruff_format', 'isort']}
-" In ~/.vim/vimrc, or somewhere similar.
-let g:ale_linters = {'python': ['ruff']}
-
-function! SetJediEnvironment()
-  " Get the current working directory
-  let l:project_root = getcwd()
-
-  " Path to the virtual environment Python interpreter
-  let l:venv_python = l:project_root . '/.venv/bin/python'
-  let l:venv2_python = l:project_root . '/venv/bin/python'
-  let l:venv3_python = l:project_root . '/env/bin/python'
-
-
-  " Check if the .venv directory exists
-  if filereadable(l:venv_python)
-    " If .venv exists, use its Python interpreter
-    let g:jedi#environment_path = l:venv_python
-  endif
-
-  if filereadable(l:venv2_python)
-	" If venv exists, use its Python interpreter
-	let g:jedi#environment_path = l:venv2_python
-  endif
-
-  if filereadable(l:venv3_python)
-	" If env exists, use its Python interpreter
-	let g:jedi#environment_path = l:venv3_python
-  endif
-
-endfunction
-
-if has('python3')
-	" set jedi
-	let g:jedi#goto_command = "<leader>d"
-	let g:jedi#goto_assignments_command = "ga"
-	let g:jedi#goto_stubs_command = "gs"
-	let g:jedi#goto_definitions_command = "gd"
-	let g:jedi#documentation_command = "K"
-	let g:jedi#usages_command = "gr"
-	let g:jedi#rename_command = "<leader>rn"
-	let g:jedi#rename_command_keep_name = "<leader>R"
-	let g:jedi#popup_select_first = 0
-  let g:jedi#popup_on_dot = 0
-  let g:jedi#show_call_signatures = 2
-	autocmd FileType python call SetJediEnvironment()
-    autocmd FileType python let g:SuperTabDefaultCompletionType = "<c-x><c-o>"
-endif
-
-" code completion SuperTab config
-let g:SuperTabLongestEnhanced = 1
-let g:SuperTabDefaultCompletionType = "context"
-
 " ctrlp
 let g:ctrlp_extensions = ['tag', 'buffertag', 'quickfix']
 
 " taglist
 nnoremap <silent> <leader>tl :TlistToggle<CR>
+
+" gutentags搜索工程目录的标志，碰到这些文件/目录名就停止向上一级目录递归 "
+let g:gutentags_project_root = ['.root', '.svn', '.git', '.project']
+
+" 所生成的数据文件的名称 "
+let g:gutentags_ctags_tagfile = '.tags'
+
+" 将自动生成的 tags 文件全部放入 ~/.cache/tags 目录中，避免污染工程目录 "
+let s:vim_tags = expand('~/.cache/tags')
+let g:gutentags_cache_dir = s:vim_tags
+" 检测 ~/.cache/tags 不存在就新建 "
+if !isdirectory(s:vim_tags)
+   silent! call mkdir(s:vim_tags, 'p')
+endif
+
+" completion
+nnoremap gd :YcmCompleter GoTo<cr>
+nnoremap gs :YcmCompleter GoToSymbol<cr>
+nnoremap gr :YcmCompleter GoToReferences<cr>
+nnoremap gt :YcmCompleter GetType<cr>
+nnoremap <leader>F :YcmCompleter Format<cr>
+nnoremap <leader>qf :YcmCompleter FixIt<cr>
+nnoremap <leader>rn :YcmCompleter RefactorRename<space>
+
+nmap K <plug>(YCMHover)
+
+let g:ycm_enable_diagnostic_signs = 1
+let g:ycm_show_diagnostics_ui = 1
+let g:ycm_enable_diagnostic_highlighting = 0
+let g:ycm_key_invoke_completion = '<c-j>'
+let g:ycm_auto_hover = ''
+let g:ycm_signature_help_disable_syntax = 1
+let g:ycm_collect_identifiers_from_tags_files = 1
+let g:ycm_min_num_of_chars_for_completion = 2
+let g:ycm_always_populate_location_list=1
+let g:ycm_show_detailed_diag_in_popup=1
+let g:ycm_server_keep_logfiles = 0
+let g:ycm_update_diagnostics_in_insert_mode = 0
+"let g:ycm_echo_current_diagnostic = 'virtual-text'
+
+
+let g:ycm_semantic_triggers =  {
+  \   'c': ['->', '.', 're!^\s*#include\s',],
+  \   'objc': ['->', '.', 're!\[[_a-zA-Z]+\w*\s', 're!^\s*[^\W\d]\w*\s',
+  \            're!\[.*\]\s'],
+  \   'ocaml': ['.', '#'],
+  \   'cpp,cuda,objcpp': ['->', '.', '::'],
+  \   'perl': ['->'],
+  \   'php': ['->', '::'],
+  \   'cs,d,elixir,go,groovy,java,javascript,julia,perl6,scala,typescript,vb': ['.'],
+  \   'python': ['.', 're!^\s*import\s', 're!^\s*from\s'],
+  \   'ruby,rust': ['.', '::'],
+  \   'lua': ['.', ':'],
+  \   'erlang': [':'],
+  \ }
+
+let g:UltiSnipsExpandTrigger="<c-m>"
+let g:UltiSnipsJumpForwardTrigger="<c-m>"
+let g:UltiSnipsJumpBackwardTrigger="<c-b>"
+
+" If you want :UltiSnipsEdit to split your window.
+let g:UltiSnipsEditSplit="vertical"
