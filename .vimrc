@@ -2,11 +2,8 @@ set nu
 set ai
 set encoding=utf-8
 syntax on
-filetype on
-filetype plugin indent on
 set ignorecase
 set hlsearch
-set ruler
 set incsearch
 set background=dark
 set pumheight=10
@@ -30,7 +27,5 @@ call plug#end()
 
 colorscheme habamax
 
-" taglist
 nnoremap <silent> <leader>tl :TlistToggle<CR>
-" gutentags搜索工程目录的标志，碰到这些文件/目录名就停止向上一级目录递归 "
 let g:gutentags_project_root = ['.git']
