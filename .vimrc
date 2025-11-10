@@ -13,7 +13,6 @@ set pumheight=10
 set laststatus=1
 set noswapfile
 set completeopt=menu,menuone,noselect
-set nowritebackup
 set signcolumn=yes
 
 let mapleader = "\<space>"
@@ -27,7 +26,6 @@ Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-unimpaired'
 Plug 'yegappan/taglist'
-Plug 'nvie/vim-flake8'
 call plug#end()
 
 colorscheme habamax
@@ -35,6 +33,4 @@ colorscheme habamax
 " taglist
 nnoremap <silent> <leader>tl :TlistToggle<CR>
 " gutentags搜索工程目录的标志，碰到这些文件/目录名就停止向上一级目录递归 "
-let g:gutentags_project_root = ['.root', '.svn', '.git', '.project']
-
-autocmd FileType python map <buffer> <leader>f8 :call flake8#Flake8()<CR>
+let g:gutentags_project_root = ['.git']
