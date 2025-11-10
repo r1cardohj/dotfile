@@ -12,10 +12,9 @@ set background=dark
 set pumheight=10
 set laststatus=1
 set noswapfile
-set omnifunc=syntaxcomplete#Complete
-set completeopt=menu,menuone
+set completeopt=menu,menuone,noselect
 set nowritebackup
-" set signcolumn=yes
+set signcolumn=yes
 
 let mapleader = "\<space>"
 
@@ -33,8 +32,6 @@ call plug#end()
 
 colorscheme habamax
 
-" ctrlp
-let g:ctrlp_extensions = ['tag', 'buffertag', 'quickfix']
 " taglist
 nnoremap <silent> <leader>tl :TlistToggle<CR>
 " gutentags搜索工程目录的标志，碰到这些文件/目录名就停止向上一级目录递归 "
