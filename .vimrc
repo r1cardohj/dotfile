@@ -27,5 +27,6 @@ call plug#end()
 
 colorscheme habamax
 
+let g:ctrlp_extensions = ['tag']
 nnoremap <silent> <leader>tl :TlistToggle<CR>
 let g:gutentags_project_root = ['.git']
