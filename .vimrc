@@ -23,6 +23,7 @@ Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-unimpaired'
 Plug 'yegappan/taglist'
+Plug 'dense-analysis/ale'
 call plug#end()
 
 colorscheme habamax
@@ -30,3 +31,21 @@ colorscheme habamax
 let g:ctrlp_extensions = ['tag']
 nnoremap <silent> <leader>tl :TlistToggle<CR>
 let g:gutentags_project_root = ['.git']
+
+" ale
+let g:ale_lint_delay = 5000
+nmap <silent> [d <Plug>(ale_previous_wrap)
+nmap <silent> ]d <Plug>(ale_next_wrap)
+let g:ale_virtualtext_cursor = 'current'
+let g:ale_lint_on_text_changed = 'never'
+let g:ale_lint_on_enter = 0
+let g:ale_lint_on_insert_leave = 0
+let g:ale_disable_lsp = 1
+nnoremap <leader>F :ALEFix<CR>
+let g:ale_echo_msg_format = '[%linter%] %s [%severity%]'
+
+
+let g:ale_fixers = {'*': ['remove_trailing_lines', 'trim_whitespace'], 'python': ['ruff', 'ruff_format', 'isort']}
+" In ~/.vim/vimrc, or somewhere similar.
+let g:ale_linters = {'python': ['ruff']}
+let g:ale_set_signs = 0
