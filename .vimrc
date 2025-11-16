@@ -25,6 +25,7 @@ Plug 'tpope/vim-unimpaired'
 Plug 'yegappan/taglist'
 Plug 'SirVer/ultisnips'
 Plug 'honza/vim-snippets'
+Plug 'tmsvg/pear-tree'
 call plug#end()
 
 colorscheme habamax
