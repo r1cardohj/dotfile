@@ -26,6 +26,7 @@ Plug 'yegappan/taglist'
 Plug 'SirVer/ultisnips'
 Plug 'honza/vim-snippets'
 Plug 'tmsvg/pear-tree'
+Plug 'neomake/neomake'
 call plug#end()
 
 colorscheme habamax
@@ -40,3 +41,6 @@ let g:UltiSnipsJumpBackwardTrigger="<S-tab>"
 
 " If you want :UltiSnipsEdit to split your window.
 let g:UltiSnipsEditSplit="vertical"
+
+" neomake
+call neomake#configure#automake('w')
