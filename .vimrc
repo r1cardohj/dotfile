@@ -1,27 +1,47 @@
-set nu
-set ai
-set encoding=utf-8
-syntax on
-set ignorecase
-set hlsearch
-set incsearch
+vim9script
+
 set background=dark
 set pumheight=10
+set nu
+set ruler
 set laststatus=1
 set noswapfile
 set cpt=.,w,b,u,t,i,o
 set ac
-"complete delay may 200 ms is best hahah...
-set acl=200 
-set completeopt=popup,fuzzy,menu
+# complete delay may 200 ms is best hahah...
+set acl=200
+set completeopt=popup,fuzzy
 set wildoptions+=fuzzy
 set shortmess+=c
 set signcolumn=yes
 set noshowmode
 
-let mapleader = "\<space>"
+# cmdline autocompletion
+autocmd CmdlineChanged [:/\?] call wildtrigger()
+set wildmode=noselect:lastused,full wildoptions=pum
 
-call plug#begin()
+
+# fuzzy-file-picker
+set findfunc=Find
+def Find(arg: string, _: any): list<string>
+    if empty(filescache)
+      filescache = globpath('.', '**', 1, 1)
+      filter(filescache, (_, val) => !isdirectory(val))
+      map(filescache, (_, val) => fnamemodify(val, ':.'))
+    endif
+    return arg == '' ? filescache : matchfuzzy(filescache, arg)
+enddef
+var filescache: list<string> = []
+autocmd CmdlineEnter : filescache = []
+
+# auto-complete
+inoremap <silent><expr> <Tab>   pumvisible() ? "\<C-n>" : "\<Tab>"
+inoremap <silent><expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
+
+g:mapleader = "\<space>"
+
+# vim plug
+plug#begin()
 Plug 'sheerun/vim-polyglot'
 Plug 'ludovicchabant/vim-gutentags'
 Plug 'tpope/vim-fugitive'
@@ -29,32 +49,12 @@ Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-unimpaired'
 Plug 'tmsvg/pear-tree'
 Plug 'neomake/neomake'
-call plug#end()
+plug#end()
 
 colorscheme habamax
 
-" cmdline autocompletion
-autocmd CmdlineChanged [:/\?] call wildtrigger()
-set wildmode=noselect:lastused,full wildoptions=pum
+# 插件设置
+g:java_ignore_markdown = 1
 
-let g:java_ignore_markdown = 1
-
-" neomake
-call neomake#configure#automake('w')
-
-" fuzzy-file-picker
-set findfunc=Find
-func Find(arg, _)
-    if empty(s:filescache)
-      let s:filescache = globpath('.', '**', 1, 1)
-      call filter(s:filescache, '!isdirectory(v:val)')
-      call map(s:filescache, "fnamemodify(v:val, ':.')")
-    endif
-    return a:arg == '' ? s:filescache : matchfuzzy(s:filescache, a:arg)
-endfunc
-let s:filescache = []
-autocmd CmdlineEnter : let s:filescache = []
-
-" auto-complete
-inoremap <silent><expr> <Tab>   pumvisible() ? "\<C-n>" : "\<Tab>"
-inoremap <silent><expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
+# neomake
+neomake#configure#automake('w')
