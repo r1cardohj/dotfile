@@ -9,38 +9,52 @@ set background=dark
 set pumheight=10
 set laststatus=1
 set noswapfile
-set completeopt=menu,menuone,noselect
+set cpt=.,w,b,u,t,i,o
+set ac
+"complete delay may 200 ms is best hahah...
+set acl=200 
+set completeopt=popup,fuzzy,menu
+set wildoptions+=fuzzy
+set shortmess+=c
 set signcolumn=yes
+set noshowmode
 
 let mapleader = "\<space>"
 
 call plug#begin()
-Plug 'tpope/vim-sensible'
 Plug 'sheerun/vim-polyglot'
-Plug 'ctrlpvim/ctrlp.vim'
 Plug 'ludovicchabant/vim-gutentags'
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-unimpaired'
-Plug 'yegappan/taglist'
-Plug 'SirVer/ultisnips'
-Plug 'honza/vim-snippets'
 Plug 'tmsvg/pear-tree'
 Plug 'neomake/neomake'
 call plug#end()
 
 colorscheme habamax
 
-let g:ctrlp_extensions = ['tag']
-nnoremap <silent> <leader>tl :TlistToggle<CR>
-let g:gutentags_project_root = ['.git']
+" cmdline autocompletion
+autocmd CmdlineChanged [:/\?] call wildtrigger()
+set wildmode=noselect:lastused,full wildoptions=pum
 
-let g:UltiSnipsExpandTrigger="<tab>"
-let g:UltiSnipsJumpForwardTrigger="<tab>"
-let g:UltiSnipsJumpBackwardTrigger="<S-tab>"
-
-" If you want :UltiSnipsEdit to split your window.
-let g:UltiSnipsEditSplit="vertical"
+let g:java_ignore_markdown = 1
 
 " neomake
 call neomake#configure#automake('w')
+
+" fuzzy-file-picker
+set findfunc=Find
+func Find(arg, _)
+    if empty(s:filescache)
+      let s:filescache = globpath('.', '**', 1, 1)
+      call filter(s:filescache, '!isdirectory(v:val)')
+      call map(s:filescache, "fnamemodify(v:val, ':.')")
+    endif
+    return a:arg == '' ? s:filescache : matchfuzzy(s:filescache, a:arg)
+endfunc
+let s:filescache = []
+autocmd CmdlineEnter : let s:filescache = []
+
+" auto-complete
+inoremap <silent><expr> <Tab>   pumvisible() ? "\<C-n>" : "\<Tab>"
+inoremap <silent><expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
