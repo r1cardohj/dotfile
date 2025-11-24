@@ -50,9 +50,12 @@ Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-unimpaired'
 Plug 'tmsvg/pear-tree'
 Plug 'neomake/neomake'
+Plug 'girishji/devdocs.vim'
 plug#end()
 
 colorscheme habamax
 
 # neomake
 neomake#configure#automake('w')
+
+nnoremap <leader>k :DevdocsFind<CR>
