@@ -4,12 +4,14 @@ set background=dark
 set pumheight=10
 set nu
 set ruler
+set expandtab
+set tabstop=2
 set laststatus=1
 set noswapfile
 set cpt=.,w,b,u,t,i,o
 set ac
 # complete delay may 200 ms is best hahah...
-set acl=200
+set acl=120
 set completeopt=popup,fuzzy
 set wildoptions+=fuzzy
 set shortmess+=c
@@ -42,7 +44,6 @@ g:mapleader = "\<space>"
 
 # vim plug
 plug#begin()
-Plug 'sheerun/vim-polyglot'
 Plug 'ludovicchabant/vim-gutentags'
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-commentary'
@@ -52,9 +53,6 @@ Plug 'neomake/neomake'
 plug#end()
 
 colorscheme habamax
-
-# 插件设置
-g:java_ignore_markdown = 1
 
 # neomake
 neomake#configure#automake('w')
