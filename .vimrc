@@ -4,19 +4,20 @@ set background=dark
 set pumheight=10
 set nu
 set ruler
-set expandtab
-set tabstop=2
+set ai
 set laststatus=1
 set noswapfile
 set cpt=.,w,b,u,t,i,o
 set ac
+
 # complete delay may 200 ms is best hahah...
-set acl=120
+set acl=100
 set completeopt=popup,fuzzy
 set wildoptions+=fuzzy
 set shortmess+=c
 set signcolumn=yes
 set noshowmode
+set termguicolors
 
 # cmdline autocompletion
 autocmd CmdlineChanged [:/\?] call wildtrigger()
@@ -44,16 +45,21 @@ g:mapleader = "\<space>"
 
 # vim plug
 plug#begin()
-Plug 'ludovicchabant/vim-gutentags'
+Plug 'tpope/vim-sleuth'
+Plug 'tpope/vim-sensible'
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-unimpaired'
+Plug 'ludovicchabant/vim-gutentags'
 Plug 'tmsvg/pear-tree'
 Plug 'neomake/neomake'
 Plug 'girishji/devdocs.vim'
+Plug 'Rigellute/shades-of-purple.vim'
+Plug 'vim-airline/vim-airline'
+Plug 'Vimjas/vim-python-pep8-indent'
 plug#end()
 
-colorscheme habamax
+colorscheme shades_of_purple
 
 # neomake
 neomake#configure#automake('w')
