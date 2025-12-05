@@ -1,23 +1,33 @@
 vim9script
 
+syntax on
+set tabstop=2
+set shiftwidth=2
+set expandtab
+set ai
+set hlsearch
 set background=dark
 set pumheight=10
 set nu
 set ruler
-set ai
 set laststatus=1
 set noswapfile
-set cpt=.,w,b,u,t,i,o
+set cpt=.,w,b,u,t,i,o 
 set ac
 
 # complete delay may 200 ms is best hahah...
-set acl=100
+set acl=250
 set completeopt=popup,fuzzy
 set wildoptions+=fuzzy
 set shortmess+=c
 set signcolumn=yes
 set noshowmode
-set termguicolors
+
+highlight Comment ctermfg=green
+highlight String ctermfg=brown
+highlight SignColumn ctermbg=NONE
+highlight LineNr ctermfg=darkgrey
+
 
 # cmdline autocompletion
 autocmd CmdlineChanged [:/\?] call wildtrigger()
@@ -41,27 +51,16 @@ autocmd CmdlineEnter : filescache = []
 inoremap <silent><expr> <Tab>   pumvisible() ? "\<C-n>" : "\<Tab>"
 inoremap <silent><expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
 
+
 g:mapleader = "\<space>"
 
-# vim plug
+# my plugins
 plug#begin()
-Plug 'tpope/vim-sleuth'
-Plug 'tpope/vim-sensible'
 Plug 'tpope/vim-fugitive'
-Plug 'tpope/vim-commentary'
-Plug 'tpope/vim-unimpaired'
 Plug 'ludovicchabant/vim-gutentags'
 Plug 'tmsvg/pear-tree'
 Plug 'neomake/neomake'
-Plug 'girishji/devdocs.vim'
-Plug 'Rigellute/shades-of-purple.vim'
-Plug 'vim-airline/vim-airline'
-Plug 'Vimjas/vim-python-pep8-indent'
 plug#end()
-
-colorscheme shades_of_purple
 
 # neomake
 neomake#configure#automake('w')
-
-nnoremap <leader>k :DevdocsFind<CR>
