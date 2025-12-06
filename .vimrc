@@ -6,6 +6,7 @@ set shiftwidth=2
 set expandtab
 set ai
 set hlsearch
+set nocompatible
 set background=dark
 set pumheight=10
 set nu
@@ -57,6 +58,7 @@ g:mapleader = "\<space>"
 # my plugins
 plug#begin()
 Plug 'tpope/vim-fugitive'
+Plug 'tpope/vim-unimpaired'
 Plug 'ludovicchabant/vim-gutentags'
 Plug 'tmsvg/pear-tree'
 Plug 'neomake/neomake'
