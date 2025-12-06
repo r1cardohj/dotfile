@@ -3,6 +3,7 @@ vim9script
 syntax on
 set tabstop=2
 set shiftwidth=2
+set softtabstop=2
 set expandtab
 set ai
 set hlsearch
@@ -13,7 +14,7 @@ set nu
 set ruler
 set laststatus=1
 set noswapfile
-set cpt=.,w,b,u,t,i,o 
+set cpt+=.,w,b,u,t,i,o 
 set ac
 
 # complete delay may 200 ms is best hahah...
@@ -22,6 +23,7 @@ set completeopt=popup,fuzzy
 set wildoptions+=fuzzy
 set shortmess+=c
 set signcolumn=yes
+set wildignore+=*.pyc,tags
 set noshowmode
 
 highlight Comment ctermfg=green
