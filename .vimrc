@@ -14,10 +14,11 @@ set nu
 set ruler
 set laststatus=1
 set noswapfile
+set showmatch
 set cpt+=.,w,b,u,t,i,o 
 
 # complete delay may 200 ms is best hahah...
-set completeopt+=fuzzy
+set completeopt+=fuzzy,noselect,menuone
 set completeopt-=preview
 set wildoptions+=fuzzy
 set shortmess+=c
@@ -50,14 +51,14 @@ plug#begin()
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-unimpaired'
 Plug 'ludovicchabant/vim-gutentags'
-Plug 'tmsvg/pear-tree'
 Plug 'neomake/neomake'
 Plug 'davidhalter/jedi-vim'
 Plug 'fatih/vim-go'
 Plug 'ervandew/supertab'
+Plug 'liuchengxu/space-vim-theme'
 plug#end()
 
-color habamax
+color space_vim_theme
 
 # neomake
 neomake#configure#automake('w')
