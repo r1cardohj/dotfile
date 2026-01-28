@@ -10,6 +10,7 @@ set hlsearch
 set nocompatible
 set background=dark
 set pumheight=10
+set mouse=a
 set nu
 set ruler
 set laststatus=1
@@ -22,27 +23,12 @@ set completeopt+=fuzzy,noselect,menuone
 set completeopt-=preview
 set wildoptions+=fuzzy
 set shortmess+=c
+set cursorline
+set relativenumber
 set signcolumn=yes
-set wildignore+=*.pyc,tags
+set wildignore+=*.pyc,tags,*/tmp/*,*.so,*.swp,*.zip
 set noshowmode
-
-# cmdline autocompletion
-autocmd CmdlineChanged [:/\?] call wildtrigger()
-set wildmode=noselect:lastused,full wildoptions=pum
-
-
-# fuzzy-file-picker
-set findfunc=Find
-def Find(arg: string, _: any): list<string>
-    if empty(filescache)
-      filescache = globpath('.', '**', 1, 1)
-      filter(filescache, (_, val) => !isdirectory(val))
-      map(filescache, (_, val) => fnamemodify(val, ':.'))
-    endif
-    return arg == '' ? filescache : matchfuzzy(filescache, arg)
-enddef
-var filescache: list<string> = []
-autocmd CmdlineEnter : filescache = []
+set termguicolors
 
 g:mapleader = "\<space>"
 
@@ -51,17 +37,25 @@ plug#begin()
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-unimpaired'
 Plug 'ludovicchabant/vim-gutentags'
-Plug 'neomake/neomake'
-Plug 'davidhalter/jedi-vim'
-Plug 'fatih/vim-go'
+Plug 'airblade/vim-gitgutter'
 Plug 'ervandew/supertab'
-Plug 'liuchengxu/space-vim-theme'
+Plug 'tpope/vim-vinegar'
+Plug 'tmsvg/pear-tree'
+Plug 'ctrlpvim/ctrlp.vim'
+Plug 'tpope/vim-commentary'
+Plug 'szw/vim-maximizer'
+Plug 'davidhalter/jedi-vim', {'for': 'python'}
+Plug 'nvie/vim-flake8', {'for': 'python'}
+Plug 'fatih/vim-go', {'for': 'go'}
+Plug 'mattn/emmet-vim'
+Plug 'Vimjas/vim-python-pep8-indent', {'for': 'python'}
+Plug 'markonm/traces.vim'
+Plug 'NLKNguyen/papercolor-theme'
+Plug 'andreasvc/vim-256noir'
 plug#end()
 
-color space_vim_theme
-
-# neomake
-neomake#configure#automake('w')
+# color Papercolor
+color 256_noir
 
 # ==================== Completion ====================
 g:SuperTabDefaultCompletionType = "context"
@@ -78,12 +72,14 @@ g:jedi#goto_definitions_command = "gd"
 g:jedi#documentation_command = "K"
 g:jedi#usages_command = "gr"
 g:jedi#rename_command = "<leader>rn"
+g:jedi#popup_on_dot = 0
 g:jedi#rename_command_keep_name = "<leader>R"
 g:jedi#show_call_signatures = 2
 
 
 # auto set venv
 autocmd FileType python call SetPythonEnvironment()
+autocmd FileType python map <buffer> <leader>8 :call flake8#Flake8()<CR>
 
 def SetPythonEnvironment()
   # Get the current working directory
@@ -98,7 +94,7 @@ def SetPythonEnvironment()
   ]
 
   # use jedi
-	g:SuperTabDefaultCompletionType = "<c-x><c-o>"
+  g:SuperTabDefaultCompletionType = "<c-x><c-o>"
 
   # Check each path in order
   for venv_path in venv_paths
@@ -139,6 +135,3 @@ g:go_highlight_build_constraints = 1
 g:go_highlight_operators = 1
 
 g:go_fold_enable = []
-
-nmap <script> <silent> <leader>l :call ToggleLocationList()<CR>
-nmap <script> <silent> <leader>q :call ToggleQuickfixList()<CR>
