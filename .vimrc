@@ -90,7 +90,6 @@ call plug#begin()
 Plug 'shrikecode/kyotonight.vim'
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'github/copilot.vim'
-Plug 'tpope/vim-fugitive'
 Plug 'tmsvg/pear-tree'
 call plug#end()
 
