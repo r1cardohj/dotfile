@@ -49,8 +49,6 @@ set splitbelow
 set foldmethod=syntax
 set foldlevel=99
 
-set list
-set listchars=tab:>-,trail:.,extends:>,precedes:<
 
 set cpt+=.,w,b,u,t,i,o
 
@@ -89,7 +87,12 @@ let mapleader = "\<Space>"
 call plug#begin()
 Plug 'shrikecode/kyotonight.vim'
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
+Plug 'tpope/vim-fugitive'
+Plug 'airblade/vim-gitgutter'
+Plug 'preservim/nerdtree'
+Plug 'Xuyuanp/nerdtree-git-plugin'
 Plug 'github/copilot.vim'
+Plug 'vim-airline/vim-airline'
 Plug 'tmsvg/pear-tree'
 call plug#end()
 
@@ -101,6 +104,9 @@ let g:kyotonight_italic_comments = 0
 
 colorscheme kyotonight
 
+nnoremap <leader>e :NERDTreeToggle<CR>
+nnoremap <leader>tf :NERDTreeFind<CR>
+
 " Having longer updatetime (default is 4000 ms = 4s) leads to noticeable
 " delays and poor user experience
 set updatetime=300
@@ -108,6 +114,11 @@ set updatetime=300
 " Always show the signcolumn, otherwise it would shift the text each time
 " diagnostics appear/become resolved
 set signcolumn=yes
+
+function! CheckBackspace() abort
+  let col = col('.') - 1
+  return !col || getline('.')[col - 1]  =~# '\s'
+endfunction
 
 " Use tab for trigger completion with characters ahead and navigate
 " NOTE: There's always complete item selected by default, you may want to enable
@@ -125,10 +136,6 @@ inoremap <expr><S-TAB> coc#pum#visible() ? coc#pum#prev(1) : "\<C-h>"
 inoremap <silent><expr> <CR> coc#pum#visible() ? coc#pum#confirm()
                               \: "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
 
-function! CheckBackspace() abort
-  let col = col('.') - 1
-  return !col || getline('.')[col - 1]  =~# '\s'
-endfunction
 
 " Use <c-space> to trigger completion
 if has('nvim')
@@ -250,23 +257,17 @@ nnoremap <silent><nowait> <space>j  :<C-u>CocNext<CR>
 nnoremap <silent><nowait> <space>k  :<C-u>CocPrev<CR>
 " Resume latest coc list
 nnoremap <silent><nowait> <space>p  :<C-u>CocListResume<CR>
-nnoremap <silent><nowait> <space><space> :<C-u>CocList<cr>
+nnoremap <silent><nowait> <C-p> :<C-u>CocList<cr>
 
 imap <silent><script><expr> <C-l> copilot#Accept("\<CR>")
 let g:copilot_no_tab_map = v:true
 
-" navigate chunks of current buffer
-nmap [g <Plug>(coc-git-prevchunk)
-nmap ]g <Plug>(coc-git-nextchunk)
-" navigate conflicts of current buffer
-nmap [c <Plug>(coc-git-prevconflict)
-nmap ]c <Plug>(coc-git-nextconflict)
-" show chunk diff at current position
-nmap gs <Plug>(coc-git-chunkinfo)
-" show commit contains current position
-nmap gc <Plug>(coc-git-commit)
-" create text object for git chunks
-omap ig <Plug>(coc-git-chunk-inner)
-xmap ig <Plug>(coc-git-chunk-inner)
-omap ag <Plug>(coc-git-chunk-outer)
-xmap ag <Plug>(coc-git-chunk-outer)
+nmap ]h <Plug>(GitGutterNextHunk)
+nmap [h <Plug>(GitGutterPrevHunk)
+nmap ghs <Plug>(GitGutterStageHunk)
+nmap ghu <Plug>(GitGutterUndoHunk)
+nmap ghp <Plug>(GitGutterPreviewHunk)
+omap ih <Plug>(GitGutterTextObjectInnerPending)
+omap ah <Plug>(GitGutterTextObjectOuterPending)
+xmap ih <Plug>(GitGutterTextObjectInnerVisual)
+xmap ah <Plug>(GitGutterTextObjectOuterVisual)

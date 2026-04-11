@@ -1,15 +1,22 @@
 {
-	"suggest.triggerCompletionWait": 300,
+  "suggest.triggerCompletionWait": 150,
+  "suggest.virtualText": false,
+  "suggest.enableFloat": true,
+  "suggest.noselect": true,
+  "suggest.autoTrigger": "none",
+  "diagnostic.virtualTextCurrentLineOnly": false,
 	"pyright.inlayHints.variableTypes": false,
 	"pyright.inlayHints.parameterTypes": false,
 	"pyright.inlayHints.functionReturnTypes": false,
 	"python.formatting.provider": "ruff",
 	"python.linting.ruffEnabled": true,
 	"pyright.organizeimports.provider": "ruff",
-	"python.analysis.typeshedPaths": ["~/.local/share/typeshed"],
-	"python.analysis.typeCheckingMode": "standard",
+	"python.analysis.typeCheckingMode": "basic",
 	"java.configuration.maven.globalSettings": "/etc/maven/settings.xml",
-	"explorer.icon.enableNerdfont": true,
+	"explorer.icon.enableNerdfont": false,
 	"diagnostic.displayByAle": false,
-	"suggest.noselect": true
+  "Lua.diagnostics.globals": [
+    "vim"
+  ],
+  "snippets.ultisnips.pythonPrompt": false
 }
